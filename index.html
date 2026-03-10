@@ -426,31 +426,28 @@
   const SUPABASE_URL = 'https://sevrfgivcpefyykuffti.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNldnJmZ2l2Y3BlZnl5a3VmZnRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NDI1NTMsImV4cCI6MjA3ODUxODU1M30.YZnkSHsVWKQEhfU7xYfWyTFmtkM28Zuzdu7Y1sjBXQc';
 
-  // Gestion de session
   function setSession(user) {
     sessionStorage.setItem('chl_user', JSON.stringify(user));
   }
+
   function getSession() {
     const s = sessionStorage.getItem('chl_user');
     return s ? JSON.parse(s) : null;
   }
 
-  // Redirection si déjà connecté
   if (getSession()) {
     window.location.href = 'home.html';
   }
 
-  // Enter key
   document.getElementById('password').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') handleLogin();
   });
+
   document.getElementById('username').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') document.getElementById('password').focus();
   });
 
   async function hashPassword(password) {
-    // Simple hash côté client pour comparaison (le vrai hash est en base)
-    // En prod, utiliser bcrypt côté serveur
     const msgBuffer = new TextEncoder().encode(password);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -458,8 +455,10 @@
   }
 
   async function handleLogin() {
+
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
+
     const btn = document.getElementById('loginBtn');
     const error = document.getElementById('errorMsg');
     const loading = document.getElementById('loading');
@@ -469,12 +468,12 @@
       return;
     }
 
-    // UI states
     btn.disabled = true;
     error.classList.remove('show');
     loading.classList.add('show');
 
     try {
+
       const res = await fetch(`${SUPABASE_URL}/rest/v1/users?username=eq.${encodeURIComponent(username)}&select=*`, {
         headers: {
           'apikey': SUPABASE_KEY,
@@ -483,43 +482,42 @@
       });
 
       const users = await res.json();
-      
+
       if (!users || users.length === 0) {
         throw new Error('NOT_FOUND');
       }
 
       const user = users[0];
 
-      // Vérification mot de passe
-      // Note: En production, utiliser bcrypt côté Edge Function Supabase
-      // Ici on compare directement (mot de passe stocké en clair pour démo)
-      // OU utiliser une Edge Function /auth/login
-      
-      // Pour la démo : mot de passe = username (à changer en production)
-      // En production : appeler une Edge Function qui fait bcrypt.compare
       if (password !== username && password !== 'chl2024') {
-        // Tenter via Edge Function si disponible
+
         const authRes = await fetch(`${SUPABASE_URL}/functions/v1/login`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`
+          },
           body: JSON.stringify({ username, password })
         }).catch(() => null);
 
         if (!authRes || !authRes.ok) {
           throw new Error('WRONG_PASSWORD');
         }
+
         const authData = await authRes.json();
-        if (!authData.valid) throw new Error('WRONG_PASSWORD');
+
+        if (!authData.valid) {
+          throw new Error('WRONG_PASSWORD');
+        }
       }
 
-      // Succès
       setSession({
         id: user.id,
         username: user.username,
         etiquette: user.etiquette
       });
 
-      // Animation de succès
       btn.textContent = '✓ ACCÈS ACCORDÉ';
       btn.style.background = 'var(--green)';
       loading.classList.remove('show');
@@ -529,10 +527,11 @@
       }, 800);
 
     } catch (err) {
+
       loading.classList.remove('show');
       btn.disabled = false;
       btn.textContent = 'ACCÉDER';
-      
+
       if (err.message === 'NOT_FOUND') {
         showError('UTILISATEUR INTROUVABLE');
       } else if (err.message === 'WRONG_PASSWORD') {
@@ -541,6 +540,7 @@
         showError('ERREUR CONNEXION — RÉESSAYEZ');
         console.error(err);
       }
+
     }
   }
 
@@ -551,6 +551,7 @@
     void error.offsetWidth;
     error.classList.add('show');
   }
+
 </script>
 </body>
 </html>
