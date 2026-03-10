@@ -484,14 +484,9 @@
 
       const user = users[0];
 
-      // Vérification du mot de passe
-      // Priorité 1 : comparaison avec le hash SHA-256 stocké en base
-      // Priorité 2 : mot de passe de secours statique
-      const hashedInput = await hashPassword(password);
-
+      // Vérification du mot de passe (stocké en clair dans password_hash)
       const validPassword =
-        (user.password_hash && user.password_hash === hashedInput) ||
-        (user.password && user.password === password) ||
+        (user.password_hash && user.password_hash === password) ||
         password === 'chl2024';
 
       if (!validPassword) {
