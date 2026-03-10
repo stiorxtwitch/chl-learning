@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHL — Cours</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0c;
+    --card: #0e1318;
+    --card2: #141820;
+    --border: #1e2832;
+    --accent: #c0392b;
+    --accent2: #e74c3c;
+    --gold: #d4a843;
+    --text: #e8eaf0;
+    --muted: #6b7585;
+    --green: #27ae60;
+    --blue: #2980b9;
+    --orange: #e67e22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(192,57,43,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,0.03) 1px,transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none; z-index: 0;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; height: 64px;
+    background: rgba(8,10,12,0.95); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 30px; z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  nav::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg,transparent,var(--accent),transparent); opacity: 0.5; }
+  .nav-brand { font-family: 'Bebas Neue',sans-serif; font-size: 26px; letter-spacing: 6px; color: var(--text); text-decoration: none; margin-right: auto; }
+  .nav-brand span { color: var(--accent); }
+  .nav-link { padding: 8px 18px; font-family: 'Share Tech Mono',monospace; font-size: 11px; letter-spacing: 2px; color: var(--muted); text-decoration: none; border-radius: 2px; transition: all 0.2s; border: 1px solid transparent; }
+  .nav-link:hover, .nav-link.active { color: var(--text); background: var(--card2); border-color: var(--border); }
+  .nav-link.active { color: var(--accent); border-color: rgba(192,57,43,0.3); }
+  .btn-logout { background: none; border: 1px solid var(--border); color: var(--muted); font-family: 'Share Tech Mono',monospace; font-size: 10px; letter-spacing: 2px; padding: 6px 14px; cursor: pointer; border-radius: 2px; transition: all 0.2s; margin-left: 16px; }
+  .btn-logout:hover { border-color: var(--accent); color: var(--accent); }
+
+  main { padding-top: 64px; min-height: 100vh; position: relative; z-index: 1; }
+
+  /* LAYOUT */
+  .layout { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 64px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 24px 0;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-section {
+    margin-bottom: 8px;
+  }
+  .sidebar-section-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    padding: 8px 20px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+  .sidebar-section-title.et-stagiaire { color: var(--green); border-color: rgba(39,174,96,0.2); }
+  .sidebar-section-title.et-infirmier { color: var(--blue); border-color: rgba(41,128,185,0.2); }
+  .sidebar-section-title.et-apprenti { color: var(--orange); border-color: rgba(230,126,34,0.2); }
+  .sidebar-section-title.et-medecin { color: var(--gold); border-color: rgba(212,168,67,0.2); }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar-item:hover { background: var(--card2); }
+  .sidebar-item.active { background: rgba(192,57,43,0.08); border-left-color: var(--accent); }
+  .sidebar-item.locked { opacity: 0.4; cursor: not-allowed; }
+  .sidebar-item-icon { font-size: 18px; flex-shrink: 0; }
+  .sidebar-item-text { flex: 1; }
+  .sidebar-item-title { font-size: 13px; font-weight: 500; line-height: 1.3; }
+  .sidebar-item-sub { font-family: 'Share Tech Mono',monospace; font-size: 9px; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+
+  /* CONTENT */
+  .content {
+    overflow-y: auto;
+    padding: 36px 48px;
+  }
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .content-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .content-label {
+    font-family: 'Share Tech Mono',monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .content-title {
+    font-family: 'Bebas Neue',sans-serif;
+    font-size: 40px;
+    letter-spacing: 3px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .content-desc {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 700px;
+  }
+  .content-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    padding: 10px 22px;
+    background: var(--accent);
+    color: white;
+    font-family: 'Bebas Neue',sans-serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-secondary {
+    padding: 10px 22px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Bebas Neue',sans-serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--text); color: var(--text); }
+
+  /* PDF Viewer */
+  .pdf-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .pdf-header {
+    padding: 14px 20px;
+    background: var(--card2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pdf-title {
+    font-family: 'Share Tech Mono',monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+  }
+  .pdf-frame {
+    width: 100%;
+    height: 600px;
+    border: none;
+    background: #1a1a2e;
+  }
+  .pdf-external {
+    padding: 40px;
+    text-align: center;
+  }
+  .pdf-external-icon { font-size: 48px; margin-bottom: 16px; }
+  .pdf-external-text {
+    font-family: 'Share Tech Mono',monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  /* Contenu texte */
+  .course-text {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 32px;
+    line-height: 1.8;
+    font-size: 15px;
+    color: #c8cad8;
+  }
+  .course-text h3 {
+    font-family: 'Bebas Neue',sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--text);
+    margin: 24px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .course-text h3:first-child { margin-top: 0; }
+  .course-text p { margin-bottom: 14px; }
+  .course-text strong { color: var(--accent2); font-weight: 600; }
+  .course-text ul { padding-left: 24px; margin-bottom: 14px; }
+  .course-text li { margin-bottom: 6px; }
+  .course-text .highlight-box {
+    background: rgba(192,57,43,0.08);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Progression */
+  .progress-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 20px 24px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .progress-label {
+    font-family: 'Share Tech Mono',monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .prog-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.5s ease; }
+  .prog-pct { font-family: 'Bebas Neue',sans-serif; font-size: 20px; color: var(--accent); flex-shrink: 0; }
+  .btn-complete {
+    padding: 8px 18px;
+    background: var(--green);
+    color: white;
+    font-family: 'Bebas Neue',sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .btn-complete:hover { filter: brightness(1.1); }
+
+  .welcome-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    text-align: center;
+    gap: 16px;
+  }
+  .welcome-icon { font-size: 60px; opacity: 0.3; }
+  .welcome-title { font-family: 'Bebas Neue',sans-serif; font-size: 32px; letter-spacing: 4px; color: var(--muted); }
+  .welcome-sub { font-family: 'Share Tech Mono',monospace; font-size: 11px; color: var(--muted); letter-spacing: 2px; opacity: 0.6; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="home.html" class="nav-brand">C<span>H</span>L</a>
+  <a href="home.html" class="nav-link">ACCUEIL</a>
+  <a href="cours.html" class="nav-link active">COURS</a>
+  <a href="examen.html" class="nav-link">EXAMENS</a>
+  <button class="btn-logout" onclick="logout()">DÉCONNEXION</button>
+</nav>
+
+<main>
+  <div class="layout">
+    <div class="sidebar" id="sidebar">
+      <div style="padding:16px 20px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted)">CHARGEMENT...</div>
+    </div>
+    <div class="content" id="content">
+      <div class="welcome-screen">
+        <div class="welcome-icon">📚</div>
+        <div class="welcome-title">SÉLECTIONNEZ UN COURS</div>
+        <div class="welcome-sub">CHOISISSEZ UN MODULE DANS LE MENU LATÉRAL</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const SUPABASE_URL = 'VOTRE_URL_SUPABASE';
+  const SUPABASE_KEY = 'VOTRE_CLE_ANON_SUPABASE';
+
+  function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
+  const user = getSession();
+  if (!user) window.location.href = 'index.html';
+
+  const HIERARCHY = ['Stagiaire','Infirmier','Apprenti Médecin','Médecin','Direction'];
+  function canAccess(req) {
+    if (user.etiquette === 'Direction') return true;
+    return HIERARCHY.indexOf(user.etiquette) >= HIERARCHY.indexOf(req);
+  }
+
+  function getEtClass(et) {
+    const m = {'Stagiaire':'stagiaire','Infirmier':'infirmier','Apprenti Médecin':'apprenti','Médecin':'medecin'};
+    return m[et] || 'stagiaire';
+  }
+  function getIcon(t) {
+    t = t.toLowerCase();
+    if (t.includes('bls')||t.includes('secours')) return '🫀';
+    if (t.includes('ecg')) return '📈';
+    if (t.includes('injection')) return '💉';
+    if (t.includes('suture')) return '🩺';
+    if (t.includes('anatomie')) return '🫁';
+    if (t.includes('tccc')) return '⚕️';
+    if (t.includes('opex')) return '🪖';
+    return '📋';
+  }
+
+  let allCours = [];
+  let progressData = {};
+
+  async function loadCours() {
+    const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
+    const [res, progRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/cours?actif=eq.true&order=etiquette_requise,ordre`, { headers }),
+      fetch(`${SUPABASE_URL}/rest/v1/progression?user_id=eq.${user.id}&select=*`, { headers })
+    ]);
+    allCours = await res.json();
+    const progs = await progRes.json();
+    progs.forEach(p => progressData[p.cours_id] = p);
+    renderSidebar();
+
+    // Auto-select depuis URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    if (id) {
+      const c = allCours.find(x => x.id === id);
+      if (c && canAccess(c.etiquette_requise)) renderCours(c);
+    }
+  }
+
+  function renderSidebar() {
+    const groups = {};
+    const etOrder = ['Stagiaire','Infirmier','Apprenti Médecin','Médecin'];
+    allCours.forEach(c => {
+      if (!groups[c.etiquette_requise]) groups[c.etiquette_requise] = [];
+      groups[c.etiquette_requise].push(c);
+    });
+
+    let html = '';
+    etOrder.forEach(et => {
+      if (!groups[et]) return;
+      const etC = getEtClass(et);
+      html += `<div class="sidebar-section">
+        <div class="sidebar-section-title et-${etC}">${et}</div>`;
+      groups[et].forEach(c => {
+        const locked = !canAccess(c.etiquette_requise);
+        const prog = progressData[c.id];
+        html += `
+          <div class="sidebar-item ${locked ? 'locked' : ''}" onclick="${locked ? '' : `showCours('${c.id}')`}" id="item-${c.id}">
+            <div class="sidebar-item-icon">${locked ? '🔒' : getIcon(c.titre)}</div>
+            <div class="sidebar-item-text">
+              <div class="sidebar-item-title">${c.titre}</div>
+              <div class="sidebar-item-sub">${prog && prog.termine ? '✓ TERMINÉ' : prog ? 'EN COURS' : 'NON COMMENCÉ'}</div>
+            </div>
+          </div>`;
+      });
+      html += '</div>';
+    });
+
+    document.getElementById('sidebar').innerHTML = html;
+  }
+
+  function showCours(id) {
+    const c = allCours.find(x => x.id === id);
+    if (!c) return;
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('item-' + id)?.classList.add('active');
+    renderCours(c);
+    window.history.pushState({}, '', '?id=' + id);
+  }
+
+  function renderCours(c) {
+    const prog = progressData[c.id];
+    const pct = prog && prog.termine ? 100 : prog ? 50 : 0;
+    const etC = getEtClass(c.etiquette_requise);
+    
+    let contentHtml = '';
+    
+    if (c.pdf_url) {
+      // Google Drive → embed URL
+      const embedUrl = c.pdf_url.replace('/view', '/preview');
+      contentHtml = `
+        <div class="pdf-container">
+          <div class="pdf-header">
+            <span class="pdf-title">📄 DOCUMENT PDF</span>
+            <a href="${c.pdf_url}" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;text-decoration:none">OUVRIR ↗</a>
+          </div>
+          <iframe class="pdf-frame" src="${embedUrl}" allowfullscreen></iframe>
+        </div>`;
+    }
+    
+    if (c.contenu) {
+      // Formater le contenu texte
+      const formatted = c.contenu
+        .replace(/\. ([A-Z][A-Za-z\s]+)\s*:/g, (m, title) => `</p><h3>${title}</h3><p>`)
+        .replace(/([A-Z]{2,}[^.]*?)\s*:/g, '<strong>$1 :</strong>')
+        .split('\n').filter(l => l.trim()).map(l => `<p>${l}</p>`).join('');
+      
+      contentHtml += `
+        <div class="course-text">
+          ${formatted}
+        </div>`;
+    }
+
+    document.getElementById('content').innerHTML = `
+      <div class="content-header">
+        <div class="content-label">${c.etiquette_requise.toUpperCase()} // MODULE DE FORMATION</div>
+        <div class="content-title">${c.titre}</div>
+        <div class="content-desc">${c.description || ''}</div>
+        <div class="content-actions">
+          ${c.pdf_url ? `<a href="${c.pdf_url}" target="_blank" class="btn-primary">📄 PDF COURS</a>` : ''}
+          <a href="examen.html?cours=${c.id}" class="btn-secondary">📝 PASSER L'EXAMEN</a>
+        </div>
+      </div>
+      ${contentHtml}
+      <div class="progress-section">
+        <span class="progress-label">PROGRESSION</span>
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+        <span class="prog-pct">${pct}%</span>
+        <button class="btn-complete" onclick="markComplete('${c.id}')">✓ MARQUER TERMINÉ</button>
+      </div>
+    `;
+  }
+
+  async function markComplete(coursId) {
+    const headers = {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates'
+    };
+    await fetch(`${SUPABASE_URL}/rest/v1/progression`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ user_id: user.id, cours_id: coursId, termine: true, derniere_page: 100 })
+    });
+    progressData[coursId] = { termine: true };
+    renderSidebar();
+    const c = allCours.find(x => x.id === coursId);
+    if (c) renderCours(c);
+  }
+
+  function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
+
+  loadCours().catch(e => {
+    document.getElementById('sidebar').innerHTML = '<div style="padding:20px;font-family:Share Tech Mono,monospace;font-size:11px;color:var(--accent)">ERREUR DE CONNEXION</div>';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHL — Examens</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0c; --card: #0e1318; --card2: #141820; --border: #1e2832;
+    --accent: #c0392b; --accent2: #e74c3c; --gold: #d4a843;
+    --text: #e8eaf0; --muted: #6b7585; --green: #27ae60; --blue: #2980b9; --orange: #e67e22;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans',sans-serif; min-height: 100vh; }
+  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(192,57,43,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.03) 1px,transparent 1px); background-size:50px 50px; pointer-events:none; z-index:0; }
+  
+  nav { position:fixed; top:0; left:0; right:0; height:64px; background:rgba(8,10,12,.95); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 30px; z-index:100; backdrop-filter:blur(10px); }
+  nav::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:.5; }
+  .nav-brand { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:6px; color:var(--text); text-decoration:none; margin-right:auto; }
+  .nav-brand span { color:var(--accent); }
+  .nav-link { padding:8px 18px; font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:2px; color:var(--muted); text-decoration:none; border-radius:2px; transition:all .2s; border:1px solid transparent; }
+  .nav-link:hover,.nav-link.active { color:var(--text); background:var(--card2); border-color:var(--border); }
+  .nav-link.active { color:var(--accent); border-color:rgba(192,57,43,.3); }
+  .btn-logout { background:none; border:1px solid var(--border); color:var(--muted); font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; padding:6px 14px; cursor:pointer; border-radius:2px; transition:all .2s; margin-left:16px; }
+  .btn-logout:hover { border-color:var(--accent); color:var(--accent); }
+
+  main { padding-top:64px; min-height:100vh; position:relative; z-index:1; }
+
+  /* EXAM LIST */
+  .exam-list-container { max-width:900px; margin:0 auto; padding:40px 30px; }
+  .page-header { margin-bottom:40px; }
+  .page-label { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:4px; color:var(--accent); margin-bottom:10px; }
+  .page-title { font-family:'Bebas Neue',sans-serif; font-size:48px; letter-spacing:4px; }
+
+  .exam-list { display:flex; flex-direction:column; gap:12px; }
+  .exam-list-item {
+    background:var(--card); border:1px solid var(--border); border-radius:2px; padding:22px 28px;
+    cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:20px; text-decoration:none; color:inherit;
+  }
+  .exam-list-item:hover { border-color:rgba(212,168,67,.4); background:var(--card2); transform:translateY(-1px); }
+  .exam-list-item.locked { opacity:.4; cursor:not-allowed; pointer-events:none; }
+  .eli-icon { font-size:28px; flex-shrink:0; }
+  .eli-body { flex:1; }
+  .eli-title { font-weight:600; font-size:16px; margin-bottom:4px; }
+  .eli-desc { font-size:13px; color:var(--muted); }
+  .eli-meta { display:flex; gap:16px; margin-top:8px; }
+  .eli-tag { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:1px; }
+  .eli-score { font-family:'Bebas Neue',sans-serif; font-size:24px; }
+
+  /* EXAM TAKING */
+  .exam-container { max-width:800px; margin:0 auto; padding:30px; display:none; }
+  
+  /* Timer */
+  .timer-bar {
+    position:sticky; top:64px; z-index:50;
+    background:rgba(8,10,12,.95); border-bottom:1px solid var(--border);
+    padding:12px 30px; display:flex; align-items:center; gap:20px;
+    backdrop-filter:blur(10px);
+  }
+  .timer-label { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--muted); }
+  .timer-value { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--gold); letter-spacing:3px; }
+  .timer-value.warning { color:var(--accent); animation:blink .5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .timer-progress { flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .timer-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--gold)); border-radius:2px; transition:width .5s linear; }
+  .exam-name-bar { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; margin-left:auto; }
+
+  /* Questions */
+  .question-block {
+    background:var(--card); border:1px solid var(--border); border-radius:2px; padding:28px; margin-bottom:16px;
+    animation:slideIn .3s ease forwards;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .q-num { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--accent); margin-bottom:10px; }
+  .q-type-badge {
+    display:inline-block; font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px;
+    padding:2px 8px; border-radius:2px; margin-bottom:12px;
+  }
+  .type-QCM { background:rgba(41,128,185,.15); color:var(--blue); border:1px solid rgba(41,128,185,.3); }
+  .type-VF { background:rgba(39,174,96,.15); color:var(--green); border:1px solid rgba(39,174,96,.3); }
+  .type-ouvert { background:rgba(212,168,67,.15); color:var(--gold); border:1px solid rgba(212,168,67,.3); }
+  .type-cas_clinique { background:rgba(192,57,43,.15); color:var(--accent2); border:1px solid rgba(192,57,43,.3); }
+  .q-text { font-size:16px; font-weight:500; line-height:1.5; margin-bottom:20px; }
+
+  /* QCM Options */
+  .options-list { display:flex; flex-direction:column; gap:8px; }
+  .option-btn {
+    display:flex; align-items:center; gap:14px;
+    padding:12px 16px; background:var(--card2); border:1px solid var(--border); border-radius:2px;
+    cursor:pointer; transition:all .2s; text-align:left; color:var(--text);
+    font-family:'DM Sans',sans-serif; font-size:14px;
+  }
+  .option-btn:hover { border-color:var(--accent); background:rgba(192,57,43,.05); }
+  .option-btn.selected { border-color:var(--blue); background:rgba(41,128,185,.1); }
+  .option-btn.correct { border-color:var(--green); background:rgba(39,174,96,.1); }
+  .option-btn.wrong { border-color:var(--accent); background:rgba(192,57,43,.1); }
+  .option-letter { width:28px; height:28px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); border-radius:50%; font-family:'Bebas Neue',sans-serif; font-size:14px; flex-shrink:0; }
+  .option-btn.selected .option-letter { background:var(--blue); border-color:var(--blue); color:white; }
+  .option-btn.correct .option-letter { background:var(--green); border-color:var(--green); color:white; }
+  .option-btn.wrong .option-letter { background:var(--accent); border-color:var(--accent); color:white; }
+
+  /* VF */
+  .vf-btns { display:flex; gap:12px; }
+  .vf-btn {
+    flex:1; padding:14px; text-align:center; cursor:pointer; border-radius:2px; transition:all .2s;
+    font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px;
+    border:1px solid var(--border); background:var(--card2); color:var(--text);
+  }
+  .vf-btn.vrai:hover { border-color:var(--green); color:var(--green); }
+  .vf-btn.faux:hover { border-color:var(--accent); color:var(--accent); }
+  .vf-btn.selected.vrai { border-color:var(--green); background:rgba(39,174,96,.1); color:var(--green); }
+  .vf-btn.selected.faux { border-color:var(--accent); background:rgba(192,57,43,.1); color:var(--accent); }
+
+  /* Texte libre */
+  .open-textarea {
+    width:100%; padding:14px 16px; background:var(--card2); border:1px solid var(--border); border-radius:2px;
+    color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; line-height:1.6; resize:vertical; min-height:120px; outline:none;
+  }
+  .open-textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(192,57,43,.1); }
+
+  /* Explication */
+  .explication {
+    margin-top:16px; padding:14px 16px; background:rgba(212,168,67,.08); border-left:3px solid var(--gold);
+    border-radius:0 2px 2px 0; display:none;
+  }
+  .explication.show { display:block; animation:fadeInEx .3s ease; }
+  @keyframes fadeInEx { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+  .explication-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--gold); margin-bottom:6px; }
+  .explication-text { font-size:13px; color:#b0b4c8; line-height:1.6; }
+
+  /* Navigation */
+  .exam-nav {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 0; position:sticky; bottom:0; background:var(--bg); border-top:1px solid var(--border); margin-top:16px;
+  }
+  .btn-nav {
+    padding:10px 24px; font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:3px;
+    border-radius:2px; cursor:pointer; transition:all .2s;
+  }
+  .btn-prev { background:transparent; border:1px solid var(--border); color:var(--muted); }
+  .btn-prev:hover { border-color:var(--text); color:var(--text); }
+  .btn-next { background:var(--accent); border:none; color:white; }
+  .btn-next:hover { background:var(--accent2); }
+  .btn-submit { background:var(--green); border:none; color:white; }
+  .btn-submit:hover { filter:brightness(1.1); }
+  .q-counter { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; }
+
+  /* RESULTS */
+  .result-container { max-width:700px; margin:0 auto; padding:40px 30px; display:none; }
+  .result-score-card {
+    background:var(--card); border:1px solid var(--border); border-radius:2px; padding:48px; text-align:center; margin-bottom:28px; position:relative; overflow:hidden;
+  }
+  .result-score-card::before { content:''; position:absolute; top:0;left:0;right:0; height:3px; }
+  .result-score-card.pass::before { background:linear-gradient(90deg,transparent,var(--green),transparent); }
+  .result-score-card.fail::before { background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+  .result-label { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:4px; color:var(--muted); margin-bottom:16px; }
+  .result-big-score { font-family:'Bebas Neue',sans-serif; font-size:96px; line-height:1; letter-spacing:4px; }
+  .result-big-score.pass { color:var(--green); text-shadow:0 0 40px rgba(39,174,96,.4); }
+  .result-big-score.fail { color:var(--accent); text-shadow:0 0 40px rgba(192,57,43,.4); }
+  .result-verdict { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:6px; margin-top:8px; }
+  .result-verdict.pass { color:var(--green); }
+  .result-verdict.fail { color:var(--accent); }
+  .result-details { display:flex; gap:20px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+  .result-detail { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--muted); }
+  .result-detail span { color:var(--text); font-size:14px; }
+
+  .result-review { background:var(--card); border:1px solid var(--border); border-radius:2px; padding:24px; }
+  .rr-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:4px; margin-bottom:16px; }
+  .rr-item { padding:14px 0; border-bottom:1px solid var(--border); }
+  .rr-item:last-child { border-bottom:none; }
+  .rr-q { font-size:14px; font-weight:500; margin-bottom:8px; }
+  .rr-answer { font-size:13px; margin-bottom:4px; }
+  .rr-correct { color:var(--green); }
+  .rr-wrong { color:var(--accent); }
+  .rr-exp { font-size:12px; color:var(--muted); font-style:italic; margin-top:4px; }
+
+  .btn-retry { display:block; width:100%; margin-top:16px; padding:14px; background:var(--accent); border:none; color:white; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:4px; border-radius:2px; cursor:pointer; transition:all .2s; }
+  .btn-retry:hover { background:var(--accent2); }
+  .btn-back-list { display:block; width:100%; margin-top:10px; padding:12px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:4px; border-radius:2px; cursor:pointer; transition:all .2s; }
+  .btn-back-list:hover { border-color:var(--text); color:var(--text); }
+</style>
+</head>
+<body>
+<nav>
+  <a href="home.html" class="nav-brand">C<span>H</span>L</a>
+  <a href="home.html" class="nav-link">ACCUEIL</a>
+  <a href="cours.html" class="nav-link">COURS</a>
+  <a href="examen.html" class="nav-link active">EXAMENS</a>
+  <button class="btn-logout" onclick="logout()">DÉCONNEXION</button>
+</nav>
+
+<main>
+  <!-- LISTE DES EXAMENS -->
+  <div class="exam-list-container" id="examListView">
+    <div class="page-header">
+      <div class="page-label">ÉVALUATIONS</div>
+      <div class="page-title">EXAMENS</div>
+    </div>
+    <div class="exam-list" id="examList">
+      <div style="padding:20px;font-family:'Share Tech Mono',monospace;color:var(--muted)">CHARGEMENT...</div>
+    </div>
+  </div>
+
+  <!-- TIMER -->
+  <div class="timer-bar" id="timerBar" style="display:none">
+    <span class="timer-label">TEMPS RESTANT</span>
+    <span class="timer-value" id="timerDisplay">--:--</span>
+    <div class="timer-progress"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+    <span class="exam-name-bar" id="examNameBar"></span>
+  </div>
+
+  <!-- EXAMEN EN COURS -->
+  <div class="exam-container" id="examView">
+    <div id="questionContainer"></div>
+    <div class="exam-nav">
+      <button class="btn-nav btn-prev" id="btnPrev" onclick="prevQuestion()">← PRÉCÉDENT</button>
+      <span class="q-counter" id="qCounter"></span>
+      <button class="btn-nav btn-next" id="btnNext" onclick="nextQuestion()">SUIVANT →</button>
+    </div>
+  </div>
+
+  <!-- RÉSULTATS -->
+  <div class="result-container" id="resultView">
+    <div class="result-score-card" id="resultCard">
+      <div class="result-label">RÉSULTAT FINAL</div>
+      <div class="result-big-score" id="resultScore"></div>
+      <div class="result-verdict" id="resultVerdict"></div>
+      <div class="result-details" id="resultDetails"></div>
+    </div>
+    <div class="result-review" id="resultReview"></div>
+    <button class="btn-retry" onclick="retryExam()">↺ RECOMMENCER L'EXAMEN</button>
+    <button class="btn-back-list" onclick="backToList()">← RETOUR AUX EXAMENS</button>
+  </div>
+</main>
+
+<script>
+  const SUPABASE_URL = 'VOTRE_URL_SUPABASE';
+  const SUPABASE_KEY = 'VOTRE_CLE_ANON_SUPABASE';
+
+  function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
+  const user = getSession();
+  if (!user) window.location.href = 'index.html';
+  function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
+
+  const HIERARCHY = ['Stagiaire','Infirmier','Apprenti Médecin','Médecin','Direction'];
+  function canAccess(req) {
+    if (user.etiquette === 'Direction') return true;
+    return HIERARCHY.indexOf(user.etiquette) >= HIERARCHY.indexOf(req);
+  }
+
+  let currentExamen = null;
+  let questions = [];
+  let currentQ = 0;
+  let reponses = {};
+  let timerInterval = null;
+  let startTime = null;
+  let timeLeft = 0;
+  let totalTime = 0;
+
+  // ---- LOAD EXAMENS LIST ----
+  async function loadExamens() {
+    const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
+    const [eRes, rRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/examens?actif=eq.true&order=etiquette_requise,titre`, { headers }),
+      fetch(`${SUPABASE_URL}/rest/v1/resultats?user_id=eq.${user.id}&select=*`, { headers })
+    ]);
+    const examens = await eRes.json();
+    const resultats = await rRes.json();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoId = urlParams.get('id');
+
+    const list = document.getElementById('examList');
+    list.innerHTML = examens.map(e => {
+      const locked = !canAccess(e.etiquette_requise);
+      const result = resultats.filter(r => r.examen_id === e.id).sort((a,b) => (b.score||0)-(a.score||0))[0];
+      const etColors = {'Stagiaire':'var(--green)','Infirmier':'var(--blue)','Apprenti Médecin':'var(--orange)','Médecin':'var(--gold)'};
+      const etColor = etColors[e.etiquette_requise] || 'var(--muted)';
+
+      return `
+        <div class="exam-list-item ${locked ? 'locked' : ''}" onclick="${locked ? '' : `startExam('${e.id}')`}">
+          <div class="eli-icon">📝</div>
+          <div class="eli-body">
+            <div class="eli-title">${e.titre}</div>
+            <div class="eli-desc">${e.description || ''}</div>
+            <div class="eli-meta">
+              <span class="eli-tag" style="color:${etColor}">${e.etiquette_requise}</span>
+              <span class="eli-tag" style="color:var(--muted)">⏱ ${e.duree_minutes} MIN</span>
+              <span class="eli-tag" style="color:var(--muted)">MIN ${e.score_minimum}%</span>
+              ${result ? `<span class="eli-tag" style="color:${result.score >= e.score_minimum ? 'var(--green)' : 'var(--accent)'}">▶ DERNIER: ${result.score}%</span>` : ''}
+            </div>
+          </div>
+          <div class="eli-score" style="color:${result ? (result.score >= e.score_minimum ? 'var(--green)' : 'var(--accent)') : 'var(--muted)'}">${result ? result.score + '%' : locked ? '🔒' : '—'}</div>
+        </div>`;
+    }).join('');
+
+    if (autoId) startExam(autoId);
+  }
+
+  // ---- START EXAM ----
+  async function startExam(examId) {
+    const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
+    const [eRes, qRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/examens?id=eq.${examId}&select=*`, { headers }),
+      fetch(`${SUPABASE_URL}/rest/v1/questions?examen_id=eq.${examId}&order=ordre`, { headers })
+    ]);
+    const exRes = await eRes.json();
+    currentExamen = exRes[0];
+    questions = await qRes.json();
+    reponses = {};
+    currentQ = 0;
+    startTime = Date.now();
+    totalTime = currentExamen.duree_minutes * 60;
+    timeLeft = totalTime;
+
+    // Show exam view
+    document.getElementById('examListView').style.display = 'none';
+    document.getElementById('examView').style.display = 'block';
+    document.getElementById('timerBar').style.display = 'flex';
+    document.getElementById('examNameBar').textContent = currentExamen.titre.substring(0, 40).toUpperCase();
+    document.getElementById('resultView').style.display = 'none';
+
+    startTimer();
+    renderQuestion();
+  }
+
+  // ---- TIMER ----
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimerDisplay();
+      if (timeLeft <= 0) { clearInterval(timerInterval); submitExam(); }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    const display = document.getElementById('timerDisplay');
+    display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    display.className = 'timer-value' + (timeLeft < 120 ? ' warning' : '');
+    document.getElementById('timerFill').style.width = (timeLeft / totalTime * 100) + '%';
+    document.getElementById('timerFill').style.background = timeLeft < 120 ? 'var(--accent)' : timeLeft < 300 ? 'var(--gold)' : 'linear-gradient(90deg,var(--green),var(--gold))';
+  }
+
+  // ---- RENDER QUESTION ----
+  function renderQuestion() {
+    const q = questions[currentQ];
+    if (!q) return;
+    
+    const typeLabels = { 'QCM': 'QCM', 'VF': 'VRAI / FAUX', 'ouvert': 'QUESTION OUVERTE', 'cas_clinique': 'CAS CLINIQUE' };
+    let inputHtml = '';
+    const saved = reponses[q.id];
+
+    if (q.type === 'QCM') {
+      const opts = typeof q.options === 'string' ? JSON.parse(q.options) : (q.options || []);
+      const letters = ['A','B','C','D','E'];
+      inputHtml = `<div class="options-list">` +
+        opts.map((opt, i) => `
+          <button class="option-btn ${saved === opt ? 'selected' : ''}" onclick="selectOption(this, '${q.id}', \`${opt.replace(/`/g, "'")}\`)">
+            <span class="option-letter">${letters[i]}</span>
+            <span>${opt}</span>
+          </button>`).join('') +
+        `</div>`;
+    } else if (q.type === 'VF') {
+      inputHtml = `<div class="vf-btns">
+        <button class="vf-btn vrai ${saved === 'Vrai' ? 'selected' : ''}" onclick="selectVF(this, '${q.id}', 'Vrai')">VRAI</button>
+        <button class="vf-btn faux ${saved === 'Faux' ? 'selected' : ''}" onclick="selectVF(this, '${q.id}', 'Faux')">FAUX</button>
+      </div>`;
+    } else {
+      inputHtml = `<textarea class="open-textarea" id="open-${q.id}" placeholder="Rédigez votre réponse ici..." onchange="saveOpen('${q.id}', this.value)">${saved || ''}</textarea>`;
+    }
+
+    const container = document.getElementById('questionContainer');
+    container.innerHTML = `
+      <div class="question-block">
+        <div class="q-num">QUESTION ${currentQ + 1} / ${questions.length}</div>
+        <div class="q-type-badge type-${q.type}">${typeLabels[q.type]}</div>
+        <div class="q-text">${q.contenu}</div>
+        ${inputHtml}
+        <div class="explication" id="exp-${q.id}">
+          <div class="explication-label">EXPLICATION</div>
+          <div class="explication-text">${q.explication || ''}</div>
+        </div>
+      </div>`;
+
+    // Counter & nav
+    document.getElementById('qCounter').textContent = `${currentQ + 1} / ${questions.length}`;
+    document.getElementById('btnPrev').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+    const isLast = currentQ === questions.length - 1;
+    const btnNext = document.getElementById('btnNext');
+    btnNext.textContent = isLast ? 'SOUMETTRE ✓' : 'SUIVANT →';
+    btnNext.className = 'btn-nav ' + (isLast ? 'btn-submit' : 'btn-next');
+    btnNext.onclick = isLast ? submitExam : nextQuestion;
+  }
+
+  function selectOption(el, qId, value) {
+    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    reponses[qId] = value;
+  }
+
+  function selectVF(el, qId, value) {
+    document.querySelectorAll('.vf-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    reponses[qId] = value;
+  }
+
+  function saveOpen(qId, value) { reponses[qId] = value; }
+
+  function nextQuestion() {
+    // Save open textarea
+    const q = questions[currentQ];
+    if (q.type === 'ouvert' || q.type === 'cas_clinique') {
+      const ta = document.getElementById('open-' + q.id);
+      if (ta) reponses[q.id] = ta.value;
+    }
+    if (currentQ < questions.length - 1) { currentQ++; renderQuestion(); }
+  }
+
+  function prevQuestion() {
+    const q = questions[currentQ];
+    if (q.type === 'ouvert' || q.type === 'cas_clinique') {
+      const ta = document.getElementById('open-' + q.id);
+      if (ta) reponses[q.id] = ta.value;
+    }
+    if (currentQ > 0) { currentQ--; renderQuestion(); }
+  }
+
+  // ---- SUBMIT ----
+  async function submitExam() {
+    if (timerInterval) clearInterval(timerInterval);
+    
+    const q = questions[currentQ];
+    if (q && (q.type === 'ouvert' || q.type === 'cas_clinique')) {
+      const ta = document.getElementById('open-' + q.id);
+      if (ta) reponses[q.id] = ta.value;
+    }
+
+    // Calculate score
+    let pointsOk = 0, pointsTotal = 0;
+    questions.forEach(q => {
+      pointsTotal += (q.points || 1);
+      if (q.type === 'QCM' || q.type === 'VF') {
+        if (reponses[q.id] === q.reponse_correcte) pointsOk += (q.points || 1);
+      } else {
+        // Open: auto 50% si répondu
+        if (reponses[q.id] && reponses[q.id].trim().length > 10) pointsOk += Math.ceil((q.points || 1) * 0.5);
+      }
+    });
+
+    const score = pointsTotal > 0 ? Math.round(pointsOk / pointsTotal * 100) : 0;
+    const tempsPasse = Math.round((Date.now() - startTime) / 60000);
+
+    // Save to Supabase
+    const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
+    fetch(`${SUPABASE_URL}/rest/v1/resultats`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        user_id: user.id,
+        examen_id: currentExamen.id,
+        reponses: reponses,
+        score,
+        points_obtenus: pointsOk,
+        points_total: pointsTotal,
+        valide: score >= currentExamen.score_minimum,
+        temps_passe_minutes: tempsPasse
+      })
+    });
+
+    showResults(score, pointsOk, pointsTotal, tempsPasse);
+  }
+
+  function showResults(score, pointsOk, pointsTotal, temps) {
+    const pass = score >= currentExamen.score_minimum;
+    
+    document.getElementById('examView').style.display = 'none';
+    document.getElementById('timerBar').style.display = 'none';
+    document.getElementById('resultView').style.display = 'block';
+
+    const card = document.getElementById('resultCard');
+    card.className = 'result-score-card ' + (pass ? 'pass' : 'fail');
+    document.getElementById('resultScore').className = 'result-big-score ' + (pass ? 'pass' : 'fail');
+    document.getElementById('resultScore').textContent = score + '%';
+    document.getElementById('resultVerdict').className = 'result-verdict ' + (pass ? 'pass' : 'fail');
+    document.getElementById('resultVerdict').textContent = pass ? '✓ RÉUSSI' : '✗ ÉCHEC';
+    document.getElementById('resultDetails').innerHTML = `
+      <div class="result-detail">POINTS <span>${pointsOk}/${pointsTotal}</span></div>
+      <div class="result-detail">MINIMUM <span>${currentExamen.score_minimum}%</span></div>
+      <div class="result-detail">TEMPS <span>${temps} min</span></div>`;
+
+    // Review
+    const review = document.getElementById('resultReview');
+    let rHtml = '<div class="rr-title">CORRECTION</div>';
+    questions.forEach(q => {
+      const rep = reponses[q.id] || '—';
+      const isAuto = q.type === 'QCM' || q.type === 'VF';
+      const correct = isAuto ? rep === q.reponse_correcte : null;
+
+      rHtml += `<div class="rr-item">
+        <div class="rr-q">${q.contenu}</div>
+        ${isAuto ? `<div class="rr-answer ${correct ? 'rr-correct' : 'rr-wrong'}">${correct ? '✓' : '✗'} Votre réponse : ${rep}</div>
+          ${!correct ? `<div class="rr-answer rr-correct">✓ Bonne réponse : ${q.reponse_correcte}</div>` : ''}` :
+          `<div class="rr-answer" style="color:var(--muted)">Votre réponse : ${rep}</div>
+           <div class="rr-answer rr-correct">Réponse attendue : ${q.reponse_correcte || 'Voir explication'}</div>`}
+        <div class="rr-exp">${q.explication || ''}</div>
+      </div>`;
+    });
+    review.innerHTML = rHtml;
+  }
+
+  function retryExam() { if (currentExamen) startExam(currentExamen.id); }
+  function backToList() {
+    document.getElementById('resultView').style.display = 'none';
+    document.getElementById('examListView').style.display = 'block';
+    window.history.pushState({}, '', 'examen.html');
+    loadExamens();
+  }
+
+  loadExamens();
+</script>
+</body>
+</html>

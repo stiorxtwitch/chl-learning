@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHL — Résultats</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#080a0c;--card:#0e1318;--card2:#141820;--border:#1e2832;--accent:#c0392b;--accent2:#e74c3c;--gold:#d4a843;--text:#e8eaf0;--muted:#6b7585;--green:#27ae60;--blue:#2980b9;--orange:#e67e22; }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(192,57,43,.03)1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.03)1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+  nav{position:fixed;top:0;left:0;right:0;height:64px;background:rgba(8,10,12,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 30px;z-index:100;backdrop-filter:blur(10px);}
+  nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5;}
+  .nav-brand{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:6px;color:var(--text);text-decoration:none;margin-right:auto;}
+  .nav-brand span{color:var(--accent);}
+  .nav-link{padding:8px 18px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--muted);text-decoration:none;border-radius:2px;transition:all .2s;border:1px solid transparent;}
+  .nav-link:hover,.nav-link.active{color:var(--text);background:var(--card2);border-color:var(--border);}
+  .nav-link.active{color:var(--accent);border-color:rgba(192,57,43,.3);}
+  .btn-logout{background:none;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:6px 14px;cursor:pointer;border-radius:2px;transition:all .2s;margin-left:16px;}
+  .btn-logout:hover{border-color:var(--accent);color:var(--accent);}
+  main{padding-top:64px;min-height:100vh;position:relative;z-index:1;}
+  .container{max-width:1100px;margin:0 auto;padding:40px 30px;}
+  .page-header{margin-bottom:36px;}
+  .page-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--accent);margin-bottom:10px;}
+  .page-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:4px;}
+
+  /* KPI */
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;}
+  .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:20px 24px;}
+  .kpi-value{font-family:'Bebas Neue',sans-serif;font-size:40px;line-height:1;}
+  .kpi-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+
+  /* FILTERS */
+  .filters{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
+  .filter-select{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:8px 14px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;outline:none;transition:all .2s;}
+  .filter-select:focus{border-color:var(--accent);}
+
+  /* TABLE */
+  .table-wrapper{background:var(--card);border:1px solid var(--border);border-radius:2px;overflow:hidden;margin-bottom:32px;}
+  .table-head{padding:16px 24px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .table-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;}
+  .btn-export{padding:8px 18px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;border-radius:2px;cursor:pointer;transition:all .2s;}
+  .btn-export:hover{border-color:var(--gold);color:var(--gold);}
+  table{width:100%;border-collapse:collapse;}
+  thead th{padding:10px 20px;text-align:left;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);border-bottom:1px solid var(--border);}
+  tbody tr{border-bottom:1px solid rgba(30,40,50,.5);cursor:pointer;transition:background .2s;}
+  tbody tr:hover{background:var(--card2);}
+  tbody tr:last-child{border-bottom:none;}
+  td{padding:13px 20px;font-size:13px;}
+
+  .score-bar{display:flex;align-items:center;gap:10px;}
+  .sb-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;min-width:60px;}
+  .sb-fill{height:100%;border-radius:2px;transition:width .5s ease;}
+  .score-num{font-family:'Bebas Neue',sans-serif;font-size:18px;min-width:44px;}
+
+  .badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 7px;border-radius:2px;border:1px solid;}
+  .pass{color:var(--green);border-color:rgba(39,174,96,.4);background:rgba(39,174,96,.08);}
+  .fail{color:var(--accent2);border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.08);}
+  .u-name{font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:600;}
+  .muted{color:var(--muted);}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+  .modal-overlay.show{display:flex;}
+  .modal{background:var(--card);border:1px solid var(--border);border-radius:2px;width:700px;max-height:80vh;overflow-y:auto;position:relative;}
+  .modal::-webkit-scrollbar{width:4px;}
+  .modal::-webkit-scrollbar-thumb{background:var(--border);}
+  .modal-header{padding:20px 28px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;}
+  .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;}
+  .modal-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:4px;}
+  .modal-close:hover{color:var(--text);}
+  .modal-body{padding:28px;}
+  .modal-section{margin-bottom:20px;}
+  .modal-section-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--accent);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .answer-item{padding:12px 0;border-bottom:1px solid rgba(30,40,50,.5);}
+  .answer-item:last-child{border-bottom:none;}
+  .answer-q{font-size:14px;font-weight:500;margin-bottom:6px;}
+  .answer-rep{font-size:12px;padding:8px 12px;background:var(--card2);border-radius:2px;border-left:3px solid var(--border);color:var(--muted);margin-bottom:4px;}
+  .answer-correct{border-left-color:var(--green);}
+  .answer-wrong{border-left-color:var(--accent);}
+  .answer-open{border-left-color:var(--gold);}
+
+  .empty{text-align:center;padding:40px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;}
+</style>
+</head>
+<body>
+<nav>
+  <a href="home.html" class="nav-brand">C<span>H</span>L</a>
+  <a href="home.html" class="nav-link">ACCUEIL</a>
+  <a href="cours.html" class="nav-link">COURS</a>
+  <a href="examen.html" class="nav-link">EXAMENS</a>
+  <a href="admin.html" class="nav-link">ADMIN</a>
+  <a href="resultats.html" class="nav-link active">RÉSULTATS</a>
+  <button class="btn-logout" onclick="logout()">DÉCONNEXION</button>
+</nav>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">DÉTAILS</div>
+      <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<main>
+  <div class="container">
+    <div class="page-header">
+      <div class="page-label">DIRECTION // STATISTIQUES</div>
+      <div class="page-title">RÉSULTATS</div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-value" id="kpiTotal">—</div><div class="kpi-label">EXAMENS PASSÉS</div></div>
+      <div class="kpi-card"><div class="kpi-value" style="color:var(--green)" id="kpiPass">—</div><div class="kpi-label">RÉUSSIS</div></div>
+      <div class="kpi-card"><div class="kpi-value" style="color:var(--accent)" id="kpiFail">—</div><div class="kpi-label">ÉCHOUÉS</div></div>
+      <div class="kpi-card"><div class="kpi-value" style="color:var(--gold)" id="kpiAvg">—</div><div class="kpi-label">SCORE MOYEN</div></div>
+    </div>
+
+    <div class="filters">
+      <select class="filter-select" id="filterUser" onchange="applyFilters()">
+        <option value="">TOUS LES UTILISATEURS</option>
+      </select>
+      <select class="filter-select" id="filterExam" onchange="applyFilters()">
+        <option value="">TOUS LES EXAMENS</option>
+      </select>
+      <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+        <option value="">TOUS LES STATUTS</option>
+        <option value="pass">RÉUSSIS SEULEMENT</option>
+        <option value="fail">ÉCHOUÉS SEULEMENT</option>
+      </select>
+    </div>
+
+    <div class="table-wrapper">
+      <div class="table-head">
+        <div class="table-name">TOUS LES RÉSULTATS</div>
+        <button class="btn-export" onclick="exportCSV()">📥 EXPORTER CSV</button>
+      </div>
+      <div id="tableWrapper"><div class="empty">CHARGEMENT...</div></div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const SUPABASE_URL = 'VOTRE_URL_SUPABASE';
+  const SUPABASE_KEY = 'VOTRE_CLE_ANON_SUPABASE';
+
+  function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
+  const user = getSession();
+  if (!user || user.etiquette !== 'Direction') window.location.href = 'home.html';
+  function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
+
+  let allResultats = [], allUsers = [], allExamens = [], allQuestions = [];
+
+  async function loadAll() {
+    const h = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
+    const [rRes, uRes, eRes, qRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/resultats?order=created_at.desc&select=*`, { headers: h }),
+      fetch(`${SUPABASE_URL}/rest/v1/users?select=id,username,etiquette`, { headers: h }),
+      fetch(`${SUPABASE_URL}/rest/v1/examens?select=id,titre,score_minimum,etiquette_requise`, { headers: h }),
+      fetch(`${SUPABASE_URL}/rest/v1/questions?select=*`, { headers: h })
+    ]);
+    allResultats = await rRes.json();
+    allUsers = await uRes.json();
+    allExamens = await eRes.json();
+    allQuestions = await qRes.json();
+
+    populateFilters();
+    updateKPIs(allResultats);
+    renderTable(allResultats);
+  }
+
+  function populateFilters() {
+    const fu = document.getElementById('filterUser');
+    allUsers.forEach(u => { const o = document.createElement('option'); o.value=u.id; o.textContent=u.username.toUpperCase(); fu.appendChild(o); });
+    const fe = document.getElementById('filterExam');
+    allExamens.forEach(e => { const o = document.createElement('option'); o.value=e.id; o.textContent=e.titre; fe.appendChild(o); });
+  }
+
+  function applyFilters() {
+    let filtered = [...allResultats];
+    const fu = document.getElementById('filterUser').value;
+    const fe = document.getElementById('filterExam').value;
+    const fs = document.getElementById('filterStatus').value;
+    if (fu) filtered = filtered.filter(r => r.user_id === fu);
+    if (fe) filtered = filtered.filter(r => r.examen_id === fe);
+    if (fs === 'pass') filtered = filtered.filter(r => r.valide);
+    if (fs === 'fail') filtered = filtered.filter(r => !r.valide);
+    updateKPIs(filtered);
+    renderTable(filtered);
+  }
+
+  function updateKPIs(data) {
+    document.getElementById('kpiTotal').textContent = data.length;
+    const pass = data.filter(r => r.valide).length;
+    document.getElementById('kpiPass').textContent = pass;
+    document.getElementById('kpiFail').textContent = data.length - pass;
+    const avg = data.length ? Math.round(data.reduce((s,r) => s+(r.score||0),0)/data.length) : 0;
+    document.getElementById('kpiAvg').textContent = avg + '%';
+  }
+
+  function renderTable(data) {
+    if (!data.length) { document.getElementById('tableWrapper').innerHTML = '<div class="empty">AUCUN RÉSULTAT TROUVÉ</div>'; return; }
+    document.getElementById('tableWrapper').innerHTML = `
+      <table>
+        <thead><tr>
+          <th>UTILISATEUR</th><th>EXAMEN</th><th>SCORE</th><th>STATUT</th><th>TEMPS</th><th>DATE</th><th>DÉTAILS</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(r => {
+            const u = allUsers.find(x => x.id === r.user_id);
+            const e = allExamens.find(x => x.id === r.examen_id);
+            const scoreColor = r.valide ? 'var(--green)' : (r.score >= (e?.score_minimum||70)*0.8 ? 'var(--gold)' : 'var(--accent)');
+            return `<tr onclick="showDetail('${r.id}')">
+              <td><div class="u-name">${u?.username || '—'}</div><div class="muted" style="font-size:11px">${u?.etiquette || ''}</div></td>
+              <td style="font-size:13px">${e?.titre || '—'}</td>
+              <td><div class="score-bar"><div class="sb-track"><div class="sb-fill" style="width:${r.score||0}%;background:${scoreColor}"></div></div><span class="score-num" style="color:${scoreColor}">${r.score||0}%</span></div></td>
+              <td><span class="badge ${r.valide ? 'pass' : 'fail'}">${r.valide ? 'RÉUSSI' : 'ÉCHEC'}</span></td>
+              <td class="muted">${r.temps_passe_minutes || '—'} min</td>
+              <td class="muted">${new Date(r.created_at).toLocaleDateString('fr-BE')} ${new Date(r.created_at).toLocaleTimeString('fr-BE',{hour:'2-digit',minute:'2-digit'})}</td>
+              <td><span style="color:var(--accent);cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px">VOIR →</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function showDetail(resultId) {
+    const r = allResultats.find(x => x.id === resultId);
+    if (!r) return;
+    const u = allUsers.find(x => x.id === r.user_id);
+    const e = allExamens.find(x => x.id === r.examen_id);
+    const qs = allQuestions.filter(q => q.examen_id === r.examen_id).sort((a,b) => a.ordre-b.ordre);
+    const reponses = typeof r.reponses === 'string' ? JSON.parse(r.reponses) : (r.reponses || {});
+
+    let html = `
+      <div class="modal-section">
+        <div class="modal-section-title">INFORMATIONS</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-family:'Share Tech Mono',monospace;font-size:11px">
+          <div style="color:var(--muted)">UTILISATEUR <span style="color:var(--text)">${u?.username || '—'}</span></div>
+          <div style="color:var(--muted)">EXAMEN <span style="color:var(--text)">${e?.titre?.substring(0,30) || '—'}</span></div>
+          <div style="color:var(--muted)">SCORE <span style="color:${r.valide?'var(--green)':'var(--accent)'}">${r.score}% (${r.points_obtenus}/${r.points_total} pts)</span></div>
+          <div style="color:var(--muted)">TEMPS <span style="color:var(--text)">${r.temps_passe_minutes || '—'} min</span></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">RÉPONSES</div>
+        ${qs.map(q => {
+          const rep = reponses[q.id] || '—';
+          const isAuto = q.type === 'QCM' || q.type === 'VF';
+          const correct = isAuto ? rep === q.reponse_correcte : null;
+          const repClass = correct === true ? 'answer-correct' : correct === false ? 'answer-wrong' : 'answer-open';
+          return `<div class="answer-item">
+            <div class="answer-q">${q.contenu}</div>
+            <div class="answer-rep ${repClass}">${isAuto ? (correct ? '✓' : '✗') : '○'} ${rep}</div>
+            ${isAuto && !correct ? `<div class="answer-rep answer-correct">✓ ${q.reponse_correcte}</div>` : ''}
+            ${q.explication ? `<div style="font-size:11px;color:var(--muted);font-style:italic;margin-top:4px">${q.explication}</div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>`;
+
+    document.getElementById('modalTitle').textContent = `RÉSULTAT — ${u?.username?.toUpperCase() || ''}`;
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modalOverlay')) {
+      document.getElementById('modalOverlay').classList.remove('show');
+    }
+  }
+
+  function exportCSV() {
+    const data = allResultats.map(r => {
+      const u = allUsers.find(x => x.id === r.user_id);
+      const e = allExamens.find(x => x.id === r.examen_id);
+      return [u?.username||'', u?.etiquette||'', e?.titre||'', r.score||0, r.valide?'OUI':'NON', r.points_obtenus||0, r.points_total||0, r.temps_passe_minutes||'', new Date(r.created_at).toLocaleDateString('fr-BE')];
+    });
+    const csv = ['UTILISATEUR,ÉTIQUETTE,EXAMEN,SCORE,RÉUSSI,POINTS,TOTAL,TEMPS,DATE', ...data.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'chl_resultats_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+  }
+
+  loadAll().catch(e => {
+    document.getElementById('tableWrapper').innerHTML = '<div class="empty">ERREUR DE CONNEXION SUPABASE</div>';
+  });
+</script>
+</body>
+</html>

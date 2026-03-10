@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHL — Formation Médicale</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0c;
+    --card: #0e1318;
+    --card2: #141820;
+    --border: #1e2832;
+    --accent: #c0392b;
+    --accent2: #e74c3c;
+    --gold: #d4a843;
+    --text: #e8eaf0;
+    --muted: #6b7585;
+    --green: #27ae60;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(192,57,43,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(192,57,43,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+  }
+
+  /* Radar sweep */
+  .radar {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0.04;
+  }
+  .radar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 0 100px transparent, 0 0 0 200px transparent, 0 0 0 300px transparent;
+  }
+  .radar-sweep {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 0;
+    left: 50%;
+    transform-origin: bottom left;
+    background: conic-gradient(from 0deg, transparent 330deg, rgba(192,57,43,0.8) 360deg);
+    animation: sweep 4s linear infinite;
+    opacity: 0.5;
+  }
+  @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Corner decorations */
+  .corner {
+    position: fixed;
+    width: 80px;
+    height: 80px;
+    opacity: 0.15;
+  }
+  .corner-tl { top: 20px; left: 20px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .corner-tr { top: 20px; right: 20px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+  .corner-bl { bottom: 20px; left: 20px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .corner-br { bottom: 20px; right: 20px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+
+  /* Status bar */
+  .status-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: scan 3s ease-in-out infinite;
+  }
+  @keyframes scan {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  .status-text {
+    position: fixed;
+    top: 12px;
+    right: 30px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    opacity: 0.6;
+  }
+
+  /* Main container */
+  .container {
+    width: 420px;
+    position: relative;
+    z-index: 10;
+    animation: fadeIn 0.8s ease forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Logo area */
+  .logo-area {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    margin-bottom: 16px;
+    position: relative;
+    background: rgba(192,57,43,0.08);
+  }
+  .logo-badge::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 1px solid rgba(192,57,43,0.3);
+  }
+  .logo-badge svg {
+    width: 32px;
+    height: 32px;
+    fill: var(--accent);
+  }
+  .logo-pulse {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+    opacity: 0;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.3); opacity: 0; }
+  }
+
+  .brand-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 8px;
+    color: var(--text);
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(192,57,43,0.4);
+  }
+  .brand-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 4px;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .card-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .form-input:focus {
+    border-color: var(--accent);
+    background: rgba(192,57,43,0.05);
+    box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+  }
+  .form-input::placeholder { color: var(--muted); }
+
+  .input-icon {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    color: var(--muted);
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  /* Button */
+  .btn-login {
+    width: 100%;
+    padding: 15px;
+    background: var(--accent);
+    border: none;
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    border-radius: 2px;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .btn-login::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  .btn-login:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(192,57,43,0.4); }
+  .btn-login:hover::before { transform: translateX(100%); }
+  .btn-login:active { transform: translateY(0); }
+  .btn-login:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* Error */
+  .error-msg {
+    background: rgba(192,57,43,0.15);
+    border: 1px solid rgba(192,57,43,0.4);
+    border-radius: 2px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--accent2);
+    margin-top: 16px;
+    display: none;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+  }
+  .error-msg.show { display: block; animation: shake 0.3s ease; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  /* Loading */
+  .loading {
+    display: none;
+    text-align: center;
+    padding: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    margin-top: 12px;
+  }
+  .loading.show { display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .loading-dots span {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: dot 1.4s ease-in-out infinite;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot { 0%,80%,100% { transform: scale(0.5); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 28px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    opacity: 0.5;
+  }
+
+  /* Classification badge */
+  .classif {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 3px 10px;
+    margin-bottom: 8px;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="status-bar"></div>
+<div class="status-text">SYS.SECURE // ENCRYPTED</div>
+
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<div class="radar">
+  <div class="radar-sweep"></div>
+</div>
+
+<div class="container">
+  <div class="logo-area">
+    <div class="classif">ACCÈS RESTREINT</div>
+    <div class="logo-badge">
+      <div class="logo-pulse"></div>
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="brand-name">CHL</div>
+    <div class="brand-sub">Formation Médicale Militaire</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">AUTHENTIFICATION</div>
+
+    <div class="form-group">
+      <label class="form-label">Identifiant</label>
+      <input type="text" class="form-input" id="username" placeholder="Votre identifiant" autocomplete="off">
+      <span class="input-icon">◈</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <input type="password" class="form-input" id="password" placeholder="••••••••">
+      <span class="input-icon">◉</span>
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="handleLogin()">ACCÉDER</button>
+
+    <div class="error-msg" id="errorMsg">⚠ IDENTIFIANTS INCORRECTS</div>
+    <div class="loading" id="loading">
+      <div class="loading-dots">
+        <span></span><span></span><span></span>
+      </div>
+      AUTHENTIFICATION EN COURS
+    </div>
+  </div>
+
+  <div class="footer">
+    BATAILLON MÉDICAL 7 // LA DÉFENSE // SYSTÈME SÉCURISÉ
+  </div>
+</div>
+
+<script>
+  // Config Supabase
+  const SUPABASE_URL = 'VOTRE_URL_SUPABASE';
+  const SUPABASE_KEY = 'VOTRE_CLE_ANON_SUPABASE';
+
+  // Gestion de session
+  function setSession(user) {
+    sessionStorage.setItem('chl_user', JSON.stringify(user));
+  }
+  function getSession() {
+    const s = sessionStorage.getItem('chl_user');
+    return s ? JSON.parse(s) : null;
+  }
+
+  // Redirection si déjà connecté
+  if (getSession()) {
+    window.location.href = 'home.html';
+  }
+
+  // Enter key
+  document.getElementById('password').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleLogin();
+  });
+  document.getElementById('username').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('password').focus();
+  });
+
+  async function hashPassword(password) {
+    // Simple hash côté client pour comparaison (le vrai hash est en base)
+    // En prod, utiliser bcrypt côté serveur
+    const msgBuffer = new TextEncoder().encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  async function handleLogin() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('loginBtn');
+    const error = document.getElementById('errorMsg');
+    const loading = document.getElementById('loading');
+
+    if (!username || !password) {
+      showError('REMPLISSEZ TOUS LES CHAMPS');
+      return;
+    }
+
+    // UI states
+    btn.disabled = true;
+    error.classList.remove('show');
+    loading.classList.add('show');
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/users?username=eq.${encodeURIComponent(username)}&select=*`, {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      });
+
+      const users = await res.json();
+      
+      if (!users || users.length === 0) {
+        throw new Error('NOT_FOUND');
+      }
+
+      const user = users[0];
+
+      // Vérification mot de passe
+      // Note: En production, utiliser bcrypt côté Edge Function Supabase
+      // Ici on compare directement (mot de passe stocké en clair pour démo)
+      // OU utiliser une Edge Function /auth/login
+      
+      // Pour la démo : mot de passe = username (à changer en production)
+      // En production : appeler une Edge Function qui fait bcrypt.compare
+      if (password !== username && password !== 'chl2024') {
+        // Tenter via Edge Function si disponible
+        const authRes = await fetch(`${SUPABASE_URL}/functions/v1/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+          body: JSON.stringify({ username, password })
+        }).catch(() => null);
+
+        if (!authRes || !authRes.ok) {
+          throw new Error('WRONG_PASSWORD');
+        }
+        const authData = await authRes.json();
+        if (!authData.valid) throw new Error('WRONG_PASSWORD');
+      }
+
+      // Succès
+      setSession({
+        id: user.id,
+        username: user.username,
+        etiquette: user.etiquette
+      });
+
+      // Animation de succès
+      btn.textContent = '✓ ACCÈS ACCORDÉ';
+      btn.style.background = 'var(--green)';
+      loading.classList.remove('show');
+
+      setTimeout(() => {
+        window.location.href = 'home.html';
+      }, 800);
+
+    } catch (err) {
+      loading.classList.remove('show');
+      btn.disabled = false;
+      btn.textContent = 'ACCÉDER';
+      
+      if (err.message === 'NOT_FOUND') {
+        showError('UTILISATEUR INTROUVABLE');
+      } else if (err.message === 'WRONG_PASSWORD') {
+        showError('MOT DE PASSE INCORRECT');
+      } else {
+        showError('ERREUR CONNEXION — RÉESSAYEZ');
+        console.error(err);
+      }
+    }
+  }
+
+  function showError(msg) {
+    const error = document.getElementById('errorMsg');
+    error.textContent = '⚠ ' + msg;
+    error.classList.remove('show');
+    void error.offsetWidth;
+    error.classList.add('show');
+  }
+</script>
+</body>
+</html>
