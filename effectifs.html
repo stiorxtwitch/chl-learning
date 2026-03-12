@@ -10,7 +10,7 @@
     --bg:#080a0c; --card:#0e1318; --card2:#141820; --border:#1e2832;
     --accent:#c0392b; --accent2:#e74c3c; --gold:#d4a843;
     --text:#e8eaf0; --muted:#6b7585;
-    --green:#27ae60; --blue:#2980b9; --orange:#e67e22; --purple:#8e44ad; --teal:#16a085;
+    --green:#27ae60; --blue:#2980b9; --orange:#e67e22; --teal:#16a085;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
@@ -39,15 +39,11 @@
   .filter-select:focus,.filter-input:focus{border-color:var(--accent);}
   .filter-input::placeholder{color:var(--muted);}
   .filter-input{cursor:text;min-width:200px;}
-  .filter-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;}
   .view-toggle{margin-left:auto;display:flex;gap:4px;}
   .vt-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:2px;cursor:pointer;font-size:14px;transition:all .2s;}
   .vt-btn.active{border-color:var(--accent);color:var(--accent);}
   .staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
-  .staff-card{
-    background:var(--card);border:1px solid var(--border);border-radius:2px;
-    cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
-  }
+  .staff-card{background:var(--card);border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
   .staff-card:hover{border-color:rgba(192,57,43,.4);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3);}
   .staff-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
   .card-Stagiaire::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
@@ -56,12 +52,7 @@
   .card-Médecin::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
   .card-Direction::before{background:linear-gradient(90deg,transparent,var(--accent),transparent);}
   .card-header{padding:20px 20px 14px;display:flex;align-items:center;gap:14px;}
-  .card-avatar{
-    width:44px;height:44px;border-radius:2px;
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Bebas Neue',sans-serif;font-size:24px;
-    flex-shrink:0;border:1px solid;
-  }
+  .card-avatar{width:44px;height:44px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:24px;flex-shrink:0;border:1px solid;}
   .avatar-Stagiaire{color:var(--green);border-color:rgba(39,174,96,.4);background:rgba(39,174,96,.08);}
   .avatar-Infirmier{color:var(--blue);border-color:rgba(41,128,185,.4);background:rgba(41,128,185,.08);}
   .avatar-Apprenti{color:var(--orange);border-color:rgba(230,126,34,.4);background:rgba(230,126,34,.08);}
@@ -81,11 +72,7 @@
   .cs-val{font-family:'Bebas Neue',sans-serif;font-size:22px;}
   .cs-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--muted);}
   .card-badges{padding:0 20px 14px;display:flex;flex-wrap:wrap;gap:4px;}
-  .mini-badge{
-    display:inline-flex;align-items:center;gap:4px;
-    font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;
-    padding:3px 8px;border-radius:2px;border:1px solid;
-  }
+  .mini-badge{display:inline-flex;align-items:center;gap:4px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:2px;border:1px solid;}
   .mini-Stagiaire{color:var(--green);border-color:rgba(39,174,96,.35);background:rgba(39,174,96,.07);}
   .mini-Infirmier{color:var(--blue);border-color:rgba(41,128,185,.35);background:rgba(41,128,185,.07);}
   .mini-Apprenti{color:var(--orange);border-color:rgba(230,126,34,.35);background:rgba(230,126,34,.07);}
@@ -120,10 +107,7 @@
   .m-section{margin-bottom:24px;}
   .m-section-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--accent);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
   .m-badges-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-  .m-badge{
-    display:flex;align-items:center;gap:10px;
-    padding:10px 14px;border-radius:2px;border:1px solid;
-  }
+  .m-badge{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:2px;border:1px solid;}
   .m-badge.obtained{opacity:1;}
   .m-badge.locked-badge{opacity:.3;filter:grayscale(1);}
   .m-badge-icon{font-size:18px;flex-shrink:0;}
@@ -169,7 +153,6 @@
       <div class="page-title">EFFECTIFS</div>
       <div class="page-sub">Vue d'ensemble du personnel — brevets, progression et activité</div>
     </div>
-
     <div class="kpi-row" id="kpiRow">
       <div class="kpi"><div class="kpi-val">—</div><div class="kpi-lbl">TOTAL MEMBRES</div></div>
       <div class="kpi"><div class="kpi-val" style="color:var(--green)">—</div><div class="kpi-lbl">STAGIAIRES</div></div>
@@ -178,7 +161,6 @@
       <div class="kpi"><div class="kpi-val" style="color:var(--gold)">—</div><div class="kpi-lbl">MÉDECINS</div></div>
       <div class="kpi"><div class="kpi-val" style="color:var(--teal)">—</div><div class="kpi-lbl">BREVETS TOTAUX</div></div>
     </div>
-
     <div class="filters">
       <input class="filter-input" id="searchInput" placeholder="RECHERCHER UN MEMBRE..." oninput="applyFilters()">
       <select class="filter-select" id="filterEt" onchange="applyFilters()">
@@ -205,19 +187,12 @@
         <button class="vt-btn" id="btnTable" onclick="setView('table')">☰</button>
       </div>
     </div>
-
-    <div class="staff-grid" id="staffGrid">
-      <div class="empty">CHARGEMENT...</div>
-    </div>
-
+    <div class="staff-grid" id="staffGrid"><div class="empty">CHARGEMENT...</div></div>
     <div class="staff-table" id="staffTable">
       <div class="table-wrapper">
         <table>
           <thead>
-            <tr>
-              <th>MEMBRE</th><th>GRADE</th><th>BREVETS</th>
-              <th>EXAMENS</th><th>SCORE MOY.</th><th>COURS</th><th>ACTIVITÉ</th>
-            </tr>
+            <tr><th>MEMBRE</th><th>GRADE</th><th>BREVETS</th><th>EXAMENS</th><th>SCORE MOY.</th><th>COURS</th><th>ACTIVITÉ</th></tr>
           </thead>
           <tbody id="tableBody"></tbody>
         </table>
@@ -232,8 +207,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
 const user = getSession();
-if (!user || user.etiquette !== 'Direction') { window.location.href = 'home.html'; }
-
+if (!user || user.etiquette !== 'Direction') window.location.href = 'home.html';
 function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
 
 const BADGE_CATALOGUE = {
@@ -242,21 +216,14 @@ const BADGE_CATALOGUE = {
   'd3632c24-69f4-41a3-b4ee-f815e80a62d0': { nom:"Brevet TCCC/TECC Tactique", icone:'⚕️', niveau:'Infirmier', couleur:'#2980b9' },
   '60d685ce-fbea-4143-8f75-c99e50bb6e03': { nom:"Brevet Soins d'Urgence Avancés", icone:'🚑', niveau:'Infirmier', couleur:'#2980b9' },
   'ccc75dc3-9f30-4efe-b208-cb009223c7cf': { nom:"Brevet Techniques d'Injection", icone:'💉', niveau:'Infirmier', couleur:'#2980b9' },
-  '65f9db42-473f-4a73-88b4-ab5177f402f2': { nom:"Brevet Anatomie Cardiovasculaire",icone:'🫁', niveau:'Apprenti Médecin', couleur:'#e67e22' },
-  '924d190c-def4-4961-96bd-13309e8a5448': { nom:"Brevet Base du Nursing",icone:'🩺',niveau:'Stagiaire',couleur:'#27ae60'},
+  '65f9db42-473f-4a73-88b4-ab5177f402f2': { nom:"Brevet Anatomie Cardiovasculaire", icone:'🫁', niveau:'Apprenti Médecin', couleur:'#e67e22' },
+  '924d190c-def4-4961-96bd-13309e8a5448': { nom:"Brevet Base du Nursing", icone:'🩺', niveau:'Stagiaire', couleur:'#27ae60' },
   '55918448-7220-4218-9e66-642e3428e6e3': { nom:"Brevet Interprétation ECG", icone:'📈', niveau:'Médecin', couleur:'#d4a843' },
   'a617081d-2fe1-4130-a912-f57711a63977': { nom:"Brevet Suture Chirurgicale", icone:'🩺', niveau:'Médecin', couleur:'#d4a843' },
 };
 
-const ET_CLASS = {
-  'Stagiaire':'Stagiaire','Infirmier':'Infirmier',
-  'Apprenti Médecin':'Apprenti','Médecin':'Médecin','Direction':'Direction'
-};
-
-const ET_COLOR = {
-  'Stagiaire':'#27ae60','Infirmier':'#2980b9','Apprenti Médecin':'#e67e22',
-  'Médecin':'#d4a843','Direction':'#e74c3c'
-};
+const ET_CLASS = { 'Stagiaire':'Stagiaire','Infirmier':'Infirmier','Apprenti Médecin':'Apprenti','Médecin':'Médecin','Direction':'Direction' };
+const ET_COLOR = { 'Stagiaire':'#27ae60','Infirmier':'#2980b9','Apprenti Médecin':'#e67e22','Médecin':'#d4a843','Direction':'#e74c3c' };
 
 let allUsers = [];
 let currentView = 'grid';
@@ -277,10 +244,22 @@ function formatRelative(iso) {
   return `Il y a ${Math.floor(days/30)}mois`;
 }
 
+// ✅ Normalise les badges qu'ils soient strings ou objets {examen_id, obtenu_le}
+function normalizeBadges(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw.map(b => {
+    if (typeof b === 'string') return { examen_id: b, obtenu_le: null };
+    if (b && b.examen_id) return { examen_id: b.examen_id, obtenu_le: b.obtenu_le || null };
+    return null;
+  }).filter(Boolean);
+}
+
 async function loadAll() {
   const h = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
+
+  // ✅ select=* évite tout 400 lié à une colonne manquante
   const [uRes, rRes, pRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/users?select=id,username,etiquette,created_at,badges,total_badges&order=created_at.asc`, { headers: h }),
+    fetch(`${SUPABASE_URL}/rest/v1/users?select=*&order=created_at.asc`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/resultats?select=user_id,score,valide,created_at`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/progression?select=user_id,cours_id,termine`, { headers: h }),
   ]);
@@ -290,14 +269,15 @@ async function loadAll() {
   const allProg = await pRes.json();
 
   allUsers.forEach(u => {
-    u._badges = u.badges || [];
-    u._totalBadges = u.total_badges || u._badges.length || 0;
+    u._badges = normalizeBadges(u.badges);
+    u._totalBadges = u._badges.length;
     u._resultats = allResultats.filter(r => r.user_id === u.id);
     u._prog = allProg.filter(p => p.user_id === u.id);
     u._reussis = u._resultats.filter(r => r.valide).length;
     u._scoreMoy = u._resultats.length ? Math.round(u._resultats.reduce((s,r)=>s+(r.score||0),0)/u._resultats.length) : 0;
     u._coursTermines = u._prog.filter(p => p.termine).length;
-    u._lastActivity = u._resultats.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0]?.created_at || null;
+    const sorted = [...u._resultats].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    u._lastActivity = sorted[0]?.created_at || null;
   });
 
   updateKPIs();
@@ -327,12 +307,10 @@ function applyFilters() {
   const sort = document.getElementById('sortBy').value;
 
   let users = [...allUsers];
-
   if (search) users = users.filter(u => u.username.toLowerCase().includes(search));
   if (et) users = users.filter(u => u.etiquette === et);
   if (badge === 'has') users = users.filter(u => u._totalBadges > 0);
   if (badge === 'none') users = users.filter(u => u._totalBadges === 0);
-
   if (sort === 'badges') users.sort((a,b) => b._totalBadges - a._totalBadges);
   if (sort === 'score') users.sort((a,b) => b._scoreMoy - a._scoreMoy);
   if (sort === 'activite') users.sort((a,b) => new Date(b._lastActivity||0) - new Date(a._lastActivity||0));
@@ -345,7 +323,6 @@ function applyFilters() {
 function renderGrid(users) {
   const grid = document.getElementById('staffGrid');
   if (!users.length) { grid.innerHTML = '<div class="empty">AUCUN MEMBRE TROUVÉ</div>'; return; }
-
   grid.innerHTML = users.map(u => {
     const badgeHTML = u._totalBadges
       ? u._badges.slice(0,4).map(b => {
@@ -357,7 +334,6 @@ function renderGrid(users) {
 
     const etC = ET_CLASS[u.etiquette] || 'Stagiaire';
     const color = ET_COLOR[u.etiquette] || 'var(--muted)';
-
     return `
       <div class="staff-card card-${etC}" onclick="showModal('${u.id}')">
         <div class="card-header">
@@ -369,22 +345,10 @@ function renderGrid(users) {
         </div>
         <div class="card-badges">${badgeHTML}</div>
         <div class="card-stats">
-          <div class="card-stat">
-            <div class="cs-val" style="color:${color}">${u._totalBadges}</div>
-            <div class="cs-lbl">BREVETS</div>
-          </div>
-          <div class="card-stat">
-            <div class="cs-val" style="color:var(--green)">${u._reussis}</div>
-            <div class="cs-lbl">RÉUSSIS</div>
-          </div>
-          <div class="card-stat">
-            <div class="cs-val" style="color:var(--gold)">${u._scoreMoy}%</div>
-            <div class="cs-lbl">MOY.</div>
-          </div>
-          <div class="card-stat">
-            <div class="cs-val" style="color:var(--teal);font-size:12px;padding-top:4px">${formatRelative(u._lastActivity)}</div>
-            <div class="cs-lbl">ACTIVITÉ</div>
-          </div>
+          <div class="card-stat"><div class="cs-val" style="color:${color}">${u._totalBadges}</div><div class="cs-lbl">BREVETS</div></div>
+          <div class="card-stat"><div class="cs-val" style="color:var(--green)">${u._reussis}</div><div class="cs-lbl">RÉUSSIS</div></div>
+          <div class="card-stat"><div class="cs-val" style="color:var(--gold)">${u._scoreMoy}%</div><div class="cs-lbl">MOY.</div></div>
+          <div class="card-stat"><div class="cs-val" style="color:var(--teal);font-size:12px;padding-top:4px">${formatRelative(u._lastActivity)}</div><div class="cs-lbl">ACTIVITÉ</div></div>
         </div>
       </div>`;
   }).join('');
@@ -392,20 +356,17 @@ function renderGrid(users) {
 
 function renderTable(users) {
   const tbody = document.getElementById('tableBody');
-  if (!users.length) { 
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;font-family:Share Tech Mono,monospace;color:var(--muted)">AUCUN MEMBRE TROUVÉ</td></tr>'; 
-    return; 
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;font-family:Share Tech Mono,monospace;color:var(--muted)">AUCUN MEMBRE TROUVÉ</td></tr>';
+    return;
   }
-
   tbody.innerHTML = users.map(u => {
     const badgePills = u._badges.slice(0,3).map(b => {
       const cat = BADGE_CATALOGUE[b.examen_id];
       const nivKey = cat ? (cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau) : 'Stagiaire';
       return `<span class="mini-badge mini-${nivKey}" style="font-size:8px">${cat?.icone || '🎖️'}</span>`;
     }).join('') + (u._totalBadges > 3 ? `<span class="mini-badge mini-none" style="font-size:8px">+${u._totalBadges-3}</span>` : '');
-
     const etC = ET_CLASS[u.etiquette] || 'Stagiaire';
-
     return `
       <tr onclick="showModal('${u.id}')">
         <td class="td-name">${u.username.toUpperCase()}</td>
@@ -438,22 +399,18 @@ function showModal(userId) {
   if (!u) return;
 
   const badgeMap = {};
-  u._badges.forEach(b => {
-    const id = b.examen_id || b;
-    badgeMap[id] = b;
-  });
+  u._badges.forEach(b => { badgeMap[b.examen_id] = b; });
 
   const badgesHTML = Object.entries(BADGE_CATALOGUE).map(([examId, cat]) => {
     const owned = !!badgeMap[examId];
     const bData = badgeMap[examId];
-    const nivKey = cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau;
     return `
       <div class="m-badge ${owned ? 'obtained' : 'locked-badge'}"
            style="border-color:${owned ? cat.couleur+'55' : 'var(--border)'};background:${owned ? cat.couleur+'11' : 'transparent'}">
         <div class="m-badge-icon">${owned ? cat.icone : '🔒'}</div>
         <div class="m-badge-info">
           <div class="m-badge-name" style="color:${owned ? cat.couleur : 'var(--muted)'}">${cat.nom}</div>
-          <div class="m-badge-date">${owned ? `✓ ${formatDate(bData?.obtenu_le)}` : 'Non obtenu'}</div>
+          <div class="m-badge-date">${owned ? '✓ ' + formatDate(bData?.obtenu_le) : 'Non obtenu'}</div>
         </div>
       </div>`;
   }).join('');
@@ -494,7 +451,8 @@ function closeModal(e) {
 }
 
 loadAll().catch(err => {
-  document.getElementById('staffGrid').innerHTML = `<div class="empty">ERREUR DE CONNEXION SUPABASE<br><small>${err.message}</small></div>`;
+  document.getElementById('staffGrid').innerHTML = `<div class="empty">ERREUR DE CONNEXION<br><small style="font-size:9px;margin-top:4px;display:block">${err.message}</small></div>`;
+  console.error('Erreur effectifs:', err);
 });
 </script>
 </body>
