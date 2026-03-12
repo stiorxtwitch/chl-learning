@@ -32,14 +32,13 @@
     content: '';
     position: fixed;
     inset: 0;
-    background-image: 
+    background-image:
       linear-gradient(rgba(192,57,43,0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(192,57,43,0.03) 1px, transparent 1px);
     background-size: 50px 50px;
     pointer-events: none;
     z-index: 0;
   }
-
   /* NAV */
   nav {
     position: fixed;
@@ -126,7 +125,6 @@
     transition: all 0.2s;
   }
   .btn-logout:hover { border-color: var(--accent); color: var(--accent); }
-
   /* MAIN */
   main {
     padding-top: 64px;
@@ -134,7 +132,6 @@
     position: relative;
     z-index: 1;
   }
-
   /* HERO */
   .hero {
     padding: 60px 40px 40px;
@@ -190,7 +187,6 @@
     margin-top: 2px;
   }
   .stat-divider { width: 1px; background: var(--border); }
-
   /* SECTION TITLE */
   .section {
     max-width: 1200px;
@@ -216,7 +212,6 @@
     color: var(--muted);
     letter-spacing: 2px;
   }
-
   /* COURSE CARDS GRID */
   .courses-grid {
     display: grid;
@@ -253,13 +248,12 @@
     box-shadow: 0 8px 30px rgba(0,0,0,0.3);
   }
   .course-card:hover::before { transform: scaleY(1); }
-  
+ 
   .course-card.locked {
     opacity: 0.4;
     cursor: not-allowed;
     pointer-events: none;
   }
-
   .course-header {
     display: flex;
     align-items: flex-start;
@@ -280,7 +274,6 @@
   .icon-infirmier { background: rgba(41,128,185,0.1); border-color: rgba(41,128,185,0.3); }
   .icon-apprenti { background: rgba(230,126,34,0.1); border-color: rgba(230,126,34,0.3); }
   .icon-medecin { background: rgba(212,168,67,0.1); border-color: rgba(212,168,67,0.3); }
-
   .course-meta { flex: 1; }
   .course-etiquette {
     font-family: 'Share Tech Mono', monospace;
@@ -293,7 +286,6 @@
   .et-infirmier { color: var(--blue); }
   .et-apprenti { color: var(--orange); }
   .et-medecin { color: var(--gold); }
-
   .course-title {
     font-weight: 600;
     font-size: 15px;
@@ -326,7 +318,6 @@
     transition: all 0.2s;
   }
   .course-card:hover .course-arrow { color: var(--accent); transform: translateX(4px); }
-
   .progress-bar {
     height: 2px;
     background: var(--border);
@@ -340,7 +331,6 @@
     border-radius: 1px;
     transition: width 0.5s ease;
   }
-
   /* EXAM CARDS */
   .exams-grid {
     display: grid;
@@ -371,7 +361,6 @@
   .exam-card:hover { border-color: rgba(212,168,67,0.4); background: var(--card2); transform: translateY(-2px); }
   .exam-card:hover::after { opacity: 1; }
   .exam-card.locked { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
-
   .exam-icon {
     font-size: 24px;
     margin-bottom: 12px;
@@ -393,7 +382,6 @@
     letter-spacing: 1px;
   }
   .exam-stat span { color: var(--gold); font-size: 13px; }
-
   /* DIRECTION PANEL */
   .admin-grid {
     display: grid;
@@ -420,7 +408,6 @@
     letter-spacing: 3px;
     color: var(--accent);
   }
-
   /* Empty state */
   .empty-state {
     text-align: center;
@@ -435,13 +422,14 @@
 </style>
 </head>
 <body>
-
 <nav>
   <a href="home.html" class="nav-brand">C<span>H</span>L</a>
   <div class="nav-links">
     <a href="home.html" class="nav-link active">ACCUEIL</a>
     <a href="cours.html" class="nav-link">COURS</a>
     <a href="examen.html" class="nav-link">EXAMENS</a>
+    <a href="profil.html" class="nav-link">PROFIL</a>
+    <a href="effectif.html" class="nav-link">EFFECTIF</a>
     <span id="adminNav" style="display:none">
       <a href="admin.html" class="nav-link">ADMIN</a>
       <a href="resultats.html" class="nav-link">RÉSULTATS</a>
@@ -453,7 +441,6 @@
     <button class="btn-logout" onclick="logout()">DÉCONNEXION</button>
   </div>
 </nav>
-
 <main>
   <div class="hero">
     <div class="hero-label">TABLEAU DE BORD</div>
@@ -462,7 +449,7 @@
       <span class="highlight" id="heroName">SOLDAT</span>
     </div>
     <p class="hero-sub">Accédez à vos cours et examens de formation médicale. Votre progression est sauvegardée automatiquement.</p>
-    
+   
     <div class="hero-stats">
       <div class="stat">
         <div class="stat-value" id="statCours">—</div>
@@ -480,7 +467,6 @@
       </div>
     </div>
   </div>
-
   <div class="section">
     <div class="section-header">
       <div class="section-title">MES COURS</div>
@@ -491,7 +477,6 @@
       <div class="empty-state">CHARGEMENT DES COURS...</div>
     </div>
   </div>
-
   <div class="section">
     <div class="section-header">
       <div class="section-title">MES EXAMENS</div>
@@ -502,7 +487,6 @@
       <div class="empty-state">CHARGEMENT DES EXAMENS...</div>
     </div>
   </div>
-
   <div id="adminSection" style="display:none">
     <div class="section">
       <div class="section-header">
@@ -535,13 +519,11 @@
     const s = sessionStorage.getItem('chl_user');
     return s ? JSON.parse(s) : null;
   }
-
   const user = getSession();
   if (!user) { window.location.href = 'index.html'; }
 
-  // Hierarchy des étiquettes
   const HIERARCHY = ['Stagiaire','Infirmier','Apprenti Médecin','Médecin','Direction'];
-  
+ 
   function canAccess(etiquetteRequise) {
     if (user.etiquette === 'Direction') return true;
     const userLevel = HIERARCHY.indexOf(user.etiquette);
@@ -566,11 +548,10 @@
     return '📋';
   }
 
-  // Update UI
   document.getElementById('heroName').textContent = user.username.toUpperCase();
   document.getElementById('userName').textContent = user.username;
-  
-  const etClass = { 
+
+  const etClass = {
     'Stagiaire':'badge-Stagiaire',
     'Infirmier':'badge-Infirmier',
     'Apprenti Médecin':'badge-AppMedecin',
@@ -586,21 +567,17 @@
     document.getElementById('adminSection').style.display = 'block';
   }
 
-  // Fetch data
   async function fetchData() {
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
-
     const [coursRes, examensRes, resultatsRes] = await Promise.all([
       fetch(`${SUPABASE_URL}/rest/v1/cours?actif=eq.true&order=ordre`, { headers }),
       fetch(`${SUPABASE_URL}/rest/v1/examens?actif=eq.true&order=titre`, { headers }),
       fetch(`${SUPABASE_URL}/rest/v1/resultats?user_id=eq.${user.id}&select=score,examen_id`, { headers })
     ]);
-
     const cours = await coursRes.json();
     const examens = await examensRes.json();
     const resultats = await resultatsRes.json();
 
-    // Stats
     const accessibleCours = cours.filter(c => canAccess(c.etiquette_requise));
     const accessibleExamens = examens.filter(e => canAccess(e.etiquette_requise));
     const bestScore = resultats.length ? Math.max(...resultats.map(r => r.score || 0)) : null;
@@ -609,7 +586,6 @@
     document.getElementById('statExamens').textContent = accessibleExamens.length;
     document.getElementById('statScore').textContent = bestScore !== null ? bestScore + '%' : '—';
 
-    // Render cours
     document.getElementById('coursCount').textContent = accessibleCours.length + ' / ' + cours.length + ' COURS';
     renderCours(cours);
     renderExamens(examens, resultats);
@@ -618,12 +594,11 @@
   function renderCours(cours) {
     const grid = document.getElementById('coursesGrid');
     if (!cours.length) { grid.innerHTML = '<div class="empty-state">AUCUN COURS DISPONIBLE</div>'; return; }
-
     grid.innerHTML = cours.map(c => {
       const locked = !canAccess(c.etiquette_requise);
       const etC = getEtClass(c.etiquette_requise);
       const icon = getIcon(c.titre);
-      
+     
       return `
         <a href="cours.html?id=${c.id}" class="course-card ${locked ? 'locked' : ''}">
           <div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div>
@@ -646,14 +621,14 @@
   function renderExamens(examens, resultats) {
     const grid = document.getElementById('examsGrid');
     document.getElementById('examsCount').textContent = examens.length + ' EXAMENS';
-    
+   
     if (!examens.length) { grid.innerHTML = '<div class="empty-state">AUCUN EXAMEN DISPONIBLE</div>'; return; }
-    
+   
     grid.innerHTML = examens.map(e => {
       const locked = !canAccess(e.etiquette_requise);
       const result = resultats.find(r => r.examen_id === e.id);
       const etC = getEtClass(e.etiquette_requise);
-      
+     
       return `
         <a href="examen.html?id=${e.id}" class="exam-card ${locked ? 'locked' : ''}">
           <div class="exam-icon">📝</div>
