@@ -15,7 +15,6 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
   body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(192,57,43,.03)1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.03)1px,transparent 1px);background-size:50px 50px;}
-
   nav{position:fixed;top:0;left:0;right:0;height:64px;background:rgba(8,10,12,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 30px;z-index:100;backdrop-filter:blur(10px);}
   nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.5;}
   .nav-brand{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:6px;color:var(--text);text-decoration:none;margin-right:auto;}
@@ -25,51 +24,37 @@
   .nav-link.active{color:var(--accent);border-color:rgba(192,57,43,.3);}
   .btn-logout{background:none;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:6px 14px;cursor:pointer;border-radius:2px;transition:all .2s;margin-left:16px;}
   .btn-logout:hover{border-color:var(--accent);color:var(--accent);}
-
   main{padding-top:64px;min-height:100vh;position:relative;z-index:1;}
   .container{max-width:1200px;margin:0 auto;padding:48px 30px;}
-
-  /* ── HEADER ── */
   .page-header{margin-bottom:40px;}
   .page-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--accent);margin-bottom:10px;}
   .page-title{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:4px;line-height:1;}
   .page-sub{color:var(--muted);font-size:14px;margin-top:8px;}
-
-  /* ── KPI ── */
   .kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:36px;}
   .kpi{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:16px 18px;}
   .kpi-val{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;}
   .kpi-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:3px;}
-
-  /* ── FILTERS ── */
   .filters{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;align-items:center;}
   .filter-select,.filter-input{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:9px 14px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;outline:none;transition:all .2s;}
   .filter-select:focus,.filter-input:focus{border-color:var(--accent);}
   .filter-input::placeholder{color:var(--muted);}
   .filter-input{cursor:text;min-width:200px;}
   .filter-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;}
-
-  /* ── VIEW TOGGLE ── */
   .view-toggle{margin-left:auto;display:flex;gap:4px;}
   .vt-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:2px;cursor:pointer;font-size:14px;transition:all .2s;}
   .vt-btn.active{border-color:var(--accent);color:var(--accent);}
-
-  /* ── GRID VIEW ── */
   .staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
-
   .staff-card{
     background:var(--card);border:1px solid var(--border);border-radius:2px;
     cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
   }
   .staff-card:hover{border-color:rgba(192,57,43,.4);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3);}
   .staff-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-
   .card-Stagiaire::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
   .card-Infirmier::before{background:linear-gradient(90deg,transparent,var(--blue),transparent);}
   .card-Apprenti::before{background:linear-gradient(90deg,transparent,var(--orange),transparent);}
   .card-Médecin::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
   .card-Direction::before{background:linear-gradient(90deg,transparent,var(--accent),transparent);}
-
   .card-header{padding:20px 20px 14px;display:flex;align-items:center;gap:14px;}
   .card-avatar{
     width:44px;height:44px;border-radius:2px;
@@ -82,7 +67,6 @@
   .avatar-Apprenti{color:var(--orange);border-color:rgba(230,126,34,.4);background:rgba(230,126,34,.08);}
   .avatar-Médecin{color:var(--gold);border-color:rgba(212,168,67,.4);background:rgba(212,168,67,.08);}
   .avatar-Direction{color:var(--accent2);border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.08);}
-
   .card-info{flex:1;min-width:0;}
   .card-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .card-role{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;margin-top:2px;}
@@ -91,15 +75,11 @@
   .role-color-Apprenti{color:var(--orange);}
   .role-color-Médecin{color:var(--gold);}
   .role-color-Direction{color:var(--accent2);}
-
-  /* Mini stats dans la card */
   .card-stats{display:flex;gap:0;border-top:1px solid var(--border);}
   .card-stat{flex:1;padding:10px 0;text-align:center;border-right:1px solid var(--border);}
   .card-stat:last-child{border-right:none;}
   .cs-val{font-family:'Bebas Neue',sans-serif;font-size:22px;}
   .cs-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--muted);}
-
-  /* Mini badges dans card */
   .card-badges{padding:0 20px 14px;display:flex;flex-wrap:wrap;gap:4px;}
   .mini-badge{
     display:inline-flex;align-items:center;gap:4px;
@@ -111,8 +91,6 @@
   .mini-Apprenti{color:var(--orange);border-color:rgba(230,126,34,.35);background:rgba(230,126,34,.07);}
   .mini-Médecin{color:var(--gold);border-color:rgba(212,168,67,.35);background:rgba(212,168,67,.07);}
   .mini-none{color:var(--muted);border-color:var(--border);}
-
-  /* ── TABLE VIEW ── */
   .staff-table{display:none;}
   .table-wrapper{background:var(--card);border:1px solid var(--border);border-radius:2px;overflow:hidden;}
   table{width:100%;border-collapse:collapse;}
@@ -129,8 +107,6 @@
   .et-Apprenti{color:var(--orange);border-color:rgba(230,126,34,.4);background:rgba(230,126,34,.08);}
   .et-Médecin{color:var(--gold);border-color:rgba(212,168,67,.4);background:rgba(212,168,67,.08);}
   .et-Direction{color:var(--accent2);border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.08);}
-
-  /* ── MODAL PROFIL ── */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
   .modal-overlay.show{display:flex;}
   .modal{background:var(--card);border:1px solid var(--border);border-radius:2px;width:700px;max-height:85vh;overflow-y:auto;position:relative;}
@@ -154,34 +130,28 @@
   .m-badge-info{flex:1;min-width:0;}
   .m-badge-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .m-badge-date{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
-
   .m-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
   .m-stat{background:var(--card2);border:1px solid var(--border);border-radius:2px;padding:14px;text-align:center;}
   .m-stat-val{font-family:'Bebas Neue',sans-serif;font-size:28px;}
   .m-stat-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
-
-  /* ── EMPTY ── */
   .empty{text-align:center;padding:50px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;}
-
   @media(max-width:900px){.kpi-row{grid-template-columns:repeat(3,1fr);}}
   @media(max-width:600px){.kpi-row{grid-template-columns:repeat(2,1fr);}.staff-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-
 <nav>
   <a href="home.html" class="nav-brand">C<span>H</span>L</a>
-  <a href="home.html"      class="nav-link">ACCUEIL</a>
-  <a href="cours.html"     class="nav-link">COURS</a>
-  <a href="examen.html"    class="nav-link">EXAMENS</a>
-  <a href="profil.html"    class="nav-link">PROFIL</a>
+  <a href="home.html" class="nav-link">ACCUEIL</a>
+  <a href="cours.html" class="nav-link">COURS</a>
+  <a href="examen.html" class="nav-link">EXAMENS</a>
+  <a href="profil.html" class="nav-link">PROFIL</a>
   <a href="effectifs.html" class="nav-link active">EFFECTIFS</a>
-  <a href="admin.html"     class="nav-link">ADMIN</a>
+  <a href="admin.html" class="nav-link">ADMIN</a>
   <a href="resultats.html" class="nav-link">RÉSULTATS</a>
   <button class="btn-logout" onclick="logout()">DÉCONNEXION</button>
 </nav>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-top">
@@ -194,14 +164,12 @@
 
 <main>
   <div class="container">
-
     <div class="page-header">
       <div class="page-label">DIRECTION // ACCÈS RESTREINT</div>
       <div class="page-title">EFFECTIFS</div>
       <div class="page-sub">Vue d'ensemble du personnel — brevets, progression et activité</div>
     </div>
 
-    <!-- KPI -->
     <div class="kpi-row" id="kpiRow">
       <div class="kpi"><div class="kpi-val">—</div><div class="kpi-lbl">TOTAL MEMBRES</div></div>
       <div class="kpi"><div class="kpi-val" style="color:var(--green)">—</div><div class="kpi-lbl">STAGIAIRES</div></div>
@@ -211,7 +179,6 @@
       <div class="kpi"><div class="kpi-val" style="color:var(--teal)">—</div><div class="kpi-lbl">BREVETS TOTAUX</div></div>
     </div>
 
-    <!-- FILTERS -->
     <div class="filters">
       <input class="filter-input" id="searchInput" placeholder="RECHERCHER UN MEMBRE..." oninput="applyFilters()">
       <select class="filter-select" id="filterEt" onchange="applyFilters()">
@@ -235,16 +202,14 @@
       </select>
       <div class="view-toggle">
         <button class="vt-btn active" id="btnGrid" onclick="setView('grid')">⊞</button>
-        <button class="vt-btn"        id="btnTable" onclick="setView('table')">☰</button>
+        <button class="vt-btn" id="btnTable" onclick="setView('table')">☰</button>
       </div>
     </div>
 
-    <!-- GRID -->
     <div class="staff-grid" id="staffGrid">
       <div class="empty">CHARGEMENT...</div>
     </div>
 
-    <!-- TABLE -->
     <div class="staff-table" id="staffTable">
       <div class="table-wrapper">
         <table>
@@ -258,7 +223,6 @@
         </table>
       </div>
     </div>
-
   </div>
 </main>
 
@@ -269,59 +233,72 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
 const user = getSession();
 if (!user || user.etiquette !== 'Direction') { window.location.href = 'home.html'; }
+
 function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
 
 const BADGE_CATALOGUE = {
   'f0a6f686-63f2-488e-aa97-f373364999a0': { nom:"Brevet Acronymes & Vocabulaire", icone:'📖', niveau:'Stagiaire', couleur:'#27ae60' },
-  '5d8036c9-4557-4928-bda3-1ef5043a8beb': { nom:"Brevet Basic Life Support",       icone:'🫀', niveau:'Stagiaire', couleur:'#27ae60' },
-  'd3632c24-69f4-41a3-b4ee-f815e80a62d0': { nom:"Brevet TCCC/TECC Tactique",       icone:'⚕️', niveau:'Infirmier', couleur:'#2980b9' },
-  '60d685ce-fbea-4143-8f75-c99e50bb6e03': { nom:"Brevet Soins d'Urgence Avancés",  icone:'🚑', niveau:'Infirmier', couleur:'#2980b9' },
-  'ccc75dc3-9f30-4efe-b208-cb009223c7cf': { nom:"Brevet Techniques d'Injection",   icone:'💉', niveau:'Infirmier', couleur:'#2980b9' },
+  '5d8036c9-4557-4928-bda3-1ef5043a8beb': { nom:"Brevet Basic Life Support", icone:'🫀', niveau:'Stagiaire', couleur:'#27ae60' },
+  'd3632c24-69f4-41a3-b4ee-f815e80a62d0': { nom:"Brevet TCCC/TECC Tactique", icone:'⚕️', niveau:'Infirmier', couleur:'#2980b9' },
+  '60d685ce-fbea-4143-8f75-c99e50bb6e03': { nom:"Brevet Soins d'Urgence Avancés", icone:'🚑', niveau:'Infirmier', couleur:'#2980b9' },
+  'ccc75dc3-9f30-4efe-b208-cb009223c7cf': { nom:"Brevet Techniques d'Injection", icone:'💉', niveau:'Infirmier', couleur:'#2980b9' },
   '65f9db42-473f-4a73-88b4-ab5177f402f2': { nom:"Brevet Anatomie Cardiovasculaire",icone:'🫁', niveau:'Apprenti Médecin', couleur:'#e67e22' },
   '924d190c-def4-4961-96bd-13309e8a5448': { nom:"Brevet Base du Nursing",icone:'🩺',niveau:'Stagiaire',couleur:'#27ae60'},
-  '55918448-7220-4218-9e66-642e3428e6e3': { nom:"Brevet Interprétation ECG",       icone:'📈', niveau:'Médecin',   couleur:'#d4a843' },
-  'a617081d-2fe1-4130-a912-f57711a63977': { nom:"Brevet Suture Chirurgicale",      icone:'🩺', niveau:'Médecin',   couleur:'#d4a843' },
+  '55918448-7220-4218-9e66-642e3428e6e3': { nom:"Brevet Interprétation ECG", icone:'📈', niveau:'Médecin', couleur:'#d4a843' },
+  'a617081d-2fe1-4130-a912-f57711a63977': { nom:"Brevet Suture Chirurgicale", icone:'🩺', niveau:'Médecin', couleur:'#d4a843' },
 };
 
 const ET_CLASS = {
   'Stagiaire':'Stagiaire','Infirmier':'Infirmier',
   'Apprenti Médecin':'Apprenti','Médecin':'Médecin','Direction':'Direction'
 };
+
 const ET_COLOR = {
   'Stagiaire':'#27ae60','Infirmier':'#2980b9','Apprenti Médecin':'#e67e22',
   'Médecin':'#d4a843','Direction':'#e74c3c'
 };
 
-let allUsers = [], allBadges = [], allResultats = [], allProg = [];
+let allUsers = [];
 let currentView = 'grid';
 
 function formatDate(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('fr-BE', {day:'2-digit',month:'2-digit',year:'numeric'});
 }
+
 function formatRelative(iso) {
   if (!iso) return 'Jamais';
   const diff = Date.now() - new Date(iso).getTime();
   const days = Math.floor(diff / 86400000);
   if (days === 0) return "Aujourd'hui";
   if (days === 1) return 'Hier';
-  if (days < 7)  return `Il y a ${days}j`;
+  if (days < 7) return `Il y a ${days}j`;
   if (days < 30) return `Il y a ${Math.floor(days/7)}sem`;
   return `Il y a ${Math.floor(days/30)}mois`;
 }
 
 async function loadAll() {
   const h = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
-  const [uRes, bRes, rRes, pRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/users?select=*&order=created_at.asc`, { headers: h }),
-    fetch(`${SUPABASE_URL}/rest/v1/badges?select=*`, { headers: h }),
+  const [uRes, rRes, pRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/users?select=id,username,etiquette,created_at,badges,total_badges&order=created_at.asc`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/resultats?select=user_id,score,valide,created_at`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/progression?select=user_id,cours_id,termine`, { headers: h }),
   ]);
-  allUsers    = await uRes.json();
-  allBadges   = await bRes.json();
-  allResultats= await rRes.json();
-  allProg     = await pRes.json();
+
+  allUsers = await uRes.json();
+  const allResultats = await rRes.json();
+  const allProg = await pRes.json();
+
+  allUsers.forEach(u => {
+    u._badges = u.badges || [];
+    u._totalBadges = u.total_badges || u._badges.length || 0;
+    u._resultats = allResultats.filter(r => r.user_id === u.id);
+    u._prog = allProg.filter(p => p.user_id === u.id);
+    u._reussis = u._resultats.filter(r => r.valide).length;
+    u._scoreMoy = u._resultats.length ? Math.round(u._resultats.reduce((s,r)=>s+(r.score||0),0)/u._resultats.length) : 0;
+    u._coursTermines = u._prog.filter(p => p.termine).length;
+    u._lastActivity = u._resultats.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0]?.created_at || null;
+  });
 
   updateKPIs();
   applyFilters();
@@ -329,49 +306,37 @@ async function loadAll() {
 
 function updateKPIs() {
   const kpis = document.getElementById('kpiRow').children;
-  const counts = { Stagiaire:0, Infirmier:0, 'Apprenti Médecin':0, Médecin:0 };
-  allUsers.forEach(u => { if (counts[u.etiquette] !== undefined) counts[u.etiquette]++; });
-
+  const counts = { Stagiaire:0, Infirmier:0, 'Apprenti Médecin':0, Médecin:0, Direction:0 };
+  let totalBadges = 0;
+  allUsers.forEach(u => {
+    if (counts[u.etiquette] !== undefined) counts[u.etiquette]++;
+    totalBadges += u._totalBadges;
+  });
   kpis[0].children[0].textContent = allUsers.length;
   kpis[1].children[0].textContent = counts['Stagiaire'];
   kpis[2].children[0].textContent = counts['Infirmier'];
   kpis[3].children[0].textContent = counts['Apprenti Médecin'];
   kpis[4].children[0].textContent = counts['Médecin'];
-  kpis[5].children[0].textContent = allBadges.length;
-}
-
-function getUserStats(userId) {
-  const userBadges   = allBadges.filter(b => b.user_id === userId);
-  const userResultats= allResultats.filter(r => r.user_id === userId);
-  const userProg     = allProg.filter(p => p.user_id === userId);
-  const reussis      = userResultats.filter(r => r.valide).length;
-  const scoreMoy     = userResultats.length ? Math.round(userResultats.reduce((s,r)=>s+(r.score||0),0)/userResultats.length) : 0;
-  const coursTermines= userProg.filter(p => p.termine).length;
-  const lastActivity = userResultats.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0]?.created_at || null;
-  return { badges: userBadges, reussis, scoreMoy, coursTermines, lastActivity, totalExamens: userResultats.length };
-}
-
-function buildEnrichedUsers() {
-  return allUsers.map(u => ({ ...u, _stats: getUserStats(u.id) }));
+  kpis[5].children[0].textContent = totalBadges;
 }
 
 function applyFilters() {
   const search = document.getElementById('searchInput').value.toLowerCase();
-  const et     = document.getElementById('filterEt').value;
-  const badge  = document.getElementById('filterBadge').value;
-  const sort   = document.getElementById('sortBy').value;
+  const et = document.getElementById('filterEt').value;
+  const badge = document.getElementById('filterBadge').value;
+  const sort = document.getElementById('sortBy').value;
 
-  let users = buildEnrichedUsers();
+  let users = [...allUsers];
 
   if (search) users = users.filter(u => u.username.toLowerCase().includes(search));
-  if (et)     users = users.filter(u => u.etiquette === et);
-  if (badge === 'has')  users = users.filter(u => u._stats.badges.length > 0);
-  if (badge === 'none') users = users.filter(u => u._stats.badges.length === 0);
+  if (et) users = users.filter(u => u.etiquette === et);
+  if (badge === 'has') users = users.filter(u => u._totalBadges > 0);
+  if (badge === 'none') users = users.filter(u => u._totalBadges === 0);
 
-  if (sort === 'badges')   users.sort((a,b) => b._stats.badges.length - a._stats.badges.length);
-  if (sort === 'score')    users.sort((a,b) => b._stats.scoreMoy - a._stats.scoreMoy);
-  if (sort === 'activite') users.sort((a,b) => new Date(b._stats.lastActivity||0) - new Date(a._stats.lastActivity||0));
-  if (sort === 'alpha')    users.sort((a,b) => a.username.localeCompare(b.username));
+  if (sort === 'badges') users.sort((a,b) => b._totalBadges - a._totalBadges);
+  if (sort === 'score') users.sort((a,b) => b._scoreMoy - a._scoreMoy);
+  if (sort === 'activite') users.sort((a,b) => new Date(b._lastActivity||0) - new Date(a._lastActivity||0));
+  if (sort === 'alpha') users.sort((a,b) => a.username.localeCompare(b.username));
 
   if (currentView === 'grid') renderGrid(users);
   else renderTable(users);
@@ -382,19 +347,16 @@ function renderGrid(users) {
   if (!users.length) { grid.innerHTML = '<div class="empty">AUCUN MEMBRE TROUVÉ</div>'; return; }
 
   grid.innerHTML = users.map(u => {
-    const s     = u._stats;
-    const etC   = ET_CLASS[u.etiquette] || 'Stagiaire';
-    const color = ET_COLOR[u.etiquette] || 'var(--muted)';
-
-    // 3 premiers badges
-    const badgeHTML = s.badges.length
-      ? s.badges.slice(0,4).map(b => {
-          const cat   = BADGE_CATALOGUE[b.examen_id];
-          const nivKey= cat ? (cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau) : 'Stagiaire';
-          return `<span class="mini-badge mini-${nivKey}">${cat?.icone || '🎖️'} ${(cat?.nom || b.nom).replace('Brevet ','')}</span>`;
-        }).join('')
-        + (s.badges.length > 4 ? `<span class="mini-badge mini-none">+${s.badges.length-4}</span>` : '')
+    const badgeHTML = u._totalBadges
+      ? u._badges.slice(0,4).map(b => {
+          const cat = BADGE_CATALOGUE[b.examen_id];
+          const nivKey = cat ? (cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau) : 'Stagiaire';
+          return `<span class="mini-badge mini-${nivKey}">${cat?.icone || '🎖️'} ${(cat?.nom || 'Brevet').replace('Brevet ','')}</span>`;
+        }).join('') + (u._totalBadges > 4 ? `<span class="mini-badge mini-none">+${u._totalBadges-4}</span>` : '')
       : '<span class="mini-badge mini-none">🔒 Aucun brevet</span>';
+
+    const etC = ET_CLASS[u.etiquette] || 'Stagiaire';
+    const color = ET_COLOR[u.etiquette] || 'var(--muted)';
 
     return `
       <div class="staff-card card-${etC}" onclick="showModal('${u.id}')">
@@ -408,19 +370,19 @@ function renderGrid(users) {
         <div class="card-badges">${badgeHTML}</div>
         <div class="card-stats">
           <div class="card-stat">
-            <div class="cs-val" style="color:${color}">${s.badges.length}</div>
+            <div class="cs-val" style="color:${color}">${u._totalBadges}</div>
             <div class="cs-lbl">BREVETS</div>
           </div>
           <div class="card-stat">
-            <div class="cs-val" style="color:var(--green)">${s.reussis}</div>
+            <div class="cs-val" style="color:var(--green)">${u._reussis}</div>
             <div class="cs-lbl">RÉUSSIS</div>
           </div>
           <div class="card-stat">
-            <div class="cs-val" style="color:var(--gold)">${s.scoreMoy}%</div>
+            <div class="cs-val" style="color:var(--gold)">${u._scoreMoy}%</div>
             <div class="cs-lbl">MOY.</div>
           </div>
           <div class="card-stat">
-            <div class="cs-val" style="color:var(--teal);font-size:12px;padding-top:4px">${formatRelative(s.lastActivity)}</div>
+            <div class="cs-val" style="color:var(--teal);font-size:12px;padding-top:4px">${formatRelative(u._lastActivity)}</div>
             <div class="cs-lbl">ACTIVITÉ</div>
           </div>
         </div>
@@ -430,16 +392,19 @@ function renderGrid(users) {
 
 function renderTable(users) {
   const tbody = document.getElementById('tableBody');
-  if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;font-family:Share Tech Mono,monospace;color:var(--muted)">AUCUN MEMBRE TROUVÉ</td></tr>'; return; }
+  if (!users.length) { 
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;font-family:Share Tech Mono,monospace;color:var(--muted)">AUCUN MEMBRE TROUVÉ</td></tr>'; 
+    return; 
+  }
 
   tbody.innerHTML = users.map(u => {
-    const s   = u._stats;
-    const etC = ET_CLASS[u.etiquette] || 'Stagiaire';
-    const badgePills = s.badges.slice(0,3).map(b => {
-      const cat   = BADGE_CATALOGUE[b.examen_id];
-      const nivKey= cat ? (cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau) : 'Stagiaire';
+    const badgePills = u._badges.slice(0,3).map(b => {
+      const cat = BADGE_CATALOGUE[b.examen_id];
+      const nivKey = cat ? (cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau) : 'Stagiaire';
       return `<span class="mini-badge mini-${nivKey}" style="font-size:8px">${cat?.icone || '🎖️'}</span>`;
-    }).join('') + (s.badges.length > 3 ? `<span class="mini-badge mini-none" style="font-size:8px">+${s.badges.length-3}</span>` : '');
+    }).join('') + (u._totalBadges > 3 ? `<span class="mini-badge mini-none" style="font-size:8px">+${u._totalBadges-3}</span>` : '');
+
+    const etC = ET_CLASS[u.etiquette] || 'Stagiaire';
 
     return `
       <tr onclick="showModal('${u.id}')">
@@ -447,42 +412,40 @@ function renderTable(users) {
         <td><span class="et-badge et-${etC}">${u.etiquette}</span></td>
         <td>
           <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${ET_COLOR[u.etiquette]||'var(--muted)'}">${s.badges.length}</span>
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${ET_COLOR[u.etiquette]||'var(--muted)'}">${u._totalBadges}</span>
             <div style="display:flex;gap:3px;flex-wrap:wrap">${badgePills}</div>
           </div>
         </td>
-        <td><span style="color:var(--green)">${s.reussis}</span> / ${s.totalExamens}</td>
-        <td style="color:var(--gold)">${s.scoreMoy}%</td>
-        <td style="color:var(--teal)">${s.coursTermines}</td>
-        <td class="td-muted">${formatRelative(s.lastActivity)}</td>
+        <td><span style="color:var(--green)">${u._reussis}</span> / ${u._resultats.length}</td>
+        <td style="color:var(--gold)">${u._scoreMoy}%</td>
+        <td style="color:var(--teal)">${u._coursTermines}</td>
+        <td class="td-muted">${formatRelative(u._lastActivity)}</td>
       </tr>`;
   }).join('');
 }
 
 function setView(v) {
   currentView = v;
-  document.getElementById('staffGrid').style.display  = v === 'grid'  ? 'grid'  : 'none';
+  document.getElementById('staffGrid').style.display = v === 'grid' ? 'grid' : 'none';
   document.getElementById('staffTable').style.display = v === 'table' ? 'block' : 'none';
-  document.getElementById('btnGrid').classList.toggle('active',  v === 'grid');
+  document.getElementById('btnGrid').classList.toggle('active', v === 'grid');
   document.getElementById('btnTable').classList.toggle('active', v === 'table');
   applyFilters();
 }
 
-// ── Modal détail ──
 function showModal(userId) {
-  const u   = allUsers.find(x => x.id === userId);
+  const u = allUsers.find(x => x.id === userId);
   if (!u) return;
-  const s   = getUserStats(userId);
-  const etC = ET_CLASS[u.etiquette] || 'Stagiaire';
-  const color = ET_COLOR[u.etiquette] || 'var(--muted)';
 
-  // Badges obtenus et non obtenus
   const badgeMap = {};
-  s.badges.forEach(b => badgeMap[b.examen_id] = b);
+  u._badges.forEach(b => {
+    const id = b.examen_id || b;
+    badgeMap[id] = b;
+  });
 
   const badgesHTML = Object.entries(BADGE_CATALOGUE).map(([examId, cat]) => {
-    const owned  = !!badgeMap[examId];
-    const bData  = badgeMap[examId];
+    const owned = !!badgeMap[examId];
+    const bData = badgeMap[examId];
     const nivKey = cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau;
     return `
       <div class="m-badge ${owned ? 'obtained' : 'locked-badge'}"
@@ -490,7 +453,7 @@ function showModal(userId) {
         <div class="m-badge-icon">${owned ? cat.icone : '🔒'}</div>
         <div class="m-badge-info">
           <div class="m-badge-name" style="color:${owned ? cat.couleur : 'var(--muted)'}">${cat.nom}</div>
-          <div class="m-badge-date">${owned ? `✓ ${formatDate(bData.obtenu_le)}` : 'Non obtenu'}</div>
+          <div class="m-badge-date">${owned ? `✓ ${formatDate(bData?.obtenu_le)}` : 'Non obtenu'}</div>
         </div>
       </div>`;
   }).join('');
@@ -500,12 +463,12 @@ function showModal(userId) {
     <div class="m-section">
       <div class="m-section-title">INFORMATIONS</div>
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
-        <div style="width:56px;height:56px;border-radius:2px;background:${color}18;border:1px solid ${color}44;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:30px;color:${color}">
+        <div style="width:56px;height:56px;border-radius:2px;background:${ET_COLOR[u.etiquette]}18;border:1px solid ${ET_COLOR[u.etiquette]}44;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:30px;color:${ET_COLOR[u.etiquette]}">
           ${u.username.charAt(0).toUpperCase()}
         </div>
         <div>
           <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px">${u.username.toUpperCase()}</div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${color};letter-spacing:2px;margin-top:2px">${u.etiquette.toUpperCase()}</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${ET_COLOR[u.etiquette]};letter-spacing:2px;margin-top:2px">${u.etiquette.toUpperCase()}</div>
           <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px">Membre depuis ${formatDate(u.created_at)}</div>
         </div>
       </div>
@@ -513,16 +476,15 @@ function showModal(userId) {
     <div class="m-section">
       <div class="m-section-title">STATISTIQUES</div>
       <div class="m-stat-row">
-        <div class="m-stat"><div class="m-stat-val" style="color:${color}">${s.badges.length}</div><div class="m-stat-lbl">BREVETS</div></div>
-        <div class="m-stat"><div class="m-stat-val" style="color:var(--green)">${s.reussis} / ${s.totalExamens}</div><div class="m-stat-lbl">EXAMENS RÉUSSIS</div></div>
-        <div class="m-stat"><div class="m-stat-val" style="color:var(--gold)">${s.scoreMoy}%</div><div class="m-stat-lbl">SCORE MOYEN</div></div>
+        <div class="m-stat"><div class="m-stat-val" style="color:${ET_COLOR[u.etiquette]}">${u._totalBadges}</div><div class="m-stat-lbl">BREVETS</div></div>
+        <div class="m-stat"><div class="m-stat-val" style="color:var(--green)">${u._reussis} / ${u._resultats.length}</div><div class="m-stat-lbl">EXAMENS RÉUSSIS</div></div>
+        <div class="m-stat"><div class="m-stat-val" style="color:var(--gold)">${u._scoreMoy}%</div><div class="m-stat-lbl">SCORE MOYEN</div></div>
       </div>
     </div>
     <div class="m-section">
-      <div class="m-section-title">BREVETS (${s.badges.length} / ${Object.keys(BADGE_CATALOGUE).length})</div>
+      <div class="m-section-title">BREVETS (${u._totalBadges} / ${Object.keys(BADGE_CATALOGUE).length})</div>
       <div class="m-badges-grid">${badgesHTML}</div>
     </div>`;
-
   document.getElementById('modalOverlay').classList.add('show');
 }
 
