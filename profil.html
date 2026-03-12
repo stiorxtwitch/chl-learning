@@ -7,34 +7,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #080a0c;
-    --card: #0e1318;
-    --card2: #141820;
-    --border: #1e2832;
-    --accent: #c0392b;
-    --accent2: #e74c3c;
-    --gold: #d4a843;
-    --text: #e8eaf0;
-    --muted: #6b7585;
-    --green: #27ae60;
-    --blue: #2980b9;
-    --orange: #e67e22;
-    --purple: #8e44ad;
-    --teal: #16a085;
+    --bg: #080a0c; --card: #0e1318; --card2: #141820; --border: #1e2832;
+    --accent: #c0392b; --accent2: #e74c3c; --gold: #d4a843;
+    --text: #e8eaf0; --muted: #6b7585;
+    --green: #27ae60; --blue: #2980b9; --orange: #e67e22; --teal: #16a085;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
-  body::before {
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-    background-image:linear-gradient(rgba(192,57,43,.03)1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.03)1px,transparent 1px);
-    background-size:50px 50px;
-  }
-  nav {
-    position:fixed; top:0; left:0; right:0; height:64px;
-    background:rgba(8,10,12,.95); border-bottom:1px solid var(--border);
-    display:flex; align-items:center; padding:0 30px; z-index:100;
-    backdrop-filter:blur(10px);
-  }
+  body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:0; background-image:linear-gradient(rgba(192,57,43,.03)1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.03)1px,transparent 1px); background-size:50px 50px; }
+  nav { position:fixed; top:0; left:0; right:0; height:64px; background:rgba(8,10,12,.95); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 30px; z-index:100; backdrop-filter:blur(10px); }
   nav::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:.5; }
   .nav-brand { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:6px; color:var(--text); text-decoration:none; margin-right:auto; }
   .nav-brand span { color:var(--accent); }
@@ -46,140 +27,56 @@
   .btn-logout:hover { border-color:var(--accent); color:var(--accent); }
   main { padding-top:64px; min-height:100vh; position:relative; z-index:1; }
   .container { max-width:960px; margin:0 auto; padding:48px 30px; }
-  .profile-hero {
-    display:grid; grid-template-columns:auto 1fr; gap:32px;
-    align-items:center; margin-bottom:48px;
-    background:var(--card); border:1px solid var(--border); border-radius:2px;
-    padding:36px 40px; position:relative; overflow:hidden;
-  }
-  .profile-hero::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:2px;
-    background:linear-gradient(90deg,transparent,var(--accent),transparent);
-  }
-  .profile-hero::after {
-    content:''; position:absolute; right:-60px; top:-60px;
-    width:200px; height:200px; border-radius:50%;
-    background:radial-gradient(circle,rgba(192,57,43,.08),transparent 70%);
-    pointer-events:none;
-  }
-  .avatar {
-    width:100px; height:100px; border-radius:2px;
-    background:var(--card2); border:2px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    position:relative; flex-shrink:0;
-  }
-  .avatar-letter {
-    font-family:'Bebas Neue',sans-serif; font-size:52px;
-    color:var(--accent); line-height:1;
-  }
-  .avatar-ring {
-    position:absolute; inset:-6px; border-radius:4px;
-    border:1px solid rgba(192,57,43,.3);
-    animation:ring-pulse 3s ease-in-out infinite;
-  }
+  .profile-hero { display:grid; grid-template-columns:auto 1fr; gap:32px; align-items:center; margin-bottom:48px; background:var(--card); border:1px solid var(--border); border-radius:2px; padding:36px 40px; position:relative; overflow:hidden; }
+  .profile-hero::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+  .profile-hero::after { content:''; position:absolute; right:-60px; top:-60px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(192,57,43,.08),transparent 70%); pointer-events:none; }
+  .avatar { width:100px; height:100px; border-radius:2px; background:var(--card2); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; position:relative; flex-shrink:0; }
+  .avatar-letter { font-family:'Bebas Neue',sans-serif; font-size:52px; color:var(--accent); line-height:1; }
+  .avatar-ring { position:absolute; inset:-6px; border-radius:4px; border:1px solid rgba(192,57,43,.3); animation:ring-pulse 3s ease-in-out infinite; }
   @keyframes ring-pulse { 0%,100%{opacity:.4;transform:scale(1)} 50%{opacity:.9;transform:scale(1.02)} }
-  .profile-info { }
-  .profile-label {
-    font-family:'Share Tech Mono',monospace; font-size:10px;
-    letter-spacing:4px; color:var(--accent); margin-bottom:6px;
-  }
-  .profile-name {
-    font-family:'Bebas Neue',sans-serif; font-size:52px;
-    letter-spacing:4px; line-height:1; margin-bottom:12px;
-    text-shadow:0 0 30px rgba(192,57,43,.2);
-  }
+  .profile-label { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:4px; color:var(--accent); margin-bottom:6px; }
+  .profile-name { font-family:'Bebas Neue',sans-serif; font-size:52px; letter-spacing:4px; line-height:1; margin-bottom:12px; }
   .profile-meta { display:flex; gap:16px; flex-wrap:wrap; }
-  .meta-item {
-    display:flex; align-items:center; gap:8px;
-    font-family:'Share Tech Mono',monospace; font-size:10px;
-    letter-spacing:2px; color:var(--muted);
-  }
+  .meta-item { display:flex; align-items:center; gap:8px; font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--muted); }
   .meta-item span { color:var(--text); font-size:12px; }
-  .role-badge {
-    display:inline-flex; align-items:center; gap:8px;
-    padding:6px 16px; border-radius:2px; border:1px solid;
-    font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px;
-  }
+  .role-badge { display:inline-flex; align-items:center; padding:6px 16px; border-radius:2px; border:1px solid; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; }
   .role-Stagiaire { color:var(--green); border-color:rgba(39,174,96,.4); background:rgba(39,174,96,.08); }
   .role-Infirmier { color:var(--blue); border-color:rgba(41,128,185,.4); background:rgba(41,128,185,.08); }
   .role-Apprenti { color:var(--orange); border-color:rgba(230,126,34,.4); background:rgba(230,126,34,.08); }
   .role-Médecin { color:var(--gold); border-color:rgba(212,168,67,.4); background:rgba(212,168,67,.08); }
-  .role-Direction { color:var(--accent2);border-color:rgba(231,76,60,.4); background:rgba(231,76,60,.08); }
+  .role-Direction { color:var(--accent2); border-color:rgba(231,76,60,.4); background:rgba(231,76,60,.08); }
   .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:40px; }
-  .stat-card {
-    background:var(--card); border:1px solid var(--border); border-radius:2px;
-    padding:20px 22px; text-align:center;
-  }
+  .stat-card { background:var(--card); border:1px solid var(--border); border-radius:2px; padding:20px 22px; text-align:center; }
   .stat-value { font-family:'Bebas Neue',sans-serif; font-size:40px; line-height:1; }
   .stat-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); margin-top:4px; }
-  .section-header {
-    display:flex; align-items:center; gap:16px; margin-bottom:20px;
-  }
-  .section-title {
-    font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:4px;
-  }
+  .section-header { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+  .section-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:4px; }
   .section-line { flex:1; height:1px; background:var(--border); }
   .section-sub { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; }
-  .badges-grid {
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    gap:14px; margin-bottom:48px;
-  }
-  .badge-card {
-    background:var(--card); border:1px solid var(--border); border-radius:2px;
-    padding:20px 22px; position:relative; overflow:hidden;
-    animation:badge-in .4s ease forwards;
-    opacity:0; transform:translateY(8px);
-  }
+  .badges-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; margin-bottom:48px; }
+  .badge-card { background:var(--card); border:1px solid var(--border); border-radius:2px; padding:20px 22px; position:relative; overflow:hidden; animation:badge-in .4s ease forwards; opacity:0; transform:translateY(8px); }
   @keyframes badge-in { to{opacity:1;transform:translateY(0)} }
-  .badge-card::before {
-    content:''; position:absolute; left:0; top:0; bottom:0;
-    width:3px; border-radius:2px 0 0 2px;
-  }
-  .badge-card::after {
-    content:''; position:absolute; right:-30px; top:-30px;
-    width:100px; height:100px; border-radius:50%;
-    opacity:.05; pointer-events:none;
-  }
+  .badge-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:2px 0 0 2px; }
   .badge-Stagiaire::before { background:var(--green); }
-  .badge-Stagiaire::after { background:var(--green); }
   .badge-Infirmier::before { background:var(--blue); }
-  .badge-Infirmier::after { background:var(--blue); }
   .badge-Apprenti::before { background:var(--orange); }
-  .badge-Apprenti::after { background:var(--orange); }
   .badge-Médecin::before { background:var(--gold); }
-  .badge-Médecin::after { background:var(--gold); }
   .badge-top { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-  .badge-icon {
-    width:44px; height:44px; border-radius:2px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:22px; flex-shrink:0; border:1px solid;
-  }
+  .badge-icon { width:44px; height:44px; border-radius:2px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; border:1px solid; }
   .badge-icon-Stagiaire { background:rgba(39,174,96,.1); border-color:rgba(39,174,96,.3); }
   .badge-icon-Infirmier { background:rgba(41,128,185,.1); border-color:rgba(41,128,185,.3); }
   .badge-icon-Apprenti { background:rgba(230,126,34,.1); border-color:rgba(230,126,34,.3); }
   .badge-icon-Médecin { background:rgba(212,168,67,.1); border-color:rgba(212,168,67,.3); }
   .badge-meta { flex:1; }
-  .badge-niveau {
-    font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; margin-bottom:3px;
-  }
+  .badge-niveau { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; margin-bottom:3px; }
   .badge-nom { font-weight:600; font-size:14px; line-height:1.3; }
   .badge-desc { font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:10px; }
   .badge-date { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; }
-  .badge-shine {
-    position:absolute; inset:0; border-radius:2px;
-    background:linear-gradient(135deg,rgba(255,255,255,.03),transparent 50%);
-    pointer-events:none;
-  }
-  .badge-card.locked {
-    opacity:.25 !important; filter:grayscale(1);
-    transform:none !important;
-  }
+  .badge-shine { position:absolute; inset:0; border-radius:2px; background:linear-gradient(135deg,rgba(255,255,255,.03),transparent 50%); pointer-events:none; }
+  .badge-card.locked { opacity:.25 !important; filter:grayscale(1); transform:none !important; }
   .badge-card.locked::before { background:var(--muted); }
   .cours-list { display:flex; flex-direction:column; gap:10px; margin-bottom:48px; }
-  .cours-item {
-    background:var(--card); border:1px solid var(--border); border-radius:2px;
-    padding:16px 20px; display:flex; align-items:center; gap:16px;
-  }
+  .cours-item { background:var(--card); border:1px solid var(--border); border-radius:2px; padding:16px 20px; display:flex; align-items:center; gap:16px; }
   .cours-icon { font-size:20px; flex-shrink:0; width:32px; text-align:center; }
   .cours-body { flex:1; }
   .cours-name { font-size:14px; font-weight:500; margin-bottom:4px; }
@@ -188,12 +85,7 @@
   .cours-bar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .6s ease; }
   .cours-pct { font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--accent); flex-shrink:0; width:40px; text-align:right; }
   .cours-check { font-size:16px; flex-shrink:0; }
-  .empty-state {
-    text-align:center; padding:48px 20px;
-    font-family:'Share Tech Mono',monospace; font-size:11px;
-    color:var(--muted); letter-spacing:2px;
-    border:1px dashed var(--border); border-radius:2px;
-  }
+  .empty-state { text-align:center; padding:48px 20px; font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; border:1px dashed var(--border); border-radius:2px; }
   .empty-icon { font-size:36px; margin-bottom:12px; opacity:.4; }
   @media(max-width:700px) {
     .profile-hero { grid-template-columns:1fr; text-align:center; }
@@ -233,34 +125,23 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
 const user = getSession();
 if (!user) window.location.href = 'index.html';
-
 function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
-
-if (user.etiquette === 'Direction') document.getElementById('dirNav').style.display = 'inline';
+if (user && user.etiquette === 'Direction') document.getElementById('dirNav').style.display = 'inline';
 
 const BADGE_CATALOGUE = {
-  'f0a6f686-63f2-488e-aa97-f373364999a0': { nom: 'Brevet Acronymes & Vocabulaire', description: 'Maîtrise du vocabulaire médical militaire fondamental (MARCH, GCS, SAMPLE, OPQRST...)', icone: '📖', niveau: 'Stagiaire', couleur: '#27ae60' },
-  '5d8036c9-4557-4928-bda3-1ef5043a8beb': { nom: 'Brevet Basic Life Support', description: 'Certification RCP adulte/enfant, DEA, PLS, gestion des urgences courantes.', icone: '🫀', niveau: 'Stagiaire', couleur: '#27ae60' },
-  'd3632c24-69f4-41a3-b4ee-f815e80a62d0': { nom: 'Brevet TCCC/TECC Tactique', description: 'Soins tactiques sous feu, protocole MARCH, pharmacologie de combat.', icone: '⚕️', niveau: 'Infirmier', couleur: '#2980b9' },
-  '60d685ce-fbea-4143-8f75-c99e50bb6e03': { nom: 'Brevet Soins d\'Urgence Avancés', description: 'ABCDE, RCP avancée ERC 2025, triage START, pharmacologie des urgences.', icone: '🚑', niveau: 'Infirmier', couleur: '#2980b9' },
-  'ccc75dc3-9f30-4efe-b208-cb009223c7cf': { nom: 'Brevet Techniques d\'Injection', description: 'Maîtrise des voies IV, IM, SC et ID avec dosages médicamenteux.', icone: '💉', niveau: 'Infirmier', couleur: '#2980b9' },
-  '65f9db42-473f-4a73-88b4-ab5177f402f2': { nom: 'Brevet Anatomie Cardiovasculaire', description: 'Cœur, poumons, SNA, nœud sinusal, débit cardiaque, cycle PQRST.', icone: '🫁', niveau: 'Apprenti Médecin', couleur: '#e67e22' },
-  '924d190c-def4-4961-96bd-13309e8a5448': { nom: 'Brevet Base du Nursing', description: 'Soins, Pharmacologie, Normes, Interprétations.', icone: '🩺', niveau: 'Stagiaire', couleur: '#27ae60' },
-  '55918448-7220-4218-9e66-642e3428e6e3': { nom: 'Brevet Interprétation ECG', description: 'Lecture ECG 12 dérivations, STEMI, FA, troubles électrolytiques.', icone: '📈', niveau: 'Médecin', couleur: '#d4a843' },
-  'a617081d-2fe1-4130-a912-f57711a63977': { nom: 'Brevet Suture Chirurgicale', description: 'Techniques de suture, matériel, principes d\'éversion, gestion des complications.', icone: '🩺', niveau: 'Médecin', couleur: '#d4a843' },
+  'f0a6f686-63f2-488e-aa97-f373364999a0': { nom:'Brevet Acronymes & Vocabulaire', description:'Maîtrise du vocabulaire médical militaire fondamental (MARCH, GCS, SAMPLE, OPQRST...)', icone:'📖', niveau:'Stagiaire', couleur:'#27ae60' },
+  '5d8036c9-4557-4928-bda3-1ef5043a8beb': { nom:'Brevet Basic Life Support', description:'Certification RCP adulte/enfant, DEA, PLS, gestion des urgences courantes.', icone:'🫀', niveau:'Stagiaire', couleur:'#27ae60' },
+  'd3632c24-69f4-41a3-b4ee-f815e80a62d0': { nom:'Brevet TCCC/TECC Tactique', description:'Soins tactiques sous feu, protocole MARCH, pharmacologie de combat.', icone:'⚕️', niveau:'Infirmier', couleur:'#2980b9' },
+  '60d685ce-fbea-4143-8f75-c99e50bb6e03': { nom:"Brevet Soins d'Urgence Avancés", description:"ABCDE, RCP avancée ERC 2025, triage START, pharmacologie des urgences.", icone:'🚑', niveau:'Infirmier', couleur:'#2980b9' },
+  'ccc75dc3-9f30-4efe-b208-cb009223c7cf': { nom:"Brevet Techniques d'Injection", description:'Maîtrise des voies IV, IM, SC et ID avec dosages médicamenteux.', icone:'💉', niveau:'Infirmier', couleur:'#2980b9' },
+  '65f9db42-473f-4a73-88b4-ab5177f402f2': { nom:'Brevet Anatomie Cardiovasculaire', description:'Coeur, poumons, SNA, noeur sinusal, débit cardiaque, cycle PQRST.', icone:'🫁', niveau:'Apprenti Médecin', couleur:'#e67e22' },
+  '924d190c-def4-4961-96bd-13309e8a5448': { nom:'Brevet Base du Nursing', description:'Soins, Pharmacologie, Normes, Interprétations.', icone:'🩺', niveau:'Stagiaire', couleur:'#27ae60' },
+  '55918448-7220-4218-9e66-642e3428e6e3': { nom:'Brevet Interprétation ECG', description:'Lecture ECG 12 dérivations, STEMI, FA, troubles électrolytiques.', icone:'📈', niveau:'Médecin', couleur:'#d4a843' },
+  'a617081d-2fe1-4130-a912-f57711a63977': { nom:'Brevet Suture Chirurgicale', description:"Techniques de suture, matériel, principes d'éversion, gestion des complications.", icone:'🩺', niveau:'Médecin', couleur:'#d4a843' },
 };
 
-const ET_COLOR = {
-  'Stagiaire': '#27ae60',
-  'Infirmier': '#2980b9',
-  'Apprenti Médecin':'#e67e22',
-  'Médecin': '#d4a843',
-  'Direction': '#e74c3c',
-};
-const ET_CLASS = {
-  'Stagiaire':'Stagiaire','Infirmier':'Infirmier',
-  'Apprenti Médecin':'Apprenti','Médecin':'Médecin','Direction':'Direction'
-};
+const ET_COLOR = { 'Stagiaire':'#27ae60','Infirmier':'#2980b9','Apprenti Médecin':'#e67e22','Médecin':'#d4a843','Direction':'#e74c3c' };
+const ET_CLASS = { 'Stagiaire':'Stagiaire','Infirmier':'Infirmier','Apprenti Médecin':'Apprenti','Médecin':'Médecin','Direction':'Direction' };
 
 function getIcon(titre) {
   const t = titre.toLowerCase();
@@ -270,7 +151,6 @@ function getIcon(titre) {
   if (t.includes('suture')) return '🩺';
   if (t.includes('anatomie')) return '🫁';
   if (t.includes('tccc')) return '⚕️';
-  if (t.includes('opex')) return '🪖';
   return '📋';
 }
 
@@ -281,45 +161,49 @@ function formatDate(iso) {
 
 async function loadProfile() {
   const h = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
+
+  // ✅ select=* évite tout 400 lié à une colonne manquante
   const [userRes, resultatsRes, coursRes, progRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}&select=id,username,etiquette,created_at,badges,total_badges`, { headers: h }),
+    fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}&select=*`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/resultats?user_id=eq.${user.id}&select=*`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/cours?actif=eq.true&order=etiquette_requise,ordre`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/progression?user_id=eq.${user.id}&select=*`, { headers: h }),
   ]);
 
-  const [userData] = await userRes.json();
+  const userDataArr = await userRes.json();
+  if (!Array.isArray(userDataArr) || userDataArr.length === 0) throw new Error('Utilisateur introuvable');
+  const userData = userDataArr[0];
+
   const resultats = await resultatsRes.json();
   const cours = await coursRes.json();
   const progs = await progRes.json();
 
-  const badges = userData.badges || [];
-  console.log("Badges lus depuis users :", badges);
-
+  // ✅ Lecture robuste : badges peut être un tableau d'objets {examen_id, obtenu_le} ou de strings
+  const rawBadges = Array.isArray(userData.badges) ? userData.badges : [];
   const badgeMap = {};
-  badges.forEach(b => {
-    const id = typeof b === 'string' ? b : (b.examen_id || '');
-    if (id) badgeMap[id] = { obtenu_le: b.obtenu_le || null };
+  rawBadges.forEach(b => {
+    if (typeof b === 'string') {
+      badgeMap[b] = { obtenu_le: null };
+    } else if (b && b.examen_id) {
+      badgeMap[b.examen_id] = { obtenu_le: b.obtenu_le || null };
+    }
   });
 
   const progMap = {};
   progs.forEach(p => progMap[p.cours_id] = p);
 
-  const totalExamens = resultats.length;
   const examensReussis = resultats.filter(r => r.valide).length;
   const scoresMoy = resultats.length ? Math.round(resultats.reduce((s,r)=>s+(r.score||0),0)/resultats.length) : 0;
   const coursTermines = progs.filter(p => p.termine).length;
 
-  renderPage(userData, badges, badgeMap, resultats, cours, progMap, {
-    totalExamens, examensReussis, scoresMoy, coursTermines
-  });
+  renderPage(userData, rawBadges, badgeMap, cours, progMap, { examensReussis, scoresMoy, coursTermines });
 }
 
-function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats) {
+function renderPage(userData, badges, badgeMap, cours, progMap, stats) {
   const etClass = ET_CLASS[userData.etiquette] || 'Stagiaire';
   const etColor = ET_COLOR[userData.etiquette] || 'var(--muted)';
 
-  let heroHTML = `
+  const heroHTML = `
     <div class="profile-hero">
       <div class="avatar">
         <div class="avatar-ring"></div>
@@ -336,48 +220,33 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
       </div>
     </div>`;
 
-  let statsHTML = `
+  const statsHTML = `
     <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-value" style="color:${etColor}">${badges.length}</div>
-        <div class="stat-label">BREVETS OBTENUS</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" style="color:var(--green)">${stats.examensReussis}</div>
-        <div class="stat-label">EXAMENS RÉUSSIS</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" style="color:var(--gold)">${stats.scoresMoy}%</div>
-        <div class="stat-label">SCORE MOYEN</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" style="color:var(--teal)">${stats.coursTermines}</div>
-        <div class="stat-label">COURS TERMINÉS</div>
-      </div>
+      <div class="stat-card"><div class="stat-value" style="color:${etColor}">${badges.length}</div><div class="stat-label">BREVETS OBTENUS</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--green)">${stats.examensReussis}</div><div class="stat-label">EXAMENS RÉUSSIS</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--gold)">${stats.scoresMoy}%</div><div class="stat-label">SCORE MOYEN</div></div>
+      <div class="stat-card"><div class="stat-value" style="color:var(--teal)">${stats.coursTermines}</div><div class="stat-label">COURS TERMINÉS</div></div>
     </div>`;
 
-  const allExamenIds = Object.keys(BADGE_CATALOGUE);
+  const allIds = Object.keys(BADGE_CATALOGUE);
+  const obtained = allIds.filter(id => badgeMap[id]);
+  const locked   = allIds.filter(id => !badgeMap[id]);
+
   let badgesHTML = `
     <div class="section-header">
       <div class="section-title">🎖️ MES BREVETS</div>
       <div class="section-line"></div>
-      <div class="section-sub">${badges.length} / ${allExamenIds.length} OBTENUS</div>
+      <div class="section-sub">${badges.length} / ${allIds.length} OBTENUS</div>
     </div>
     <div class="badges-grid">`;
 
-  const obtained = allExamenIds.filter(id => badgeMap[id]);
-  const locked = allExamenIds.filter(id => !badgeMap[id]);
-  const ordered = [...obtained, ...locked];
-
-  ordered.forEach((examId, i) => {
+  [...obtained, ...locked].forEach((examId, i) => {
     const cat = BADGE_CATALOGUE[examId];
     const owned = !!badgeMap[examId];
     const bData = badgeMap[examId];
-    const niv = cat.niveau.replace(' Médecin','').replace('Apprenti','Apprenti');
     const nivKey = cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau;
     badgesHTML += `
-      <div class="badge-card badge-${nivKey} ${owned ? '' : 'locked'}"
-           style="animation-delay:${i * 0.06}s">
+      <div class="badge-card badge-${nivKey} ${owned ? '' : 'locked'}" style="animation-delay:${i*0.06}s">
         <div class="badge-shine"></div>
         <div class="badge-top">
           <div class="badge-icon badge-icon-${nivKey}">${owned ? cat.icone : '🔒'}</div>
@@ -387,21 +256,15 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
           </div>
         </div>
         <div class="badge-desc">${cat.description}</div>
-        <div class="badge-date">
-          ${owned
-            ? `✓ Obtenu le ${formatDate(bData.obtenu_le)}`
-            : '🔒 Non obtenu — Réussissez l\'examen correspondant'}
-        </div>
+        <div class="badge-date">${owned ? '✓ Obtenu le ' + formatDate(bData.obtenu_le) : '🔒 Non obtenu — Réussissez l\'examen correspondant'}</div>
       </div>`;
   });
   badgesHTML += '</div>';
 
   const HIER = ['Stagiaire','Infirmier','Apprenti Médecin','Médecin','Direction'];
-  function canAccess(req) {
-    if (userData.etiquette === 'Direction') return true;
-    return HIER.indexOf(userData.etiquette) >= HIER.indexOf(req);
-  }
+  const canAccess = req => userData.etiquette === 'Direction' || HIER.indexOf(userData.etiquette) >= HIER.indexOf(req);
   const accessibleCours = cours.filter(c => canAccess(c.etiquette_requise));
+
   let coursHTML = `
     <div class="section-header">
       <div class="section-title">📚 PROGRESSION DES COURS</div>
@@ -409,7 +272,8 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
       <div class="section-sub">${stats.coursTermines} / ${accessibleCours.length} TERMINÉS</div>
     </div>
     <div class="cours-list">`;
-  if (accessibleCours.length === 0) {
+
+  if (!accessibleCours.length) {
     coursHTML += `<div class="empty-state"><div class="empty-icon">📚</div>AUCUN COURS ACCESSIBLE</div>`;
   } else {
     accessibleCours.forEach(c => {
@@ -428,23 +292,23 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
               <div class="cours-pct">${pct}%</div>
             </div>
           </div>
-          <div class="cours-check">${pct === 100 ? '✅' : pct === 50 ? '🔄' : '⭕'}</div>
+          <div class="cours-check">${pct===100?'✅':pct===50?'🔄':'⭕'}</div>
         </div>`;
     });
   }
   coursHTML += '</div>';
 
-  document.getElementById('pageContent').innerHTML =
-    heroHTML + statsHTML + badgesHTML + coursHTML;
+  document.getElementById('pageContent').innerHTML = heroHTML + statsHTML + badgesHTML + coursHTML;
 }
 
 loadProfile().catch(err => {
   document.getElementById('pageContent').innerHTML = `
     <div class="empty-state">
       <div class="empty-icon">⚠️</div>
-      ERREUR DE CONNEXION — VÉRIFIEZ LA CONFIG SUPABASE<br>
-      <small style="font-size:10px;margin-top:8px;display:block">${err.message}</small>
+      ERREUR DE CHARGEMENT<br>
+      <small style="font-size:10px;margin-top:8px;display:block;color:var(--accent)">${err.message}</small>
     </div>`;
+  console.error('Erreur profil:', err);
 });
 </script>
 </body>
