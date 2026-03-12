@@ -14,7 +14,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans',sans-serif; min-height: 100vh; }
   body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(192,57,43,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.03) 1px,transparent 1px); background-size:50px 50px; pointer-events:none; z-index:0; }
-  
+ 
   nav { position:fixed; top:0; left:0; right:0; height:64px; background:rgba(8,10,12,.95); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 30px; z-index:100; backdrop-filter:blur(10px); }
   nav::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:.5; }
   .nav-brand { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:6px; color:var(--text); text-decoration:none; margin-right:auto; }
@@ -24,15 +24,12 @@
   .nav-link.active { color:var(--accent); border-color:rgba(192,57,43,.3); }
   .btn-logout { background:none; border:1px solid var(--border); color:var(--muted); font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; padding:6px 14px; cursor:pointer; border-radius:2px; transition:all .2s; margin-left:16px; }
   .btn-logout:hover { border-color:var(--accent); color:var(--accent); }
-
   main { padding-top:64px; min-height:100vh; position:relative; z-index:1; }
-
   /* EXAM LIST */
   .exam-list-container { max-width:900px; margin:0 auto; padding:40px 30px; }
   .page-header { margin-bottom:40px; }
   .page-label { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:4px; color:var(--accent); margin-bottom:10px; }
   .page-title { font-family:'Bebas Neue',sans-serif; font-size:48px; letter-spacing:4px; }
-
   .exam-list { display:flex; flex-direction:column; gap:12px; }
   .exam-list-item {
     background:var(--card); border:1px solid var(--border); border-radius:2px; padding:22px 28px;
@@ -47,10 +44,9 @@
   .eli-meta { display:flex; gap:16px; margin-top:8px; }
   .eli-tag { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:1px; }
   .eli-score { font-family:'Bebas Neue',sans-serif; font-size:24px; }
-
   /* EXAM TAKING */
   .exam-container { max-width:800px; margin:0 auto; padding:30px; display:none; }
-  
+ 
   /* Timer */
   .timer-bar {
     position:sticky; top:64px; z-index:50;
@@ -65,7 +61,6 @@
   .timer-progress { flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
   .timer-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--gold)); border-radius:2px; transition:width .5s linear; }
   .exam-name-bar { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; margin-left:auto; }
-
   /* Questions */
   .question-block {
     background:var(--card); border:1px solid var(--border); border-radius:2px; padding:28px; margin-bottom:16px;
@@ -82,7 +77,6 @@
   .type-ouvert { background:rgba(212,168,67,.15); color:var(--gold); border:1px solid rgba(212,168,67,.3); }
   .type-cas_clinique { background:rgba(192,57,43,.15); color:var(--accent2); border:1px solid rgba(192,57,43,.3); }
   .q-text { font-size:16px; font-weight:500; line-height:1.5; margin-bottom:20px; }
-
   /* QCM Options */
   .options-list { display:flex; flex-direction:column; gap:8px; }
   .option-btn {
@@ -99,7 +93,6 @@
   .option-btn.selected .option-letter { background:var(--blue); border-color:var(--blue); color:white; }
   .option-btn.correct .option-letter { background:var(--green); border-color:var(--green); color:white; }
   .option-btn.wrong .option-letter { background:var(--accent); border-color:var(--accent); color:white; }
-
   /* VF */
   .vf-btns { display:flex; gap:12px; }
   .vf-btn {
@@ -111,14 +104,12 @@
   .vf-btn.faux:hover { border-color:var(--accent); color:var(--accent); }
   .vf-btn.selected.vrai { border-color:var(--green); background:rgba(39,174,96,.1); color:var(--green); }
   .vf-btn.selected.faux { border-color:var(--accent); background:rgba(192,57,43,.1); color:var(--accent); }
-
   /* Texte libre */
   .open-textarea {
     width:100%; padding:14px 16px; background:var(--card2); border:1px solid var(--border); border-radius:2px;
     color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; line-height:1.6; resize:vertical; min-height:120px; outline:none;
   }
   .open-textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(192,57,43,.1); }
-
   /* Explication */
   .explication {
     margin-top:16px; padding:14px 16px; background:rgba(212,168,67,.08); border-left:3px solid var(--gold);
@@ -128,7 +119,6 @@
   @keyframes fadeInEx { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
   .explication-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--gold); margin-bottom:6px; }
   .explication-text { font-size:13px; color:#b0b4c8; line-height:1.6; }
-
   /* Navigation */
   .exam-nav {
     display:flex; align-items:center; justify-content:space-between;
@@ -145,7 +135,6 @@
   .btn-submit { background:var(--green); border:none; color:white; }
   .btn-submit:hover { filter:brightness(1.1); }
   .q-counter { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; }
-
   /* RESULTS */
   .result-container { max-width:700px; margin:0 auto; padding:40px 30px; display:none; }
   .result-score-card {
@@ -164,7 +153,6 @@
   .result-details { display:flex; gap:20px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
   .result-detail { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--muted); }
   .result-detail span { color:var(--text); font-size:14px; }
-
   .result-review { background:var(--card); border:1px solid var(--border); border-radius:2px; padding:24px; }
   .rr-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:4px; margin-bottom:16px; }
   .rr-item { padding:14px 0; border-bottom:1px solid var(--border); }
@@ -174,7 +162,6 @@
   .rr-correct { color:var(--green); }
   .rr-wrong { color:var(--accent); }
   .rr-exp { font-size:12px; color:var(--muted); font-style:italic; margin-top:4px; }
-
   .btn-retry { display:block; width:100%; margin-top:16px; padding:14px; background:var(--accent); border:none; color:white; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:4px; border-radius:2px; cursor:pointer; transition:all .2s; }
   .btn-retry:hover { background:var(--accent2); }
   .btn-back-list { display:block; width:100%; margin-top:10px; padding:12px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:4px; border-radius:2px; cursor:pointer; transition:all .2s; }
@@ -187,9 +174,10 @@
   <a href="home.html" class="nav-link">ACCUEIL</a>
   <a href="cours.html" class="nav-link">COURS</a>
   <a href="examen.html" class="nav-link active">EXAMENS</a>
+  <a href="profil.html" class="nav-link">PROFIL</a>
+  <a href="effectif.html" class="nav-link">EFFECTIF</a>
   <button class="btn-logout" onclick="logout()">DÉCONNEXION</button>
 </nav>
-
 <main>
   <!-- LISTE DES EXAMENS -->
   <div class="exam-list-container" id="examListView">
@@ -201,7 +189,6 @@
       <div style="padding:20px;font-family:'Share Tech Mono',monospace;color:var(--muted)">CHARGEMENT...</div>
     </div>
   </div>
-
   <!-- TIMER -->
   <div class="timer-bar" id="timerBar" style="display:none">
     <span class="timer-label">TEMPS RESTANT</span>
@@ -209,7 +196,6 @@
     <div class="timer-progress"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
     <span class="exam-name-bar" id="examNameBar"></span>
   </div>
-
   <!-- EXAMEN EN COURS -->
   <div class="exam-container" id="examView">
     <div id="questionContainer"></div>
@@ -219,7 +205,6 @@
       <button class="btn-nav btn-next" id="btnNext" onclick="nextQuestion()">SUIVANT →</button>
     </div>
   </div>
-
   <!-- RÉSULTATS -->
   <div class="result-container" id="resultView">
     <div class="result-score-card" id="resultCard">
@@ -241,6 +226,7 @@
   function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
   const user = getSession();
   if (!user) window.location.href = 'index.html';
+
   function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
 
   const HIERARCHY = ['Stagiaire','Infirmier','Apprenti Médecin','Médecin','Direction'];
@@ -258,6 +244,59 @@
   let timeLeft = 0;
   let totalTime = 0;
 
+  // ────────────────────────────────────────────────
+  // Anti-triche : fullscreen + détection sortie
+  // ────────────────────────────────────────────────
+  let wasInFullscreen = false;
+  let cheatDetected = false;
+
+  function enterFullscreen() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen().catch(() => {});
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    }
+  }
+
+  function exitFullscreen() {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+
+  function checkFullscreen() {
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement
+    );
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    if (document.getElementById('examView').style.display === 'block') {
+      if (!checkFullscreen() && wasInFullscreen && !cheatDetected) {
+        cheatDetected = true;
+        alert("Tentative de sortie du mode examen détectée → examen invalidé.");
+        submitExam();
+      }
+    }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && document.getElementById('examView').style.display === 'block') {
+      cheatDetected = true;
+      alert("Changement d'onglet ou minimisation détecté → examen invalidé.");
+      submitExam();
+    }
+  });
+
   // ---- LOAD EXAMENS LIST ----
   async function loadExamens() {
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
@@ -267,17 +306,14 @@
     ]);
     const examens = await eRes.json();
     const resultats = await rRes.json();
-
     const urlParams = new URLSearchParams(window.location.search);
     const autoId = urlParams.get('id');
-
     const list = document.getElementById('examList');
     list.innerHTML = examens.map(e => {
       const locked = !canAccess(e.etiquette_requise);
       const result = resultats.filter(r => r.examen_id === e.id).sort((a,b) => (b.score||0)-(a.score||0))[0];
       const etColors = {'Stagiaire':'var(--green)','Infirmier':'var(--blue)','Apprenti Médecin':'var(--orange)','Médecin':'var(--gold)'};
       const etColor = etColors[e.etiquette_requise] || 'var(--muted)';
-
       return `
         <div class="exam-list-item ${locked ? 'locked' : ''}" onclick="${locked ? '' : `startExam('${e.id}')`}">
           <div class="eli-icon">📝</div>
@@ -294,7 +330,6 @@
           <div class="eli-score" style="color:${result ? (result.score >= e.score_minimum ? 'var(--green)' : 'var(--accent)') : 'var(--muted)'}">${result ? result.score + '%' : locked ? '🔒' : '—'}</div>
         </div>`;
     }).join('');
-
     if (autoId) startExam(autoId);
   }
 
@@ -314,7 +349,12 @@
     totalTime = currentExamen.duree_minutes * 60;
     timeLeft = totalTime;
 
-    // Show exam view
+    // Forcer fullscreen + anti-triche
+    enterFullscreen();
+    wasInFullscreen = true;
+    cheatDetected = false;
+
+    // Affichage
     document.getElementById('examListView').style.display = 'none';
     document.getElementById('examView').style.display = 'block';
     document.getElementById('timerBar').style.display = 'flex';
@@ -349,11 +389,10 @@
   function renderQuestion() {
     const q = questions[currentQ];
     if (!q) return;
-    
+   
     const typeLabels = { 'QCM': 'QCM', 'VF': 'VRAI / FAUX', 'ouvert': 'QUESTION OUVERTE', 'cas_clinique': 'CAS CLINIQUE' };
     let inputHtml = '';
     const saved = reponses[q.id];
-
     if (q.type === 'QCM') {
       const opts = typeof q.options === 'string' ? JSON.parse(q.options) : (q.options || []);
       const letters = ['A','B','C','D','E'];
@@ -372,7 +411,6 @@
     } else {
       inputHtml = `<textarea class="open-textarea" id="open-${q.id}" placeholder="Rédigez votre réponse ici..." onchange="saveOpen('${q.id}', this.value)">${saved || ''}</textarea>`;
     }
-
     const container = document.getElementById('questionContainer');
     container.innerHTML = `
       <div class="question-block">
@@ -385,8 +423,6 @@
           <div class="explication-text">${q.explication || ''}</div>
         </div>
       </div>`;
-
-    // Counter & nav
     document.getElementById('qCounter').textContent = `${currentQ + 1} / ${questions.length}`;
     document.getElementById('btnPrev').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
     const isLast = currentQ === questions.length - 1;
@@ -411,7 +447,6 @@
   function saveOpen(qId, value) { reponses[qId] = value; }
 
   function nextQuestion() {
-    // Save open textarea
     const q = questions[currentQ];
     if (q.type === 'ouvert' || q.type === 'cas_clinique') {
       const ta = document.getElementById('open-' + q.id);
@@ -432,29 +467,25 @@
   // ---- SUBMIT ----
   async function submitExam() {
     if (timerInterval) clearInterval(timerInterval);
-    
+   
     const q = questions[currentQ];
     if (q && (q.type === 'ouvert' || q.type === 'cas_clinique')) {
       const ta = document.getElementById('open-' + q.id);
       if (ta) reponses[q.id] = ta.value;
     }
 
-    // Calculate score
     let pointsOk = 0, pointsTotal = 0;
     questions.forEach(q => {
       pointsTotal += (q.points || 1);
       if (q.type === 'QCM' || q.type === 'VF') {
         if (reponses[q.id] === q.reponse_correcte) pointsOk += (q.points || 1);
       } else {
-        // Open: auto 50% si répondu
         if (reponses[q.id] && reponses[q.id].trim().length > 10) pointsOk += Math.ceil((q.points || 1) * 0.5);
       }
     });
-
     const score = pointsTotal > 0 ? Math.round(pointsOk / pointsTotal * 100) : 0;
     const tempsPasse = Math.round((Date.now() - startTime) / 60000);
 
-    // Save to Supabase
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
     fetch(`${SUPABASE_URL}/rest/v1/resultats`, {
       method: 'POST',
@@ -476,10 +507,16 @@
 
   function showResults(score, pointsOk, pointsTotal, temps) {
     const pass = score >= currentExamen.score_minimum;
-    
+   
     document.getElementById('examView').style.display = 'none';
     document.getElementById('timerBar').style.display = 'none';
     document.getElementById('resultView').style.display = 'block';
+
+    // Sortie du fullscreen
+    if (document.fullscreenElement) {
+      exitFullscreen();
+    }
+    wasInFullscreen = false;
 
     const card = document.getElementById('resultCard');
     card.className = 'result-score-card ' + (pass ? 'pass' : 'fail');
@@ -491,15 +528,13 @@
       <div class="result-detail">POINTS <span>${pointsOk}/${pointsTotal}</span></div>
       <div class="result-detail">MINIMUM <span>${currentExamen.score_minimum}%</span></div>
       <div class="result-detail">TEMPS <span>${temps} min</span></div>`;
-
-    // Review
+   
     const review = document.getElementById('resultReview');
     let rHtml = '<div class="rr-title">CORRECTION</div>';
     questions.forEach(q => {
       const rep = reponses[q.id] || '—';
       const isAuto = q.type === 'QCM' || q.type === 'VF';
       const correct = isAuto ? rep === q.reponse_correcte : null;
-
       rHtml += `<div class="rr-item">
         <div class="rr-q">${q.contenu}</div>
         ${isAuto ? `<div class="rr-answer ${correct ? 'rr-correct' : 'rr-wrong'}">${correct ? '✓' : '✗'} Votre réponse : ${rep}</div>
@@ -513,6 +548,7 @@
   }
 
   function retryExam() { if (currentExamen) startExam(currentExamen.id); }
+
   function backToList() {
     document.getElementById('resultView').style.display = 'none';
     document.getElementById('examListView').style.display = 'block';
