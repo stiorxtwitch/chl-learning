@@ -7,20 +7,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:      #080a0c;
-    --card:    #0e1318;
-    --card2:   #141820;
-    --border:  #1e2832;
-    --accent:  #c0392b;
+    --bg: #080a0c;
+    --card: #0e1318;
+    --card2: #141820;
+    --border: #1e2832;
+    --accent: #c0392b;
     --accent2: #e74c3c;
-    --gold:    #d4a843;
-    --text:    #e8eaf0;
-    --muted:   #6b7585;
-    --green:   #27ae60;
-    --blue:    #2980b9;
-    --orange:  #e67e22;
-    --purple:  #8e44ad;
-    --teal:    #16a085;
+    --gold: #d4a843;
+    --text: #e8eaf0;
+    --muted: #6b7585;
+    --green: #27ae60;
+    --blue: #2980b9;
+    --orange: #e67e22;
+    --purple: #8e44ad;
+    --teal: #16a085;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
@@ -29,8 +29,6 @@
     background-image:linear-gradient(rgba(192,57,43,.03)1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.03)1px,transparent 1px);
     background-size:50px 50px;
   }
-
-  /* NAV */
   nav {
     position:fixed; top:0; left:0; right:0; height:64px;
     background:rgba(8,10,12,.95); border-bottom:1px solid var(--border);
@@ -46,11 +44,8 @@
   .nav-link.active { color:var(--accent); border-color:rgba(192,57,43,.3); }
   .btn-logout { background:none; border:1px solid var(--border); color:var(--muted); font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; padding:6px 14px; cursor:pointer; border-radius:2px; transition:all .2s; margin-left:16px; }
   .btn-logout:hover { border-color:var(--accent); color:var(--accent); }
-
   main { padding-top:64px; min-height:100vh; position:relative; z-index:1; }
   .container { max-width:960px; margin:0 auto; padding:48px 30px; }
-
-  /* ── HERO PROFIL ── */
   .profile-hero {
     display:grid; grid-template-columns:auto 1fr; gap:32px;
     align-items:center; margin-bottom:48px;
@@ -61,15 +56,12 @@
     content:''; position:absolute; top:0; left:0; right:0; height:2px;
     background:linear-gradient(90deg,transparent,var(--accent),transparent);
   }
-  /* Déco coin droit */
   .profile-hero::after {
     content:''; position:absolute; right:-60px; top:-60px;
     width:200px; height:200px; border-radius:50%;
     background:radial-gradient(circle,rgba(192,57,43,.08),transparent 70%);
     pointer-events:none;
   }
-
-  /* Avatar */
   .avatar {
     width:100px; height:100px; border-radius:2px;
     background:var(--card2); border:2px solid var(--border);
@@ -86,7 +78,6 @@
     animation:ring-pulse 3s ease-in-out infinite;
   }
   @keyframes ring-pulse { 0%,100%{opacity:.4;transform:scale(1)} 50%{opacity:.9;transform:scale(1.02)} }
-
   .profile-info { }
   .profile-label {
     font-family:'Share Tech Mono',monospace; font-size:10px;
@@ -104,20 +95,16 @@
     letter-spacing:2px; color:var(--muted);
   }
   .meta-item span { color:var(--text); font-size:12px; }
-
-  /* Étiquette de rôle colorée */
   .role-badge {
     display:inline-flex; align-items:center; gap:8px;
     padding:6px 16px; border-radius:2px; border:1px solid;
     font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px;
   }
-  .role-Stagiaire       { color:var(--green);  border-color:rgba(39,174,96,.4);  background:rgba(39,174,96,.08); }
-  .role-Infirmier       { color:var(--blue);   border-color:rgba(41,128,185,.4); background:rgba(41,128,185,.08); }
-  .role-Apprenti        { color:var(--orange); border-color:rgba(230,126,34,.4); background:rgba(230,126,34,.08); }
-  .role-Médecin         { color:var(--gold);   border-color:rgba(212,168,67,.4); background:rgba(212,168,67,.08); }
-  .role-Direction       { color:var(--accent2);border-color:rgba(231,76,60,.4);  background:rgba(231,76,60,.08); }
-
-  /* ── STATS ROW ── */
+  .role-Stagiaire { color:var(--green); border-color:rgba(39,174,96,.4); background:rgba(39,174,96,.08); }
+  .role-Infirmier { color:var(--blue); border-color:rgba(41,128,185,.4); background:rgba(41,128,185,.08); }
+  .role-Apprenti { color:var(--orange); border-color:rgba(230,126,34,.4); background:rgba(230,126,34,.08); }
+  .role-Médecin { color:var(--gold); border-color:rgba(212,168,67,.4); background:rgba(212,168,67,.08); }
+  .role-Direction { color:var(--accent2);border-color:rgba(231,76,60,.4); background:rgba(231,76,60,.08); }
   .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:40px; }
   .stat-card {
     background:var(--card); border:1px solid var(--border); border-radius:2px;
@@ -125,8 +112,6 @@
   }
   .stat-value { font-family:'Bebas Neue',sans-serif; font-size:40px; line-height:1; }
   .stat-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); margin-top:4px; }
-
-  /* ── SECTION ── */
   .section-header {
     display:flex; align-items:center; gap:16px; margin-bottom:20px;
   }
@@ -135,13 +120,10 @@
   }
   .section-line { flex:1; height:1px; background:var(--border); }
   .section-sub { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; }
-
-  /* ── BADGES GRID ── */
   .badges-grid {
     display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
     gap:14px; margin-bottom:48px;
   }
-
   .badge-card {
     background:var(--card); border:1px solid var(--border); border-radius:2px;
     padding:20px 22px; position:relative; overflow:hidden;
@@ -149,7 +131,6 @@
     opacity:0; transform:translateY(8px);
   }
   @keyframes badge-in { to{opacity:1;transform:translateY(0)} }
-
   .badge-card::before {
     content:''; position:absolute; left:0; top:0; bottom:0;
     width:3px; border-radius:2px 0 0 2px;
@@ -159,34 +140,29 @@
     width:100px; height:100px; border-radius:50%;
     opacity:.05; pointer-events:none;
   }
-
-  /* Couleurs par niveau */
-  .badge-Stagiaire::before       { background:var(--green); }
-  .badge-Stagiaire::after        { background:var(--green); }
-  .badge-Infirmier::before       { background:var(--blue); }
-  .badge-Infirmier::after        { background:var(--blue); }
-  .badge-Apprenti::before        { background:var(--orange); }
-  .badge-Apprenti::after         { background:var(--orange); }
-  .badge-Médecin::before         { background:var(--gold); }
-  .badge-Médecin::after          { background:var(--gold); }
-
+  .badge-Stagiaire::before { background:var(--green); }
+  .badge-Stagiaire::after { background:var(--green); }
+  .badge-Infirmier::before { background:var(--blue); }
+  .badge-Infirmier::after { background:var(--blue); }
+  .badge-Apprenti::before { background:var(--orange); }
+  .badge-Apprenti::after { background:var(--orange); }
+  .badge-Médecin::before { background:var(--gold); }
+  .badge-Médecin::after { background:var(--gold); }
   .badge-top { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
   .badge-icon {
     width:44px; height:44px; border-radius:2px;
     display:flex; align-items:center; justify-content:center;
     font-size:22px; flex-shrink:0; border:1px solid;
   }
-  .badge-icon-Stagiaire  { background:rgba(39,174,96,.1);  border-color:rgba(39,174,96,.3); }
-  .badge-icon-Infirmier  { background:rgba(41,128,185,.1); border-color:rgba(41,128,185,.3); }
-  .badge-icon-Apprenti   { background:rgba(230,126,34,.1); border-color:rgba(230,126,34,.3); }
-  .badge-icon-Médecin    { background:rgba(212,168,67,.1); border-color:rgba(212,168,67,.3); }
-
+  .badge-icon-Stagiaire { background:rgba(39,174,96,.1); border-color:rgba(39,174,96,.3); }
+  .badge-icon-Infirmier { background:rgba(41,128,185,.1); border-color:rgba(41,128,185,.3); }
+  .badge-icon-Apprenti { background:rgba(230,126,34,.1); border-color:rgba(230,126,34,.3); }
+  .badge-icon-Médecin { background:rgba(212,168,67,.1); border-color:rgba(212,168,67,.3); }
   .badge-meta { flex:1; }
   .badge-niveau {
     font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; margin-bottom:3px;
   }
   .badge-nom { font-weight:600; font-size:14px; line-height:1.3; }
-
   .badge-desc { font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:10px; }
   .badge-date { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; }
   .badge-shine {
@@ -194,15 +170,11 @@
     background:linear-gradient(135deg,rgba(255,255,255,.03),transparent 50%);
     pointer-events:none;
   }
-
-  /* Badge verrouillé */
   .badge-card.locked {
     opacity:.25 !important; filter:grayscale(1);
     transform:none !important;
   }
   .badge-card.locked::before { background:var(--muted); }
-
-  /* ── PROGRESSION DES COURS ── */
   .cours-list { display:flex; flex-direction:column; gap:10px; margin-bottom:48px; }
   .cours-item {
     background:var(--card); border:1px solid var(--border); border-radius:2px;
@@ -216,8 +188,6 @@
   .cours-bar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .6s ease; }
   .cours-pct { font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--accent); flex-shrink:0; width:40px; text-align:right; }
   .cours-check { font-size:16px; flex-shrink:0; }
-
-  /* ── ÉTAT VIDE ── */
   .empty-state {
     text-align:center; padding:48px 20px;
     font-family:'Share Tech Mono',monospace; font-size:11px;
@@ -225,8 +195,6 @@
     border:1px dashed var(--border); border-radius:2px;
   }
   .empty-icon { font-size:36px; margin-bottom:12px; opacity:.4; }
-
-  /* ── LOADING ── */
   .skeleton {
     background:linear-gradient(90deg,var(--card2) 25%,var(--card) 50%,var(--card2) 75%);
     background-size:200% 100%;
@@ -234,7 +202,6 @@
     border-radius:2px; height:20px;
   }
   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
   @media(max-width:700px) {
     .profile-hero { grid-template-columns:1fr; text-align:center; }
     .avatar { margin:0 auto; }
@@ -244,99 +211,91 @@
 </style>
 </head>
 <body>
-
 <nav>
   <a href="home.html" class="nav-brand">C<span>H</span>L</a>
   <div class="nav-links">
-    <a href="home.html"    class="nav-link">ACCUEIL</a>
-    <a href="cours.html"   class="nav-link">COURS</a>
-    <a href="examen.html"  class="nav-link">EXAMENS</a>
-    <a href="profil.html"  class="nav-link active">PROFIL</a>
+    <a href="home.html" class="nav-link">ACCUEIL</a>
+    <a href="cours.html" class="nav-link">COURS</a>
+    <a href="examen.html" class="nav-link">EXAMENS</a>
+    <a href="profil.html" class="nav-link active">PROFIL</a>
     <span id="dirNav" style="display:none">
       <a href="effectifs.html" class="nav-link">EFFECTIFS</a>
-      <a href="admin.html"     class="nav-link">ADMIN</a>
+      <a href="admin.html" class="nav-link">ADMIN</a>
       <a href="resultats.html" class="nav-link">RÉSULTATS</a>
     </span>
   </div>
   <button class="btn-logout" onclick="logout()">DÉCONNEXION</button>
 </nav>
-
 <main>
   <div class="container" id="pageContent">
-    <!-- Chargement -->
     <div style="padding:60px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:3px">
       CHARGEMENT DU PROFIL...
     </div>
   </div>
 </main>
-
 <script>
 const SUPABASE_URL = 'https://sevrfgivcpefyykuffti.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNldnJmZ2l2Y3BlZnl5a3VmZnRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NDI1NTMsImV4cCI6MjA3ODUxODU1M30.YZnkSHsVWKQEhfU7xYfWyTFmtkM28Zuzdu7Y1sjBXQc';
-
 function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
 const user = getSession();
 if (!user) window.location.href = 'index.html';
 function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
-
 if (user.etiquette === 'Direction') document.getElementById('dirNav').style.display = 'inline';
 
-// ── Catalogue complet des badges (lié aux UUID fixes des examens) ──
 const BADGE_CATALOGUE = {
   'f0a6f686-63f2-488e-aa97-f373364999a0': {
-    nom:         'Brevet Acronymes & Vocabulaire',
+    nom: 'Brevet Acronymes & Vocabulaire',
     description: 'Maîtrise du vocabulaire médical militaire fondamental (MARCH, GCS, SAMPLE, OPQRST...)',
-    icone:       '📖', niveau: 'Stagiaire', couleur: '#27ae60'
+    icone: '📖', niveau: 'Stagiaire', couleur: '#27ae60'
   },
   '5d8036c9-4557-4928-bda3-1ef5043a8beb': {
-    nom:         'Brevet Basic Life Support',
+    nom: 'Brevet Basic Life Support',
     description: 'Certification RCP adulte/enfant, DEA, PLS, gestion des urgences courantes.',
-    icone:       '🫀', niveau: 'Stagiaire', couleur: '#27ae60'
+    icone: '🫀', niveau: 'Stagiaire', couleur: '#27ae60'
   },
   'd3632c24-69f4-41a3-b4ee-f815e80a62d0': {
-    nom:         'Brevet TCCC/TECC Tactique',
+    nom: 'Brevet TCCC/TECC Tactique',
     description: 'Soins tactiques sous feu, protocole MARCH, pharmacologie de combat.',
-    icone:       '⚕️', niveau: 'Infirmier', couleur: '#2980b9'
+    icone: '⚕️', niveau: 'Infirmier', couleur: '#2980b9'
   },
   '60d685ce-fbea-4143-8f75-c99e50bb6e03': {
-    nom:         'Brevet Soins d\'Urgence Avancés',
+    nom: 'Brevet Soins d\'Urgence Avancés',
     description: 'ABCDE, RCP avancée ERC 2025, triage START, pharmacologie des urgences.',
-    icone:       '🚑', niveau: 'Infirmier', couleur: '#2980b9'
+    icone: '🚑', niveau: 'Infirmier', couleur: '#2980b9'
   },
   'ccc75dc3-9f30-4efe-b208-cb009223c7cf': {
-    nom:         'Brevet Techniques d\'Injection',
+    nom: 'Brevet Techniques d\'Injection',
     description: 'Maîtrise des voies IV, IM, SC et ID avec dosages médicamenteux.',
-    icone:       '💉', niveau: 'Infirmier', couleur: '#2980b9'
+    icone: '💉', niveau: 'Infirmier', couleur: '#2980b9'
   },
   '65f9db42-473f-4a73-88b4-ab5177f402f2': {
-    nom:         'Brevet Anatomie Cardiovasculaire',
+    nom: 'Brevet Anatomie Cardiovasculaire',
     description: 'Cœur, poumons, SNA, nœud sinusal, débit cardiaque, cycle PQRST.',
-    icone:       '🫁', niveau: 'Apprenti Médecin', couleur: '#e67e22'
+    icone: '🫁', niveau: 'Apprenti Médecin', couleur: '#e67e22'
   },
   '924d190c-def4-4961-96bd-13309e8a5448': {
-    nom:         'Brevet Base du Nursing',
+    nom: 'Brevet Base du Nursing',
     description: 'Soins, Pharmacologie, Normes, Interprétations.',
-    icone:       '🩺', niveau: 'Stagiaire', couleur: '#27ae60'
+    icone: '🩺', niveau: 'Stagiaire', couleur: '#27ae60'
   },
   '55918448-7220-4218-9e66-642e3428e6e3': {
-    nom:         'Brevet Interprétation ECG',
+    nom: 'Brevet Interprétation ECG',
     description: 'Lecture ECG 12 dérivations, STEMI, FA, troubles électrolytiques.',
-    icone:       '📈', niveau: 'Médecin', couleur: '#d4a843'
+    icone: '📈', niveau: 'Médecin', couleur: '#d4a843'
   },
   'a617081d-2fe1-4130-a912-f57711a63977': {
-    nom:         'Brevet Suture Chirurgicale',
+    nom: 'Brevet Suture Chirurgicale',
     description: 'Techniques de suture, matériel, principes d\'éversion, gestion des complications.',
-    icone:       '🩺', niveau: 'Médecin', couleur: '#d4a843'
+    icone: '🩺', niveau: 'Médecin', couleur: '#d4a843'
   },
 };
 
-// Couleurs par étiquette
 const ET_COLOR = {
-  'Stagiaire':       '#27ae60',
-  'Infirmier':       '#2980b9',
+  'Stagiaire': '#27ae60',
+  'Infirmier': '#2980b9',
   'Apprenti Médecin':'#e67e22',
-  'Médecin':         '#d4a843',
-  'Direction':       '#e74c3c',
+  'Médecin': '#d4a843',
+  'Direction': '#e74c3c',
 };
 const ET_CLASS = {
   'Stagiaire':'Stagiaire','Infirmier':'Infirmier',
@@ -360,37 +319,35 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString('fr-BE', { year:'numeric', month:'long', day:'numeric' });
 }
 
-// ── Charge toutes les données du profil ──
 async function loadProfile() {
   const h = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
-
-  const [userRes, badgesRes, resultatsRes, coursRes, progRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}&select=*`, { headers: h }),
-    fetch(`${SUPABASE_URL}/rest/v1/badges?user_id=eq.${user.id}&order=obtenu_le.asc`, { headers: h }),
+  const [userRes, resultatsRes, coursRes, progRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}&select=*,badges,total_badges`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/resultats?user_id=eq.${user.id}&select=*`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/cours?actif=eq.true&order=etiquette_requise,ordre`, { headers: h }),
     fetch(`${SUPABASE_URL}/rest/v1/progression?user_id=eq.${user.id}&select=*`, { headers: h }),
   ]);
-
   const [userData] = await userRes.json();
-  const badges     = await badgesRes.json();
-  const resultats  = await resultatsRes.json();
-  const cours      = await coursRes.json();
-  const progs      = await progRes.json();
+  const resultats = await resultatsRes.json();
+  const cours = await coursRes.json();
+  const progs = await progRes.json();
 
-  // Map progression
+  const badges = userData.badges || [];
+  console.log("Badges lus depuis users :", badges);
+
+  const badgeMap = {};
+  badges.forEach(b => {
+    const id = typeof b === 'string' ? b : (b.examen_id || '');
+    if (id) badgeMap[id] = { obtenu_le: b.obtenu_le || null };
+  });
+
   const progMap = {};
   progs.forEach(p => progMap[p.cours_id] = p);
 
-  // Map badges obtenus
-  const badgeMap = {};
-  badges.forEach(b => badgeMap[b.examen_id] = b);
-
-  // Calcul stats
-  const totalExamens   = resultats.length;
+  const totalExamens = resultats.length;
   const examensReussis = resultats.filter(r => r.valide).length;
-  const scoresMoy      = resultats.length ? Math.round(resultats.reduce((s,r)=>s+(r.score||0),0)/resultats.length) : 0;
-  const coursTermines  = progs.filter(p => p.termine).length;
+  const scoresMoy = resultats.length ? Math.round(resultats.reduce((s,r)=>s+(r.score||0),0)/resultats.length) : 0;
+  const coursTermines = progs.filter(p => p.termine).length;
 
   renderPage(userData, badges, badgeMap, resultats, cours, progMap, {
     totalExamens, examensReussis, scoresMoy, coursTermines
@@ -401,7 +358,6 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
   const etClass = ET_CLASS[userData.etiquette] || 'Stagiaire';
   const etColor = ET_COLOR[userData.etiquette] || 'var(--muted)';
 
-  // ── Hero ──
   let heroHTML = `
     <div class="profile-hero">
       <div class="avatar">
@@ -419,7 +375,6 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
       </div>
     </div>`;
 
-  // ── Stats ──
   let statsHTML = `
     <div class="stats-row">
       <div class="stat-card">
@@ -440,7 +395,6 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
       </div>
     </div>`;
 
-  // ── Badges ──
   const allExamenIds = Object.keys(BADGE_CATALOGUE);
   let badgesHTML = `
     <div class="section-header">
@@ -450,18 +404,16 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
     </div>
     <div class="badges-grid">`;
 
-  // D'abord les badges obtenus, puis les verrouillés
-  const obtained  = allExamenIds.filter(id => badgeMap[id]);
-  const locked    = allExamenIds.filter(id => !badgeMap[id]);
-  const ordered   = [...obtained, ...locked];
+  const obtained = allExamenIds.filter(id => badgeMap[id]);
+  const locked = allExamenIds.filter(id => !badgeMap[id]);
+  const ordered = [...obtained, ...locked];
 
   ordered.forEach((examId, i) => {
-    const cat     = BADGE_CATALOGUE[examId];
-    const owned   = !!badgeMap[examId];
-    const bData   = badgeMap[examId];
-    const niv     = cat.niveau.replace(' Médecin','').replace('Apprenti','Apprenti');
-    const nivKey  = cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau;
-
+    const cat = BADGE_CATALOGUE[examId];
+    const owned = !!badgeMap[examId];
+    const bData = badgeMap[examId];
+    const niv = cat.niveau.replace(' Médecin','').replace('Apprenti','Apprenti');
+    const nivKey = cat.niveau === 'Apprenti Médecin' ? 'Apprenti' : cat.niveau;
     badgesHTML += `
       <div class="badge-card badge-${nivKey} ${owned ? '' : 'locked'}"
            style="animation-delay:${i * 0.06}s">
@@ -483,15 +435,12 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
   });
   badgesHTML += '</div>';
 
-  // ── Progression des cours ──
   const HIER = ['Stagiaire','Infirmier','Apprenti Médecin','Médecin','Direction'];
   function canAccess(req) {
     if (userData.etiquette === 'Direction') return true;
     return HIER.indexOf(userData.etiquette) >= HIER.indexOf(req);
   }
-
   const accessibleCours = cours.filter(c => canAccess(c.etiquette_requise));
-
   let coursHTML = `
     <div class="section-header">
       <div class="section-title">📚 PROGRESSION DES COURS</div>
@@ -499,14 +448,13 @@ function renderPage(userData, badges, badgeMap, resultats, cours, progMap, stats
       <div class="section-sub">${stats.coursTermines} / ${accessibleCours.length} TERMINÉS</div>
     </div>
     <div class="cours-list">`;
-
   if (accessibleCours.length === 0) {
     coursHTML += `<div class="empty-state"><div class="empty-icon">📚</div>AUCUN COURS ACCESSIBLE</div>`;
   } else {
     accessibleCours.forEach(c => {
       const prog = progMap[c.id];
-      const pct  = prog ? (prog.termine ? 100 : 50) : 0;
-      const etC  = ET_COLOR[c.etiquette_requise] || 'var(--muted)';
+      const pct = prog ? (prog.termine ? 100 : 50) : 0;
+      const etC = ET_COLOR[c.etiquette_requise] || 'var(--muted)';
       coursHTML += `
         <div class="cours-item">
           <div class="cours-icon">${getIcon(c.titre)}</div>
