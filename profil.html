@@ -129,15 +129,23 @@ function logout() { sessionStorage.removeItem('chl_user'); window.location.href 
 if (user && user.etiquette === 'Direction') document.getElementById('dirNav').style.display = 'inline';
 
 const BADGE_CATALOGUE = {
-  '747d5f8b-c90f-4729-9cad-db8dda461f3d': { nom:'Brevet Acronymes & Vocabulaire', description:'Maîtrise du vocabulaire médical militaire fondamental (MARCH, GCS, SAMPLE, OPQRST...)', icone:'📖', niveau:'Stagiaire', couleur:'#27ae60' },
-  '5d8036c9-4557-4928-bda3-1ef5043a8beb': { nom:'Brevet Basic Life Support', description:'Certification RCP adulte/enfant, DEA, PLS, gestion des urgences courantes.', icone:'🫀', niveau:'Stagiaire', couleur:'#27ae60' },
-  'd3632c24-69f4-41a3-b4ee-f815e80a62d0': { nom:'Brevet TCCC/TECC Tactique', description:'Soins tactiques sous feu, protocole MARCH, pharmacologie de combat.', icone:'⚕️', niveau:'Infirmier', couleur:'#2980b9' },
-  '60d685ce-fbea-4143-8f75-c99e50bb6e03': { nom:"Brevet Soins d'Urgence Avancés", description:"ABCDE, RCP avancée ERC 2025, triage START, pharmacologie des urgences.", icone:'🚑', niveau:'Infirmier', couleur:'#2980b9' },
-  'ccc75dc3-9f30-4efe-b208-cb009223c7cf': { nom:"Brevet Techniques d'Injection", description:'Maîtrise des voies IV, IM, SC et ID avec dosages médicamenteux.', icone:'💉', niveau:'Infirmier', couleur:'#2980b9' },
-  '65f9db42-473f-4a73-88b4-ab5177f402f2': { nom:'Brevet Anatomie Cardiovasculaire', description:'Coeur, poumons, SNA, noeur sinusal, débit cardiaque, cycle PQRST.', icone:'🫁', niveau:'Apprenti Médecin', couleur:'#e67e22' },
-  '924d190c-def4-4961-96bd-13309e8a5448': { nom:'Brevet Base du Nursing', description:'Soins, Pharmacologie, Normes, Interprétations.', icone:'🩺', niveau:'Stagiaire', couleur:'#27ae60' },
-  '55918448-7220-4218-9e66-642e3428e6e3': { nom:'Brevet Interprétation ECG', description:'Lecture ECG 12 dérivations, STEMI, FA, troubles électrolytiques.', icone:'📈', niveau:'Médecin', couleur:'#d4a843' },
-  'a617081d-2fe1-4130-a912-f57711a63977': { nom:'Brevet Suture Chirurgicale', description:"Techniques de suture, matériel, principes d'éversion, gestion des complications.", icone:'🩺', niveau:'Médecin', couleur:'#d4a843' },
+  // Stagiaires
+  'eaeadb3d-3462-4b23-8854-181d04a6c003': { nom:'Brevet Manuel du Soignant', description:'Maîtrise des fondamentaux du soignant : protocoles, vocabulaire et bases cliniques essentielles.', icone:'📖', niveau:'Stagiaire', couleur:'#27ae60' },
+  '6d306642-2199-4bd5-81cb-7850f4bc6299': { nom:'Brevet Pharmacologie', description:'Bases de pharmacologie : classes médicamenteuses, voies d\'administration, effets et interactions.', icone:'💊', niveau:'Stagiaire', couleur:'#27ae60' },
+  'fad3b1b3-b671-4a3f-80c1-555674deb7ab': { nom:'Brevet Basic Life Support', description:'Certification RCP adulte/enfant, DEA, PLS, gestion des urgences courantes.', icone:'🫀', niveau:'Stagiaire', couleur:'#27ae60' },
+  'c4574277-e318-4192-aebc-413aced6fd5d': { nom:'Brevet Hygiène et Infection', description:'Protocoles d\'hygiène hospitalière, prévention des infections nosocomiales et stérilisation.', icone:'🧼', niveau:'Stagiaire', couleur:'#27ae60' },
+  // Infirmiers
+  '1e06fbd9-b8f1-46fe-8ddc-cfd2f4659d3a': { nom:'Brevet Interprétation ECG', description:'Lecture ECG 12 dérivations, identification des rythmes, STEMI, FA et troubles électrolytiques.', icone:'📈', niveau:'Infirmier', couleur:'#2980b9' },
+  '4e97d687-6ff4-4b33-a2a8-3e690ffc48eb': { nom:'Brevet Soin Infirmier', description:'Techniques de soins infirmiers : pansements, voies veineuses, administration médicamenteuse.', icone:'🩹', niveau:'Infirmier', couleur:'#2980b9' },
+  '65a46a17-8b1b-42fa-8492-1a0298fb645a': { nom:'Brevet Soin Infirmier PT2', description:'Soins infirmiers avancés : cas cliniques complexes, gestion de la douleur, soins spécialisés.', icone:'🩺', niveau:'Infirmier', couleur:'#2980b9' },
+  // Apprentis Médecins
+  'aa918fed-fd9a-4397-a941-ed4db7c3b479': { nom:'Brevet Anatomie Cardiovasculaire', description:'Cœur, poumons, SNA, nœud sinusal, débit cardiaque, cycle PQRST.', icone:'🫀', niveau:'Apprenti Médecin', couleur:'#e67e22' },
+  '088c8d39-740c-4ed7-bb06-39bd38f8e160': { nom:'Brevet Psychologie', description:'Fondamentaux de la psychologie clinique appliquée aux soins médicaux.', icone:'🧠', niveau:'Apprenti Médecin', couleur:'#e67e22' },
+  '56b0d589-9e22-4524-aacd-3b8093acbbde': { nom:'Brevet Pathologie Médicale', description:'Pathologies complexes : physiopathologie, diagnostic différentiel et prise en charge.', icone:'🔬', niveau:'Apprenti Médecin', couleur:'#e67e22' },
+  // Médecins
+  '84ea31ca-7da8-445b-86d6-205a7a3417a2': { nom:'Brevet Urgences Médicales', description:'Gestion des urgences : triage, réanimation avancée, protocoles SAMU et coordination.', icone:'🚑', niveau:'Médecin', couleur:'#d4a843' },
+  '32fb4c33-7679-4215-a0a7-c3f6e2a7c497': { nom:'Brevet Anatomie Respiratoire', description:'Système respiratoire : mécanique ventilatoire, gazométrie, pathologies et ventilation assistée.', icone:'🫁', niveau:'Médecin', couleur:'#d4a843' },
+  '01fc9877-3eb7-448d-a1cc-a3d173abe51d': { nom:'Brevet Sutures Complexes', description:'Techniques de suture avancées, matériel chirurgical, éversion et gestion des complications.', icone:'🧵', niveau:'Médecin', couleur:'#d4a843' },
 };
 
 const ET_COLOR = { 'Stagiaire':'#27ae60','Infirmier':'#2980b9','Apprenti Médecin':'#e67e22','Médecin':'#d4a843','Direction':'#e74c3c' };
