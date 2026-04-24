@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHL — Formation Interactive</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0c; --card: #0e1318; --card2: #141820; --border: #1e2832;
+    --accent: #c0392b; --accent2: #e74c3c; --gold: #d4a843;
+    --text: #e8eaf0; --muted: #6b7585; --green: #27ae60; --blue: #2980b9; --orange: #e67e22;
+    --purple: #8e44ad; --teal: #16a085;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans',sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(192,57,43,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,.03) 1px,transparent 1px); background-size:50px 50px; pointer-events:none; z-index:0; }
+
+  /* NAV */
+  nav { position:fixed; top:0; left:0; right:0; height:64px; background:rgba(8,10,12,.95); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 30px; z-index:200; backdrop-filter:blur(10px); }
+  nav::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:.5; }
+  .nav-brand { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:6px; color:var(--text); text-decoration:none; margin-right:auto; }
+  .nav-brand span { color:var(--accent); }
+  .nav-link { padding:8px 18px; font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:2px; color:var(--muted); text-decoration:none; border-radius:2px; transition:all .2s; border:1px solid transparent; }
+  .nav-link:hover, .nav-link.active { color:var(--text); background:var(--card2); border-color:var(--border); }
+  .nav-link.active { color:var(--accent); border-color:rgba(192,57,43,.3); }
+
+  /* LIVES */
+  .lives-display { display:flex; align-items:center; gap:6px; margin-right:20px; }
+  .life-heart { font-size:18px; transition:all .3s; }
+  .life-heart.lost { opacity:0.2; filter:grayscale(1); transform:scale(0.8); }
+
+  /* VIEWS */
+  main { padding-top:64px; min-height:100vh; position:relative; z-index:1; }
+  .view { display:none; }
+  .view.active { display:block; }
+
+  /* LIST VIEW */
+  .list-container { max-width:980px; margin:0 auto; padding:40px 30px; }
+  .page-header { margin-bottom:40px; }
+  .page-label { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:4px; color:var(--accent); margin-bottom:10px; }
+  .page-title { font-family:'Bebas Neue',sans-serif; font-size:52px; letter-spacing:4px; }
+  .page-sub { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; margin-top:6px; }
+
+  .cases-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+  .case-card { background:var(--card); border:1px solid var(--border); border-radius:2px; padding:22px; cursor:pointer; transition:all .25s; position:relative; overflow:hidden; }
+  .case-card::before { content:''; position:absolute; top:0;left:0;right:0;height:2px; opacity:0; transition:opacity .2s; }
+  .case-card:hover { border-color:rgba(192,57,43,.5); background:var(--card2); transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,.4); }
+  .case-card:hover::before { opacity:1; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+  .case-severity { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:3px; padding:3px 10px; border-radius:2px; display:inline-block; margin-bottom:12px; }
+  .sev-legere { background:rgba(39,174,96,.15); color:var(--green); border:1px solid rgba(39,174,96,.3); }
+  .sev-moyenne { background:rgba(230,126,34,.15); color:var(--orange); border:1px solid rgba(230,126,34,.3); }
+  .sev-critique { background:rgba(192,57,43,.15); color:var(--accent2); border:1px solid rgba(192,57,43,.3); }
+  .case-title { font-weight:600; font-size:15px; margin-bottom:6px; line-height:1.3; }
+  .case-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+  .case-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+  .case-tag { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:1px; color:var(--muted); background:var(--bg); border:1px solid var(--border); padding:2px 8px; border-radius:2px; }
+  .case-done { position:absolute; top:12px; right:12px; color:var(--green); font-size:16px; }
+
+  /* SIMULATION VIEW */
+  .sim-layout { display:grid; grid-template-columns:1fr 380px; min-height:calc(100vh - 64px); }
+  .sim-main { padding:24px; border-right:1px solid var(--border); overflow-y:auto; }
+  .sim-sidebar { display:flex; flex-direction:column; height:calc(100vh - 64px); position:sticky; top:64px; }
+
+  /* HUD */
+  .hud { background:var(--card); border-bottom:1px solid var(--border); padding:14px 20px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .hud-item { display:flex; flex-direction:column; gap:2px; }
+  .hud-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); }
+  .hud-value { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; }
+  .hud-sep { width:1px; height:36px; background:var(--border); }
+  .vital-ok { color:var(--green); }
+  .vital-warn { color:var(--orange); }
+  .vital-crit { color:var(--accent2); animation:blink .6s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* CONSCIOUSNESS LEVEL */
+  .consciousness-bar { background:var(--card); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; align-items:center; gap:12px; }
+  .consciousness-label { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--muted); }
+  .consciousness-value { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; }
+  .gcs-bars { display:flex; gap:4px; flex:1; }
+  .gcs-bar { flex:1; height:6px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .gcs-fill { height:100%; border-radius:2px; transition:width .5s ease; }
+
+  /* SCENARIO TEXT */
+  .scenario-header { margin-bottom:20px; }
+  .scenario-urgence { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:4px; color:var(--accent); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+  .urgence-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); animation:blink .8s ease-in-out infinite; }
+  .scenario-title { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:3px; margin-bottom:6px; }
+  .scenario-text { font-size:14px; line-height:1.7; color:#b8bcc8; background:var(--card); border:1px solid var(--border); border-left:3px solid var(--gold); padding:16px 20px; border-radius:0 2px 2px 0; }
+
+  /* BODY DIAGRAM */
+  .body-section { margin-top:24px; }
+  .body-section-title { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:14px; }
+  .body-diagram-wrap { display:flex; gap:24px; align-items:flex-start; }
+  .body-svg-container { position:relative; width:160px; flex-shrink:0; }
+  .body-svg-container svg { width:160px; }
+  .body-zone { cursor:pointer; transition:all .2s; opacity:0.7; }
+  .body-zone:hover { opacity:1; }
+  .body-zone.injured { animation:injPulse 1.2s ease-in-out infinite; }
+  @keyframes injPulse { 0%,100%{opacity:.8} 50%{opacity:1} }
+  .body-zone.critical { filter:drop-shadow(0 0 6px var(--accent)); }
+  .body-injuries { flex:1; }
+  .injury-item { background:var(--card); border:1px solid var(--border); border-radius:2px; padding:12px 16px; margin-bottom:8px; }
+  .injury-zone { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); margin-bottom:4px; }
+  .injury-name { font-size:14px; font-weight:600; }
+  .injury-severity { font-size:12px; margin-top:2px; }
+  .inj-legere { color:var(--green); }
+  .inj-moyenne { color:var(--orange); }
+  .inj-critique { color:var(--accent2); }
+
+  /* FEEDBACK */
+  .feedback-box { margin-top:20px; padding:16px 20px; border-radius:2px; display:none; animation:fadeIn .3s ease; }
+  .feedback-box.show { display:block; }
+  .feedback-box.good { background:rgba(39,174,96,.1); border:1px solid rgba(39,174,96,.4); border-left:3px solid var(--green); }
+  .feedback-box.bad { background:rgba(192,57,43,.1); border:1px solid rgba(192,57,43,.4); border-left:3px solid var(--accent); }
+  .feedback-box.info { background:rgba(41,128,185,.1); border:1px solid rgba(41,128,185,.4); border-left:3px solid var(--blue); }
+  .feedback-title { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; margin-bottom:4px; }
+  .feedback-text { font-size:13px; line-height:1.5; color:#b0b4c8; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ECG DISPLAY */
+  .ecg-display { background:#000; border:1px solid var(--green); border-radius:2px; padding:10px; display:none; margin-top:12px; position:relative; overflow:hidden; }
+  .ecg-display.show { display:block; animation:fadeIn .3s ease; }
+  .ecg-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .ecg-title { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--green); }
+  .ecg-canvas { width:100%; height:80px; display:block; }
+  .ecg-leads { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:8px; }
+  .ecg-lead { background:rgba(39,174,96,.05); border:1px solid rgba(39,174,96,.2); padding:4px 8px; cursor:pointer; transition:all .2s; border-radius:2px; }
+  .ecg-lead.placed { background:rgba(39,174,96,.15); border-color:var(--green); }
+  .ecg-lead span { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:1px; color:var(--green); display:block; text-align:center; }
+
+  /* SIDEBAR */
+  .sidebar-tabs { display:flex; border-bottom:1px solid var(--border); }
+  .sidebar-tab { flex:1; padding:12px 8px; font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--muted); background:none; border:none; cursor:pointer; transition:all .2s; }
+  .sidebar-tab.active { color:var(--accent); border-bottom:2px solid var(--accent); }
+  .sidebar-content { flex:1; overflow-y:auto; padding:16px; }
+
+  /* TOOLS */
+  .tool-section { margin-bottom:20px; }
+  .tool-section-title { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+  .tools-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .tool-btn { padding:10px 8px; background:var(--card2); border:1px solid var(--border); border-radius:2px; cursor:pointer; transition:all .2s; text-align:center; }
+  .tool-btn:hover { border-color:var(--accent); background:rgba(192,57,43,.05); }
+  .tool-btn.used { border-color:var(--green); background:rgba(39,174,96,.05); opacity:0.7; cursor:default; }
+  .tool-btn.active { border-color:var(--gold); background:rgba(212,168,67,.05); }
+  .tool-icon { font-size:18px; display:block; margin-bottom:4px; }
+  .tool-name { font-family:'Share Tech Mono',monospace; font-size:8px; letter-spacing:1px; color:var(--muted); display:block; line-height:1.3; }
+  .tool-btn:hover .tool-name { color:var(--text); }
+  .tool-btn.used .tool-name { color:var(--green); }
+
+  /* PROCEDURE MODAL */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:300; display:flex; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); display:none; }
+  .modal-overlay.show { display:flex; }
+  .modal-box { background:var(--card); border:1px solid var(--border); border-radius:2px; max-width:560px; width:100%; max-height:85vh; overflow-y:auto; position:relative; }
+  .modal-box::before { content:''; position:absolute; top:0;left:0;right:0;height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+  .modal-header { padding:24px 28px 16px; border-bottom:1px solid var(--border); }
+  .modal-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:3px; }
+  .modal-sub { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; margin-top:4px; }
+  .modal-body { padding:20px 28px; }
+  .modal-close { position:absolute; top:16px; right:16px; background:none; border:1px solid var(--border); color:var(--muted); width:28px; height:28px; border-radius:2px; cursor:pointer; font-size:14px; transition:all .2s; }
+  .modal-close:hover { border-color:var(--accent); color:var(--accent); }
+
+  /* PROCEDURE STEPS */
+  .proc-steps { display:flex; flex-direction:column; gap:10px; }
+  .proc-step { display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--card2); border:1px solid var(--border); border-radius:2px; cursor:pointer; transition:all .2s; }
+  .proc-step:hover:not(.done):not(.locked-step) { border-color:var(--accent); background:rgba(192,57,43,.05); }
+  .proc-step.done { border-color:var(--green); background:rgba(39,174,96,.05); cursor:default; }
+  .proc-step.locked-step { opacity:0.4; cursor:not-allowed; }
+  .proc-step.active-step { border-color:var(--gold); background:rgba(212,168,67,.05); animation:stepPulse 1s ease-in-out infinite; }
+  @keyframes stepPulse { 0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,0)} 50%{box-shadow:0 0 0 4px rgba(212,168,67,.2)} }
+  .step-num { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:14px; border:1px solid var(--border); flex-shrink:0; }
+  .proc-step.done .step-num { background:var(--green); border-color:var(--green); color:white; }
+  .proc-step.active-step .step-num { background:var(--gold); border-color:var(--gold); color:#000; }
+  .step-text { font-size:13px; flex:1; }
+  .step-icon { font-size:18px; }
+  .proc-btn { width:100%; margin-top:16px; padding:12px; background:var(--accent); border:none; color:white; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:3px; border-radius:2px; cursor:pointer; transition:all .2s; }
+  .proc-btn:hover { background:var(--accent2); }
+  .proc-btn:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; }
+
+  /* GAME OVER / WIN */
+  .endscreen { position:fixed; inset:0; z-index:400; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.9); backdrop-filter:blur(8px); display:none; }
+  .endscreen.show { display:flex; }
+  .endscreen-box { background:var(--card); border:1px solid var(--border); border-radius:2px; padding:48px; text-align:center; max-width:500px; position:relative; }
+  .endscreen-icon { font-size:64px; margin-bottom:16px; }
+  .endscreen-title { font-family:'Bebas Neue',sans-serif; font-size:52px; letter-spacing:4px; margin-bottom:8px; }
+  .endscreen-title.win { color:var(--green); text-shadow:0 0 40px rgba(39,174,96,.4); }
+  .endscreen-title.lose { color:var(--accent); text-shadow:0 0 40px rgba(192,57,43,.4); }
+  .endscreen-sub { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:2px; margin-bottom:24px; }
+  .endscreen-stats { display:flex; gap:20px; justify-content:center; margin-bottom:28px; flex-wrap:wrap; }
+  .endscreen-stat { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; }
+  .endscreen-stat span { display:block; font-size:20px; color:var(--text); font-family:'Bebas Neue',sans-serif; letter-spacing:2px; margin-top:2px; }
+  .btn-end { padding:12px 28px; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; border-radius:2px; cursor:pointer; transition:all .2s; border:none; margin:6px; }
+  .btn-retry { background:var(--accent); color:white; }
+  .btn-next-case { background:var(--green); color:white; }
+  .btn-list { background:transparent; border:1px solid var(--border) !important; color:var(--muted); }
+  .btn-list:hover { border-color:var(--text) !important; color:var(--text); }
+
+  /* LOG */
+  .action-log { padding:0; }
+  .log-entry { padding:10px 16px; border-bottom:1px solid var(--border); font-size:12px; display:flex; gap:10px; align-items:flex-start; }
+  .log-time { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--muted); flex-shrink:0; margin-top:1px; }
+  .log-text { color:#b0b4c8; line-height:1.4; }
+  .log-good { border-left:2px solid var(--green); }
+  .log-bad { border-left:2px solid var(--accent); }
+  .log-info { border-left:2px solid var(--blue); }
+
+  /* DEFIBRILLATOR */
+  .defib-display { background:#000; border:1px solid var(--orange); border-radius:2px; padding:12px; margin-top:12px; display:none; }
+  .defib-display.show { display:block; }
+  .defib-joules { font-family:'Bebas Neue',sans-serif; font-size:48px; color:var(--orange); text-align:center; letter-spacing:4px; }
+  .defib-controls { display:flex; gap:8px; margin-top:8px; }
+  .defib-btn { flex:1; padding:10px; font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; border-radius:2px; cursor:pointer; border:none; transition:all .2s; }
+  .defib-charge { background:var(--orange); color:#000; }
+  .defib-shock { background:var(--accent); color:white; }
+  .defib-shock:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; }
+
+  /* GLYCEMIA */
+  .gluco-display { background:var(--card2); border:1px solid var(--border); border-radius:2px; padding:14px; margin-top:10px; display:none; }
+  .gluco-display.show { display:block; }
+  .gluco-value { font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:3px; }
+  .gluco-unit { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--muted); }
+  .gluco-range { font-size:12px; margin-top:4px; }
+
+  /* BLOOD PACK */
+  .blood-options { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .blood-opt { padding:8px 14px; background:rgba(192,57,43,.1); border:1px solid rgba(192,57,43,.3); border-radius:2px; cursor:pointer; font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--accent2); transition:all .2s; }
+  .blood-opt:hover { background:rgba(192,57,43,.2); }
+
+  /* DRUGS */
+  .drug-btn { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--card2); border:1px solid var(--border); border-radius:2px; cursor:pointer; transition:all .2s; margin-bottom:6px; width:100%; text-align:left; }
+  .drug-btn:hover { border-color:var(--purple); background:rgba(142,68,173,.05); }
+  .drug-icon { font-size:20px; }
+  .drug-info { flex:1; }
+  .drug-name { font-size:13px; font-weight:600; }
+  .drug-desc { font-size:11px; color:var(--muted); }
+  .drug-dose { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--purple); margin-top:2px; }
+
+  /* PANSEMENT STEPS */
+  .bandage-steps { display:flex; flex-direction:column; gap:6px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:var(--border); }
+  ::-webkit-scrollbar-thumb { background:var(--muted); border-radius:2px; }
+
+  /* PROGRESS */
+  .objective-panel { background:var(--card); border:1px solid var(--border); border-radius:2px; padding:16px; margin-bottom:16px; }
+  .obj-title { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--muted); margin-bottom:10px; }
+  .obj-item { display:flex; align-items:center; gap:10px; padding:6px 0; font-size:13px; }
+  .obj-check { width:16px; height:16px; border:1px solid var(--border); border-radius:2px; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+  .obj-check.done { background:var(--green); border-color:var(--green); color:white; }
+  .obj-text { color:var(--muted); }
+  .obj-item.done .obj-text { color:var(--text); text-decoration:line-through; text-decoration-color:var(--green); }
+
+  /* IV ACCESS PROCEDURE VISUAL */
+  .iv-visual { background:var(--card2); border:1px solid var(--border); border-radius:2px; padding:16px; margin:12px 0; }
+  .iv-visual-title { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); margin-bottom:10px; }
+  .iv-arm { display:flex; justify-content:center; align-items:center; height:80px; position:relative; }
+  .iv-arm svg { width:100%; max-width:240px; }
+
+  /* URGENCY TIMER */
+  .urgency-timer { background:rgba(192,57,43,.08); border:1px solid rgba(192,57,43,.2); border-radius:2px; padding:8px 14px; display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .ut-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--accent); }
+  .ut-bar { flex:1; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .ut-fill { height:100%; background:var(--accent); border-radius:2px; transition:width 1s linear; }
+  .ut-value { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--accent); }
+
+  /* FILTER */
+  .filter-bar { display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
+  .filter-btn { padding:6px 16px; font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:2px; border-radius:2px; cursor:pointer; border:1px solid var(--border); background:var(--card); color:var(--muted); transition:all .2s; }
+  .filter-btn:hover, .filter-btn.active { color:var(--text); background:var(--card2); border-color:var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="home.html" class="nav-brand">C<span>H</span>L</a>
+  <a href="home.html" class="nav-link">ACCUEIL</a>
+  <a href="cours.html" class="nav-link">COURS</a>
+  <a href="examen.html" class="nav-link">EXAMENS</a>
+  <a href="formation.html" class="nav-link active">FORMATION</a>
+  <div class="lives-display" id="livesDisplay">
+    <span class="life-heart" id="h1">❤️</span>
+    <span class="life-heart" id="h2">❤️</span>
+    <span class="life-heart" id="h3">❤️</span>
+    <span class="life-heart" id="h4">❤️</span>
+    <span class="life-heart" id="h5">❤️</span>
+  </div>
+</nav>
+
+<main>
+  <!-- LIST VIEW -->
+  <div class="view active" id="viewList">
+    <div class="list-container">
+      <div class="page-header">
+        <div class="page-label">SIMULATION MÉDICALE</div>
+        <div class="page-title">CAS CLINIQUES</div>
+        <div class="page-sub">AUX URGENCES — FORMATION INTERACTIVE — 5 VIES DISPONIBLES</div>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterCases('all', this)">TOUS</button>
+        <button class="filter-btn" onclick="filterCases('legere', this)">LÉGÈRES</button>
+        <button class="filter-btn" onclick="filterCases('moyenne', this)">MODÉRÉES</button>
+        <button class="filter-btn" onclick="filterCases('critique', this)">CRITIQUES</button>
+        <button class="filter-btn" onclick="filterCases('cardio', this)">CARDIO</button>
+        <button class="filter-btn" onclick="filterCases('trauma', this)">TRAUMA</button>
+        <button class="filter-btn" onclick="filterCases('metabolique', this)">MÉTABOLIQUE</button>
+      </div>
+      <div class="cases-grid" id="caseGrid"></div>
+    </div>
+  </div>
+
+  <!-- SIMULATION VIEW -->
+  <div class="view" id="viewSim">
+    <div class="sim-layout">
+      <!-- Main Area -->
+      <div class="sim-main">
+        <!-- HUD -->
+        <div class="hud" id="hud">
+          <div class="hud-item">
+            <span class="hud-label">FC</span>
+            <span class="hud-value vital-ok" id="hud-hr">--</span>
+          </div>
+          <div class="hud-sep"></div>
+          <div class="hud-item">
+            <span class="hud-label">TA</span>
+            <span class="hud-value vital-ok" id="hud-bp">--/--</span>
+          </div>
+          <div class="hud-sep"></div>
+          <div class="hud-item">
+            <span class="hud-label">SpO2</span>
+            <span class="hud-value vital-ok" id="hud-spo2">--%</span>
+          </div>
+          <div class="hud-sep"></div>
+          <div class="hud-item">
+            <span class="hud-label">FR</span>
+            <span class="hud-value vital-ok" id="hud-rr">--</span>
+          </div>
+          <div class="hud-sep"></div>
+          <div class="hud-item">
+            <span class="hud-label">TEMP</span>
+            <span class="hud-value vital-ok" id="hud-temp">--</span>
+          </div>
+          <div class="hud-sep"></div>
+          <div class="hud-item">
+            <span class="hud-label">GLYCÉMIE</span>
+            <span class="hud-value vital-ok" id="hud-glucose">--</span>
+          </div>
+        </div>
+        <!-- CONSCIOUSNESS -->
+        <div class="consciousness-bar">
+          <span class="consciousness-label">CONSCIENCE</span>
+          <span class="consciousness-value" id="gcsLevel">--</span>
+          <div class="gcs-bars">
+            <div class="gcs-bar"><div class="gcs-fill" id="gcsFill" style="width:0%;background:var(--green)"></div></div>
+          </div>
+          <span class="hud-label" id="gcsScore">GCS --/15</span>
+        </div>
+
+        <!-- Urgency Timer -->
+        <div style="padding:14px 0 0; display:none" id="timerWrap">
+          <div class="urgency-timer">
+            <span class="ut-label">TEMPS CRITIQUE</span>
+            <div class="ut-bar"><div class="ut-fill" id="utFill" style="width:100%"></div></div>
+            <span class="ut-value" id="utVal">00:00</span>
+          </div>
+        </div>
+
+        <!-- Scenario -->
+        <div class="scenario-header" style="margin-top:20px">
+          <div class="scenario-urgence"><span class="urgence-dot"></span> URGENCES — ARRIVÉE PATIENT</div>
+          <div class="scenario-title" id="simTitle">---</div>
+        </div>
+        <div class="scenario-text" id="simText">---</div>
+
+        <!-- ECG Display (hidden until used) -->
+        <div class="ecg-display" id="ecgDisplay">
+          <div class="ecg-header">
+            <span class="ecg-title">ECG — 12 DÉRIVATIONS</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted)" id="ecgRhythm">TRACÉ EN COURS...</span>
+          </div>
+          <canvas class="ecg-canvas" id="ecgCanvas" width="600" height="80"></canvas>
+          <div class="ecg-leads" id="ecgLeads">
+            <div class="ecg-lead" onclick="placeLead(this,'I')"><span>I</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'II')"><span>II</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'III')"><span>III</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'aVR')"><span>aVR</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'aVL')"><span>aVL</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'aVF')"><span>aVF</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'V1')"><span>V1</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'V2')"><span>V2</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'V3')"><span>V3</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'V4')"><span>V4</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'V5')"><span>V5</span></div>
+            <div class="ecg-lead" onclick="placeLead(this,'V6')"><span>V6</span></div>
+          </div>
+        </div>
+
+        <!-- Defibrillator Display -->
+        <div class="defib-display" id="defibDisplay">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--orange);text-align:center;margin-bottom:4px">DÉFIBRILLATEUR</div>
+          <div class="defib-joules" id="defibJoules">200 J</div>
+          <div class="defib-controls">
+            <button class="defib-btn defib-charge" onclick="changeDefibJoules(-50)">▼ 50J</button>
+            <button class="defib-btn defib-charge" onclick="changeDefibJoules(50)">▲ 50J</button>
+            <button class="defib-btn defib-shock" id="shockBtn" onclick="deliverShock()" disabled>⚡ CHOC</button>
+          </div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);text-align:center;margin-top:6px" id="defibStatus">POSITIONNER LES ÉLECTRODES</div>
+        </div>
+
+        <!-- Glycemia Display -->
+        <div class="gluco-display" id="glucoDisplay">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px">GLUCOMÈTRE</div>
+          <div class="gluco-value" id="glucoVal" style="color:var(--green)">--</div>
+          <div class="gluco-unit">mg/dL</div>
+          <div class="gluco-range" id="glucoRange"></div>
+        </div>
+
+        <!-- Body Diagram -->
+        <div class="body-section">
+          <div class="body-section-title">BILAN LÉSIONNEL</div>
+          <div class="body-diagram-wrap">
+            <div class="body-svg-container">
+              <svg viewBox="0 0 100 250" xmlns="http://www.w3.org/2000/svg" id="bodySvg">
+                <!-- Head -->
+                <ellipse cx="50" cy="18" rx="16" ry="18" fill="#1a2230" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="tête" onclick="showZoneInfo('tête')" id="zone-head"/>
+                <!-- Neck -->
+                <rect x="44" y="35" width="12" height="10" rx="2" fill="#1a2230" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="cou" onclick="showZoneInfo('cou')" id="zone-neck"/>
+                <!-- Torso -->
+                <rect x="26" y="44" width="48" height="72" rx="4" fill="#1a2230" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="thorax" onclick="showZoneInfo('thorax')" id="zone-thorax"/>
+                <!-- Abdomen -->
+                <rect x="28" y="115" width="44" height="40" rx="3" fill="#161e2a" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="abdomen" onclick="showZoneInfo('abdomen')" id="zone-abdomen"/>
+                <!-- Left arm -->
+                <rect x="4" y="44" width="20" height="70" rx="6" fill="#1a2230" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="bras gauche" onclick="showZoneInfo('bras gauche')" id="zone-larm"/>
+                <!-- Right arm -->
+                <rect x="76" y="44" width="20" height="70" rx="6" fill="#1a2230" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="bras droit" onclick="showZoneInfo('bras droit')" id="zone-rarm"/>
+                <!-- Left forearm -->
+                <rect x="2" y="116" width="18" height="50" rx="5" fill="#161e2a" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="avant-bras gauche" onclick="showZoneInfo('avant-bras gauche')" id="zone-lforearm"/>
+                <!-- Right forearm -->
+                <rect x="80" y="116" width="18" height="50" rx="5" fill="#161e2a" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="avant-bras droit" onclick="showZoneInfo('avant-bras droit')" id="zone-rforearm"/>
+                <!-- Pelvis -->
+                <rect x="26" y="154" width="48" height="24" rx="3" fill="#1a2230" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="bassin" onclick="showZoneInfo('bassin')" id="zone-pelvis"/>
+                <!-- Left thigh -->
+                <rect x="26" y="178" width="20" height="42" rx="5" fill="#1a2230" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="cuisse gauche" onclick="showZoneInfo('cuisse gauche')" id="zone-lthigh"/>
+                <!-- Right thigh -->
+                <rect x="54" y="178" width="20" height="42" rx="5" fill="#1a2230" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="cuisse droite" onclick="showZoneInfo('cuisse droite')" id="zone-rthigh"/>
+                <!-- Left leg -->
+                <rect x="27" y="220" width="18" height="30" rx="4" fill="#161e2a" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="jambe gauche" onclick="showZoneInfo('jambe gauche')" id="zone-lleg"/>
+                <!-- Right leg -->
+                <rect x="55" y="220" width="18" height="30" rx="4" fill="#161e2a" stroke="#2e3a4a" stroke-width="1.5" class="body-zone" data-zone="jambe droite" onclick="showZoneInfo('jambe droite')" id="zone-rleg"/>
+                <!-- Heart indicator -->
+                <text x="48" y="68" font-size="8" fill="#c0392b" text-anchor="middle" id="heartIndicator" style="display:none">♥</text>
+                <!-- Labels -->
+                <text x="50" y="74" font-size="5" fill="#2e3a4a" text-anchor="middle">THORAX</text>
+                <text x="50" y="140" font-size="5" fill="#2e3a4a" text-anchor="middle">ABDOMEN</text>
+              </svg>
+            </div>
+            <div class="body-injuries" id="bodyInjuries">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">Cliquez sur une zone du corps pour l'examiner</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback -->
+        <div class="feedback-box" id="feedbackBox">
+          <div class="feedback-title" id="feedbackTitle"></div>
+          <div class="feedback-text" id="feedbackText"></div>
+        </div>
+
+        <!-- Objectives -->
+        <div class="objective-panel" style="margin-top:20px" id="objectivePanel">
+          <div class="obj-title">OBJECTIFS DU CAS</div>
+          <div id="objectiveList"></div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sim-sidebar">
+        <div class="sidebar-tabs">
+          <button class="sidebar-tab active" onclick="switchTab('tools',this)">MATÉRIEL</button>
+          <button class="sidebar-tab" onclick="switchTab('meds',this)">MÉDICAMENTS</button>
+          <button class="sidebar-tab" onclick="switchTab('log',this)">JOURNAL</button>
+        </div>
+        <div class="sidebar-content" id="tabTools">
+          <!-- Dynamic tools loaded here -->
+        </div>
+        <div class="sidebar-content" id="tabMeds" style="display:none">
+          <!-- Dynamic meds loaded here -->
+        </div>
+        <div class="sidebar-content action-log" id="tabLog" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- PROCEDURE MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">PROCÉDURE</div>
+      <div class="modal-sub" id="modalSub">SUIVRE LES ÉTAPES DANS L'ORDRE</div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ENDSCREEN -->
+<div class="endscreen" id="endScreen">
+  <div class="endscreen-box">
+    <div class="endscreen-icon" id="endIcon">🏥</div>
+    <div class="endscreen-title" id="endTitle">--</div>
+    <div class="endscreen-sub" id="endSub">--</div>
+    <div class="endscreen-stats" id="endStats"></div>
+    <div>
+      <button class="btn-end btn-retry" onclick="retryCase()">↺ RECOMMENCER</button>
+      <button class="btn-end btn-next-case" onclick="nextCase()" id="btnNextCase">→ CAS SUIVANT</button>
+      <button class="btn-end btn-list" onclick="showList()">☰ LISTE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================== DATA ==================
+const CASES = [
+  // ---- LÉGÈRES ----
+  {
+    id:'c001', severity:'legere', category:'trauma',
+    title:'Chute de vélo — Abrasions multiples',
+    scenario:'On vous ramène un homme de 34 ans, casqué, chute de vélo à basse vitesse. Conscient, légèrement agité. Se plaint de douleurs au genou droit et à l\'avant-bras gauche. Pas de perte de connaissance.',
+    vitals:{ hr:88, bp:'118/76', spo2:98, rr:16, temp:36.8, glucose:92 },
+    gcs:15, gcsParts:{E:4,V:5,M:6},
+    injuries:[ {zone:'avant-bras gauche', type:'Abrasion', severity:'legere'}, {zone:'jambe droite', type:'Abrasion', severity:'legere'} ],
+    objectives:['Nettoyer et désinfecter les plaies','Poser un pansement de terrain sur chaque blessure','Évaluer le niveau de douleur','Prendre les constantes'],
+    requiredActions:['pansement_terrain_larm', 'pansement_terrain_rleg'],
+    tags:['abrasion','trauma mineur'],
+    criticalTimer: false,
+    hint:'Commencez par une évaluation complète, puis soignez les plaies avec un pansement de terrain.',
+    solution:'Les abrasions légères nécessitent un nettoyage et un pansement de terrain. Pas d\'accès IV requis.'
+  },
+  {
+    id:'c002', severity:'legere', category:'trauma',
+    title:'Contusion au poignet — Chute simple',
+    scenario:'Femme de 52 ans, chute dans l\'escalier. Poignet droit douloureux et légèrement gonflé. Pas de plaie ouverte. Elle marche seule. Alerte et orientée.',
+    vitals:{ hr:82, bp:'130/82', spo2:99, rr:14, temp:36.6, glucose:105 },
+    gcs:15, gcsParts:{E:4,V:5,M:6},
+    injuries:[ {zone:'avant-bras droit', type:'Contusion', severity:'legere'} ],
+    objectives:['Poser un coldpack sur le poignet','Mettre une bande élastique de soutien','Prendre les constantes'],
+    requiredActions:['coldpack', 'bande_elastique'],
+    tags:['contusion','chute'],
+    criticalTimer: false,
+    hint:'Application locale de froid et immobilisation par bande élastique.',
+    solution:'La contusion du poignet est traitée par RICE : Rest, Ice, Compression, Élévation.'
+  },
+  {
+    id:'c003', severity:'legere', category:'metabolique',
+    title:'Hypoglycémie légère — Diabétique type 2',
+    scenario:'Homme de 61 ans, diabétique type 2 connu, un peu confus, tremble légèrement. Sa femme dit qu\'il n\'a pas mangé depuis ce matin. Conscient, répond aux questions.',
+    vitals:{ hr:96, bp:'108/70', spo2:98, rr:16, temp:36.9, glucose:52 },
+    gcs:14, gcsParts:{E:4,V:4,M:6},
+    injuries:[],
+    objectives:['Mesurer la glycémie','Administrer du glucagon ou resucrage oral','Surveiller et re-mesurer la glycémie'],
+    requiredActions:['glycemie', 'glucagon'],
+    tags:['hypoglycémie','diabète'],
+    criticalTimer: false,
+    hint:'Commencez par vérifier la glycémie. La valeur sera déterminante pour le traitement.',
+    solution:'Glycémie < 70 mg/dL → administration de glucagon ou resucrage oral si patient conscient et coopératif.'
+  },
+  {
+    id:'c004', severity:'legere', category:'trauma',
+    title:'Lacération du cuir chevelu',
+    scenario:'Garçon de 18 ans, bagarre. Lacération de 4 cm au niveau temporal gauche. Saigne modérément. Conscient, un peu agité. Pas de perte de connaissance.',
+    vitals:{ hr:92, bp:'122/78', spo2:99, rr:17, temp:36.7, glucose:88 },
+    gcs:15, gcsParts:{E:4,V:5,M:6},
+    injuries:[ {zone:'tête', type:'Lacération', severity:'legere'} ],
+    objectives:['Appliquer compression sur la plaie','Poser un pansement hémostatique','Évaluer neurologie'],
+    requiredActions:['pansement_hemosta'],
+    tags:['lacération','scalp'],
+    criticalTimer: false,
+    hint:'Les lacérations du cuir chevelu saignent beaucoup mais sont rarement graves. Compression d\'abord.',
+    solution:'Compression directe puis pansement hémostatique. Le cuir chevelu est très vascularisé.'
+  },
+  {
+    id:'c005', severity:'legere', category:'trauma',
+    title:'Entorse de cheville — Douleur EVA 4/10',
+    scenario:'Jeune femme de 22 ans, torsion de la cheville droite lors d\'un match de handball. Marche avec difficulté. Cheville légèrement œdématiée. Pas de déformation visible.',
+    vitals:{ hr:78, bp:'116/74', spo2:99, rr:14, temp:36.5, glucose:95 },
+    gcs:15, gcsParts:{E:4,V:5,M:6},
+    injuries:[ {zone:'jambe droite', type:'Contusion', severity:'legere'} ],
+    objectives:['Appliquer coldpack','Poser une bande élastique','Évaluer mobilité'],
+    requiredActions:['coldpack', 'bande_elastique'],
+    tags:['entorse','sport'],
+    criticalTimer: false,
+    hint:'RICE : Repos, Glace, Compression, Élévation.',
+    solution:'Entorse légère → gestion symptomatique : froid, compression, élévation.'
+  },
+
+  // ---- MOYENNES ----
+  {
+    id:'c006', severity:'moyenne', category:'trauma',
+    title:'Lacération profonde — Blessure par couteau',
+    scenario:'Homme de 28 ans, blessure pénétrante à l\'avant-bras droit suite à un accident de cuisine. Plaie de 6 cm, saignement actif modéré. Il est pâle, un peu anxieux. PA légèrement basse.',
+    vitals:{ hr:108, bp:'100/68', spo2:97, rr:20, temp:36.4, glucose:90 },
+    gcs:15, gcsParts:{E:4,V:5,M:6},
+    injuries:[ {zone:'avant-bras droit', type:'Blessure pénétrante', severity:'moyenne'}, {zone:'avant-bras droit', type:'Saignement actif', severity:'moyenne'} ],
+    objectives:['Poser un accès IV','Poser pansement compressif','Administrer morphine si douleur > 6','Prise de sang + bilan'],
+    requiredActions:['acces_iv', 'pansement_compressif'],
+    tags:['lacération','saignement'],
+    criticalTimer: false,
+    hint:'Priorité : stopper le saignement avec un pansement compressif, puis établir un accès IV.',
+    solution:'Pansement compressif direct. Accès IV pour analgésie et perfusion si nécessaire. Surveiller TA.'
+  },
+  {
+    id:'c007', severity:'moyenne', category:'trauma',
+    title:'Fracture ouverte du tibia',
+    scenario:'Homme de 45 ans, accident de moto. Fracture ouverte du tibia gauche, os visible. Saignement actif. Patient conscient mais en état de choc douloureux. TA basse.',
+    vitals:{ hr:118, bp:'94/60', spo2:96, rr:22, temp:36.2, glucose:112 },
+    gcs:14, gcsParts:{E:4,V:4,M:6},
+    injuries:[ {zone:'jambe gauche', type:'Blessure pénétrante', severity:'critique'}, {zone:'jambe gauche', type:'Saignement actif', severity:'moyenne'} ],
+    objectives:['Accès IV urgent','Pansement hémostatique','Poche de sang 500mL','Morphine IV pour douleur','Immobiliser le membre'],
+    requiredActions:['acces_iv', 'pansement_hemosta', 'poche_500'],
+    tags:['fracture','polytraumatisme'],
+    criticalTimer: true, criticalSecs: 300,
+    hint:'Fracture ouverte : risque hémorragique important. Accès IV puis pansement hémostatique en priorité.',
+    solution:'Contrôle hémorragique d\'abord, puis accès vasculaire, analgésie puissante et expansion volémique.'
+  },
+  {
+    id:'c008', severity:'moyenne', category:'cardio',
+    title:'Arythmie — Tachycardie supra-ventriculaire',
+    scenario:'Femme de 38 ans, palpitations depuis 30 min, légère dyspnée. PA correcte. Elle est anxieuse. Pas d\'antécédents cardiaques connus. ECG urgent demandé.',
+    vitals:{ hr:168, bp:'112/72', spo2:97, rr:20, temp:36.8, glucose:94 },
+    gcs:15, gcsParts:{E:4,V:5,M:6},
+    injuries:[ {zone:'thorax', type:'Contusion', severity:'legere'} ],
+    objectives:['Réaliser un ECG complet (12 dérivations)','Accès IV','Surveiller constantes','Identifier le rythme'],
+    requiredActions:['ecg', 'acces_iv'],
+    tags:['arythmie','cardio','TSV'],
+    criticalTimer: false,
+    hint:'ECG en urgence pour identifier le rythme. Toutes les dérivations sont nécessaires.',
+    solution:'TSV → Manœuvres vagales d\'abord, puis adénosine IV si besoin. L\'ECG confirme le diagnostic.'
+  },
+  {
+    id:'c009', severity:'moyenne', category:'metabolique',
+    title:'Hyperglycémie — Décompensation diabétique',
+    scenario:'Homme de 55 ans, diabétique type 1, retrouvé confus à son domicile. Soif intense, urines abondantes signalées. Haleine fruitée. GCS diminué.',
+    vitals:{ hr:102, bp:'108/66', spo2:97, rr:22, temp:37.2, glucose:480 },
+    gcs:12, gcsParts:{E:3,V:4,M:5},
+    injuries:[],
+    objectives:['Mesurer la glycémie','Accès IV urgent','Insuline IV','Réhydratation (poche NaCl)','Surveiller glycémie toutes 30 min'],
+    requiredActions:['glycemie', 'acces_iv', 'insuline'],
+    tags:['hyperglycémie','diabète','acidocétose'],
+    criticalTimer: true, criticalSecs: 360,
+    hint:'Glycémie > 300 mg/dL avec troubles de conscience = urgence métabolique.',
+    solution:'Réhydratation IV + insulinothérapie intraveineuse progressive. Surveiller K+ et glycémie régulièrement.'
+  },
+  {
+    id:'c010', severity:'moyenne', category:'trauma',
+    title:'Crush Syndrome — Membre coincé',
+    scenario:'Ouvrier de 33 ans, membre inférieur droit coincé sous une poutre pendant 2h. Libéré. Douleur intense, membre œdématié. Risque de rhabdomyolyse.',
+    vitals:{ hr:112, bp:'96/62', spo2:96, rr:20, temp:36.6, glucose:98 },
+    gcs:14, gcsParts:{E:4,V:4,M:6},
+    injuries:[ {zone:'cuisse droite', type:'Ecrasement (crush syndrome)', severity:'critique'}, {zone:'jambe droite', type:'Ecrasement (crush syndrome)', severity:'critique'} ],
+    objectives:['Accès IO ou IV d\'urgence','Expansion volémique massive (1000mL)','Surveiller diurèse','ECG (risque hyperkaliémie)','Analgésie IV'],
+    requiredActions:['acces_io', 'poche_1000', 'ecg'],
+    tags:['crush','rhabdomyolyse','trauma'],
+    criticalTimer: true, criticalSecs: 420,
+    hint:'Le crush syndrome libère de la myoglobine. Alcalinisation urinaire et hyperhydratation sont clés.',
+    solution:'Accès IO si IV impossible. Expansion volémique agressive pour diluer la myoglobine et protéger les reins.'
+  },
+  {
+    id:'c011', severity:'moyenne', category:'trauma',
+    title:'Traumatisme cranien léger à modéré',
+    scenario:'Cycliste de 29 ans, choc crânien malgré le casque. Perte de connaissance brève (< 1 min). Maintenant conscient mais confus, céphalées intenses. Vomissement.',
+    vitals:{ hr:68, bp:'148/88', spo2:98, rr:14, temp:36.9, glucose:102 },
+    gcs:13, gcsParts:{E:4,V:3,M:6},
+    injuries:[ {zone:'tête', type:'Contusion', severity:'moyenne'} ],
+    objectives:['Évaluer GCS complet','ECG (bradycardie de Cushing)','Accès IV','Surveiller pupilles','Glucomètre'],
+    requiredActions:['glycemie', 'ecg', 'acces_iv'],
+    tags:['TCE','neurologie'],
+    criticalTimer: false,
+    hint:'GCS < 15 après TC = surveillance neurologique obligatoire. Attention à la triade de Cushing (HTA + bradycardie + respiration irrégulière).',
+    solution:'TCE modéré : surveillance neurologique rapprochée, scanner cérébral urgent, pas de sédation sans intubation.'
+  },
+
+  // ---- CRITIQUES ----
+  {
+    id:'c012', severity:'critique', category:'cardio',
+    title:'Arrêt Cardiaque — Asystolie',
+    scenario:'URGENCE ABSOLUE. Homme de 58 ans, retrouvé inconscient dans la rue. Aucun pouls palpable. Apnée. Témoins ont commencé un MCE basique.',
+    vitals:{ hr:0, bp:'0/0', spo2:0, rr:0, temp:35.8, glucose:88 },
+    gcs:3, gcsParts:{E:1,V:1,M:1},
+    injuries:[ {zone:'thorax', type:'Asystolie', severity:'critique'} ],
+    objectives:['Défibrillateur immédiat (analyser le rythme)','ECG en urgence','Accès IV ou IO','Épinéphrine 1mg IV toutes 3-5 min','Poursuivre MCE'],
+    requiredActions:['defib', 'acces_iv', 'epinephrine'],
+    tags:['ACR','asystolie','réanimation'],
+    criticalTimer: true, criticalSecs: 180,
+    hint:'ACLS : MCE + Défibrillateur + Épinéphrine. Chaque minute sans RCP diminue les chances de 10%.',
+    solution:'FV/TV sans pouls → choc électrique. Asystolie/AESP → épinéphrine 1mg IV/IO toutes 3-5 min + MCE continu.'
+  },
+  {
+    id:'c013', severity:'critique', category:'trauma',
+    title:'Traumatisme balistique — Blessure par balle thoracique',
+    scenario:'Homme de 26 ans, blessure par balle dans le thorax gauche. Entré conscient mais GCS baisse rapidement. Cyanose, trachée déviée à droite. SpO2 chute.',
+    vitals:{ hr:136, bp:'78/40', spo2:82, rr:30, temp:36.0, glucose:95 },
+    gcs:10, gcsParts:{E:3,V:3,M:4},
+    injuries:[ {zone:'thorax', type:'Traumatisme par balle', severity:'critique'}, {zone:'thorax', type:'Saignement actif', severity:'critique'} ],
+    objectives:['Accès IO immédiat','Pansement hémostatique thoracique','ECG','Poche de sang 1000mL','Épinéphrine si décompensation'],
+    requiredActions:['acces_io', 'pansement_hemosta', 'poche_1000'],
+    tags:['trauma balistique','pneumothorax','choc'],
+    criticalTimer: true, criticalSecs: 150,
+    hint:'Suspicion de pneumothorax sous tension : trachée déviée, cyanose, détresse respiratoire. Traitement immédiat.',
+    solution:'Pneumothorax sous tension → exsufflation à l\'aiguille en urgence. Contrôle hémorragique et expansion volémique.'
+  },
+  {
+    id:'c014', severity:'critique', category:'cardio',
+    title:'Fibrillation Ventriculaire — Choc électrique',
+    scenario:'Femme de 64 ans, douleur thoracique depuis 1h, s\'effondre aux urgences. Passage en FV documenté au scope. Patient inconsciente.',
+    vitals:{ hr:0, bp:'0/0', spo2:0, rr:0, temp:36.3, glucose:110 },
+    gcs:3, gcsParts:{E:1,V:1,M:1},
+    injuries:[ {zone:'thorax', type:'Asystolie', severity:'critique'} ],
+    objectives:['ECG immédiat','Défibrillation 200J puis escalade','Accès IV','Épinéphrine 1mg','Amiodarone si résistante'],
+    requiredActions:['ecg', 'defib', 'acces_iv', 'epinephrine'],
+    tags:['FV','défibrillation','ACR'],
+    criticalTimer: true, criticalSecs: 120,
+    hint:'FV = choc électrique IMMÉDIAT. Pas d\'épinéphrine avant le premier choc !',
+    solution:'FV → choc 200J → RCP 2 min → réévaluer. Si FV persiste : choc 200J + épinéphrine + amiodarone.'
+  },
+  {
+    id:'c015', severity:'critique', category:'trauma',
+    title:'Polytraumatisme — Accident de la route',
+    scenario:'Conducteur 40 ans, AVP frontal à haute vitesse. Multiples blessures. Inconscient à l\'arrivée, décérébrés. Hémorragie extériorisée côté droit. PA effondrée.',
+    vitals:{ hr:148, bp:'60/30', spo2:78, rr:6, temp:35.2, glucose:88 },
+    gcs:5, gcsParts:{E:1,V:1,M:3},
+    injuries:[
+      {zone:'tête', type:'Contusion', severity:'critique'},
+      {zone:'thorax', type:'Traumatisme par balle', severity:'critique'},
+      {zone:'cuisse droite', type:'Saignement actif', severity:'critique'},
+      {zone:'bassin', type:'Ecrasement (crush syndrome)', severity:'critique'}
+    ],
+    objectives:['Accès IO bilatéral en urgence','Épinéphrine','2 poches de sang 1000mL','ECG','Pansements hémostatiques multiples'],
+    requiredActions:['acces_io', 'epinephrine', 'poche_1000', 'pansement_hemosta'],
+    tags:['polytraumatisme','choc hémorragique'],
+    criticalTimer: true, criticalSecs: 120,
+    hint:'ABCDE : Airway, Breathing, Circulation, Disability, Exposure. Tout simultanément !',
+    solution:'Choc hémorragique classe IV → contrôle hémorragique chirurgical. Accès vasculaire, remplissage, vasopresseurs.'
+  },
+  {
+    id:'c016', severity:'critique', category:'metabolique',
+    title:'Coma hypoglycémique — Insuline surdosée',
+    scenario:'Femme de 72 ans, diabétique type 1, trouvée inconsciente chez elle. Son mari dit qu\'elle a peut-être fait une erreur de dosage d\'insuline. GCS très bas.',
+    vitals:{ hr:118, bp:'90/58', spo2:95, rr:18, temp:36.0, glucose:18 },
+    gcs:6, gcsParts:{E:1,V:2,M:3},
+    injuries:[],
+    objectives:['Glycémie urgente','Accès IV immédiat','Glucagon IV ou IM','Poche glucose 500mL','Réévaluer glycémie à 15 min'],
+    requiredActions:['glycemie', 'acces_iv', 'glucagon'],
+    tags:['coma','hypoglycémie','insuline'],
+    criticalTimer: true, criticalSecs: 180,
+    hint:'Glycémie < 40 → administration IV de glucose ou glucagon IM sans délai. Chaque minute compte !',
+    solution:'Glucagon 1mg IM/SC si IV impossible. Glucose 30% IV si accès disponible. Objectif : glycémie > 80 mg/dL.'
+  },
+  {
+    id:'c017', severity:'critique', category:'trauma',
+    title:'Amputation traumatique — Explosion industrielle',
+    scenario:'Homme de 31 ans, explosion en usine. Amputation traumatique partielle du membre inférieur droit au niveau de la cuisse. Hémorragie massive. Patient en état de choc.',
+    vitals:{ hr:152, bp:'56/28', spo2:84, rr:28, temp:34.8, glucose:140 },
+    gcs:8, gcsParts:{E:2,V:2,M:4},
+    injuries:[ {zone:'cuisse droite', type:'Traumatisme par balle', severity:'critique'}, {zone:'cuisse droite', type:'Saignement actif', severity:'critique'} ],
+    objectives:['Garrot d\'urgence (accès IO si IV impossible)','Accès IO','Pansement hémostatique','2× Poche de sang 1000mL','Épinéphrine si choc'],
+    requiredActions:['acces_io', 'pansement_hemosta', 'poche_1000', 'epinephrine'],
+    tags:['amputation','choc hémorragique','trauma majeur'],
+    criticalTimer: true, criticalSecs: 90,
+    hint:'Hémorragie catastrophique → contrôle immédiat. MARCH : Massive hemorrhage, Airway, Respiration, Circulation, Hypothermia.',
+    solution:'Garrot tourniquet proximal + pansement hémostatique. Accès IO si IV impossible. Transfusion précoce.'
+  },
+  {
+    id:'c018', severity:'critique', category:'cardio',
+    title:'État de Mal Épileptique — Convulsions prolongées',
+    scenario:'Femme de 44 ans, convulsions depuis 15 min, pas d\'antécédent épileptique connu. Inconsciente entre les crises. Cyanose. Position latérale de sécurité non possible.',
+    vitals:{ hr:138, bp:'166/98', spo2:88, rr:24, temp:38.4, glucose:142 },
+    gcs:7, gcsParts:{E:1,V:2,M:4},
+    injuries:[ {zone:'tête', type:'Contusion', severity:'moyenne'} ],
+    objectives:['Accès IV urgent','Glycémie','ECG','Propofol pour sédation','Surveiller SpO2'],
+    requiredActions:['acces_iv', 'glycemie', 'propofol_100'],
+    tags:['épilepsie','convulsions','neurologie'],
+    criticalTimer: true, criticalSecs: 240,
+    hint:'État de mal épileptique > 5 min = urgence. Benzo IV en première ligne, puis propofol si résistant.',
+    solution:'Benzodiazépine IV en premier. Si échec → propofol pour sédation et intubation pour protection des voies aériennes.'
+  },
+  {
+    id:'c019', severity:'critique', category:'trauma',
+    title:'Brûlures étendues — Incendie',
+    scenario:'Homme de 50 ans, retiré d\'un incendie. Brûlures du 2e et 3e degré sur 40% de la surface corporelle. Voix rauque (brûlures des voies aériennes). Très agité.',
+    vitals:{ hr:128, bp:'88/52', spo2:91, rr:26, temp:34.5, glucose:168 },
+    gcs:11, gcsParts:{E:3,V:3,M:5},
+    injuries:[ {zone:'thorax', type:'Blessure pénétrante', severity:'critique'}, {zone:'bras gauche', type:'Contusion', severity:'critique'} ],
+    objectives:['Accès IV 2 voies','Poche de sang 1000mL (réanimation de Parkland)','Pansement de terrain sur brûlures','Morphine IV','Sécuriser les voies aériennes'],
+    requiredActions:['acces_iv', 'poche_1000', 'morphine'],
+    tags:['brûlures','choc','inhalation'],
+    criticalTimer: true, criticalSecs: 180,
+    hint:'Brûlures > 20% = choc brûlé. Formule de Parkland : 4mL × %SCB × poids(kg) en 24h.',
+    solution:'Réanimation volémique agressive selon Parkland. Attention voies aériennes → intubation précoce si stridor.'
+  },
+  {
+    id:'c020', severity:'critique', category:'cardio',
+    title:'Choc anaphylactique — Réaction allergique sévère',
+    scenario:'Jeune femme de 19 ans, piqûre de guêpe. Urticaire généralisée, œdème de Quincke, dyspnée sévère, PA effondrée. Arrive en ambulance intubée par les SMUR.',
+    vitals:{ hr:142, bp:'54/22', spo2:87, rr:0, temp:36.2, glucose:98 },
+    gcs:8, gcsParts:{E:2,V:2,M:4},
+    injuries:[ {zone:'cou', type:'Contusion', severity:'critique'} ],
+    objectives:['Épinéphrine 0.5mg IM IMMÉDIAT','Accès IV','Propofol si agitation','ECG','Poche de sang ou soluté 500mL'],
+    requiredActions:['epinephrine', 'acces_iv'],
+    tags:['anaphylaxie','allergie','choc'],
+    criticalTimer: true, criticalSecs: 90,
+    hint:'Épinéphrine IM en URGENCE ABSOLUE. C\'est le seul traitement qui peut sauver la vie en anaphylaxie.',
+    solution:'Épinéphrine 0.3-0.5mg IM face antérolatérale de la cuisse. Répéter toutes 5 min si pas d\'amélioration.'
+  },
+
+  // ---- SUPPLÉMENT DE CAS POUR ATTEINDRE 100+ ----
+  {id:'c021',severity:'legere',category:'trauma',title:'Coupure superficielle au doigt',scenario:'Cuisinière de 35 ans, coupure au couteau sur l\'index droit. Saignement faible, plaie propre de 2 cm. Consciente, calme.',vitals:{hr:74,bp:'120/78',spo2:99,rr:14,temp:36.6,glucose:95},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'avant-bras droit',type:'Coupure',severity:'legere'}],objectives:['Comprimer la plaie','Désinfecter','Pansement de terrain'],requiredActions:['pansement_terrain_rarm'],tags:['coupure','mineure'],criticalTimer:false,hint:'Compression directe puis désinfection.',solution:'Coupure superficielle : nettoyage, désinfection, pansement occlusif.'},
+  {id:'c022',severity:'legere',category:'trauma',title:'Épistaxis — Saignement de nez',scenario:'Enfant de 10 ans, chute en jouant, saignement de nez persistant depuis 5 min. Anxieux. Pas de traumatisme crânien associé.',vitals:{hr:95,bp:'106/66',spo2:99,rr:18,temp:36.7,glucose:98},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'tête',type:'Saignement actif',severity:'legere'}],objectives:['Comprimer les narines','Pansement compressif nasal','Rassurer le patient'],requiredActions:['pansement_compressif'],tags:['épistaxis','ORL'],criticalTimer:false,hint:'Compression bidigitale de l\'aile du nez pendant 10 min, tête penchée en avant.',solution:'Épistaxis simple : compression + mouchage doux. Ne jamais pencher la tête en arrière.'},
+  {id:'c023',severity:'legere',category:'metabolique',title:'Malaise vagal — Syncope simple',scenario:'Étudiante de 20 ans, syncope brève en cours magistral. Reprise de conscience spontanée avant l\'arrivée. Légère nausée. Pas de traumatisme à la chute.',vitals:{hr:58,bp:'100/60',spo2:99,rr:14,temp:36.5,glucose:88},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[],objectives:['Glycémie','Décubitus dorsal jambes élevées','Surveillance constantes'],requiredActions:['glycemie'],tags:['syncope','vagal'],criticalTimer:false,hint:'Malaise vagal : décubitus dorsal + jambes relevées. Vérifier glycémie et ECG.',solution:'Malaise vagal bénin : position allongée, jambes élevées, surveiller PA et FC.'},
+  {id:'c024',severity:'legere',category:'trauma',title:'Morsure de chien — Plaie punctiforme',scenario:'Homme de 42 ans, morsure de chien à l\'avant-bras gauche. 2 punctures profondes. Saignement modéré. Dernière vaccination antitétanique inconnue.',vitals:{hr:84,bp:'126/80',spo2:99,rr:15,temp:36.8,glucose:92},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'avant-bras gauche',type:'Blessure pénétrante',severity:'legere'}],objectives:['Nettoyer abondamment','Pansement de terrain','Évaluer risque infectieux'],requiredActions:['pansement_terrain_larm'],tags:['morsure','infection'],criticalTimer:false,hint:'Morsure profonde : nettoyage abondant à l\'eau savonneuse, puis antiseptique.',solution:'Morsure animale : lavage prolongé + antiseptique + prophylaxie antitétanique et antirabique si indiqué.'},
+  {id:'c025',severity:'legere',category:'trauma',title:'Brûlure thermique du 1er degré',scenario:'Femme de 29 ans, brûlure par eau bouillante sur la main droite. Surface < 5%. Rougeur sans phlyctène. EVA 5/10.',vitals:{hr:88,bp:'118/74',spo2:99,rr:16,temp:36.6,glucose:90},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'avant-bras droit',type:'Contusion',severity:'legere'}],objectives:['Refroidir immédiatement (coldpack)','Pansement de terrain','Antalgie'],requiredActions:['coldpack','pansement_terrain_rarm'],tags:['brûlure','main'],criticalTimer:false,hint:'Refroidissement immédiat à l\'eau courante froide pendant 15 min minimum.',solution:'Brûlure 1er degré : eau froide courante 15 min, pas de glace directe, pansement gras.'},
+  {id:'c026',severity:'moyenne',category:'cardio',title:'Douleur thoracique — Suspicion SCA',scenario:'Homme de 62 ans, douleur thoracique constrictive irradiant dans le bras gauche depuis 45 min. Sueurs froides. Antécédent coronarien.',vitals:{hr:94,bp:'158/96',spo2:96,rr:20,temp:36.7,glucose:118},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'thorax',type:'Contusion',severity:'moyenne'}],objectives:['ECG 12 dérivations URGENT','Accès IV','Glycémie','Asprine + Morphine IV'],requiredActions:['ecg','acces_iv','morphine'],tags:['SCA','infarctus','cardio'],criticalTimer:false,hint:'Toute douleur thoracique chez un coronarien = ECG immédiat. Rechercher sus-décalage ST.',solution:'SCA : ECG + bilan biologique + asprine 250mg + héparine + coronarographie si sus-ST.'},
+  {id:'c027',severity:'moyenne',category:'trauma',title:'Contusion abdominale — Choc sport',scenario:'Joueur de rugby de 24 ans, coup direct à l\'abdomen. Douleur diffuse, abdomen en planche. Nausées. TA légèrement basse.',vitals:{hr:106,bp:'102/64',spo2:97,rr:20,temp:36.5,glucose:96},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'abdomen',type:'Contusion',severity:'moyenne'}],objectives:['Accès IV','ECG','Morphine IV','Bilan chirurgical urgent'],requiredActions:['acces_iv','morphine','ecg'],tags:['trauma abdominal','chirurgie'],criticalTimer:false,hint:'Abdomen en planche = urgence chirurgicale. Pas d\'antalgie orale, IV uniquement.',solution:'Traumatisme abdominal fermé : bilan scanner, analgésie IV, bilan chirurgical. Risque de rupture splénique.'},
+  {id:'c028',severity:'moyenne',category:'trauma',title:'Traumatisme dentaire et facial',scenario:'Femme de 33 ans, AVP vélo, traumatisme facial. Dents cassées, lèvres lacérées, épistaxis bilatérale. Consciente, très agitée.',vitals:{hr:98,bp:'128/82',spo2:97,rr:18,temp:36.8,glucose:94},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'tête',type:'Lacération',severity:'moyenne'}],objectives:['Pansement compressif facial','Désinfecter les plaies','Glycémie','Évaluer voies aériennes'],requiredActions:['pansement_compressif','glycemie'],tags:['trauma facial','AVP'],criticalTimer:false,hint:'Trauma facial : attention aux voies aériennes en premier.',solution:'Trauma facial : sécuriser les voies aériennes, contrôle hémorragique, prévenir l\'inhalation de sang.'},
+  {id:'c029',severity:'moyenne',category:'metabolique',title:'Déshydratation sévère — Gastro-entérite',scenario:'Enfant de 3 ans, diarrhées et vomissements depuis 48h. Yeux cernés, fontanelle enfoncée, pli cutané. Très fatigué. Parents très inquiets.',vitals:{hr:144,bp:'88/56',spo2:97,rr:28,temp:38.2,glucose:72},gcs:13,gcsParts:{E:3,V:5,M:5},injuries:[],objectives:['Accès IV (ou IO si échec)','Glycémie','Réhydratation intraveineuse','Surveiller diurèse'],requiredActions:['acces_iv','glycemie'],tags:['déshydratation','pédiatrie'],criticalTimer:true,criticalSecs:300,hint:'Déshydratation sévère pédiatrique : accès IV urgent, bolus NaCl 0.9% 20mL/kg.',solution:'Réhydratation IV urgente. Surveiller la glycémie (risque d\'hypoglycémie chez l\'enfant).'},
+  {id:'c030',severity:'moyenne',category:'cardio',title:'HTA hypertensive urgente',scenario:'Homme de 68 ans, céphalées en coup de tonnerre, TA 220/130 mmHg. Légère confusion. Antécédent AVC.',vitals:{hr:88,bp:'220/130',spo2:97,rr:18,temp:36.9,glucose:108},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'tête',type:'Contusion',severity:'moyenne'}],objectives:['ECG','Accès IV','Surveiller neurologie','Glucomètre'],requiredActions:['ecg','acces_iv','glycemie'],tags:['HTA','urgence vasculaire'],criticalTimer:true,criticalSecs:300,hint:'HTA sévère avec signes neurologiques = urgence. Baisser la TA progressivement (pas > 25% en 1h).',solution:'Urgence hypertensive : Nicardipine ou Labétalol IV. Objectif : baisser TA de 25% dans la première heure.'},
+
+  // Cas 31-50 (légères/moyennes additionnelles)
+  {id:'c031',severity:'legere',category:'trauma',title:'Tendinite aiguë — Épaule douloureuse',scenario:'Femme de 48 ans, douleur aiguë à l\'épaule droite après jardinage. Pas de traumatisme direct. Mouvements limités par la douleur. EVA 5/10.',vitals:{hr:76,bp:'122/80',spo2:99,rr:14,temp:36.7,glucose:96},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'bras droit',type:'Contusion',severity:'legere'}],objectives:['Coldpack sur l\'épaule','Bande de soutien','Évaluation mobilité'],requiredActions:['coldpack','bande_elastique'],tags:['épaule','douleur'],criticalTimer:false,hint:'RICE pour douleur aiguë.',solution:'Tendinite aiguë : anti-inflammatoires + repos + coldpack.'},
+  {id:'c032',severity:'legere',category:'trauma',title:'Hématome de la cuisse',scenario:'Footballeur de 22 ans, choc direct à la cuisse gauche. Hématome se constituant. Pas de déformation. Marche possible mais douloureuse.',vitals:{hr:80,bp:'118/76',spo2:99,rr:15,temp:36.6,glucose:92},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'cuisse gauche',type:'Contusion',severity:'legere'}],objectives:['Coldpack','Bande compressive','Repos'],requiredActions:['coldpack','pansement_compressif'],tags:['hématome','sport'],criticalTimer:false,hint:'Hématome musculaire : compression + glace.',solution:'Contusion musculaire : compression immédiate pour limiter l\'hématome.'},
+  {id:'c033',severity:'legere',category:'trauma',title:'Plaie de la main — Bricolage',scenario:'Homme de 55 ans, plaie par perceuse dans la paume gauche. Saignement modéré. Pas de lésion tendineuse visible. Conscient.',vitals:{hr:90,bp:'130/84',spo2:99,rr:16,temp:36.8,glucose:100},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'avant-bras gauche',type:'Lacération',severity:'legere'}],objectives:['Comprimer la plaie','Nettoyer et désinfecter','Pansement hémostatique si saignement actif'],requiredActions:['pansement_hemosta'],tags:['plaie','main'],criticalTimer:false,hint:'Plaie punctiforme profonde : désinfection soigneuse.',solution:'Plaie punctiforme de la main : nettoyage minutieux + pansement + prophylaxie antitétanique.'},
+  {id:'c034',severity:'legere',category:'metabolique',title:'Crampes musculaires — Déshydratation sportive',scenario:'Triathlète de 30 ans, crampes musculaires sévères aux deux mollets après compétition. Conscient, pas d\'autre symptôme.',vitals:{hr:92,bp:'112/72',spo2:99,rr:16,temp:37.8,glucose:68},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'jambe gauche',type:'Contusion',severity:'legere'}],objectives:['Glycémie','Réhydratation orale','Coldpack sur les mollets'],requiredActions:['glycemie','coldpack'],tags:['crampes','sport','déshydratation'],criticalTimer:false,hint:'Crampes à l\'effort : réhydratation et étirements passifs.',solution:'Crampes d\'effort : réhydratation + électrolytes + étirements doux.'},
+  {id:'c035',severity:'legere',category:'trauma',title:'Traumatisme du genou — Chute en randonnée',scenario:'Randonneuse de 45 ans, chute sur le genou droit. Genoux gonflé, épanchement probable. Marche avec boiterie.',vitals:{hr:82,bp:'120/78',spo2:99,rr:15,temp:36.6,glucose:95},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'jambe droite',type:'Contusion',severity:'legere'}],objectives:['Coldpack','Bande élastique','Immobilisation'],requiredActions:['coldpack','bande_elastique'],tags:['genou','trauma'],criticalTimer:false,hint:'Épanchement articulaire : compression + glaçage.',solution:'Épanchement du genou : RICE strict, consultation orthopédique si signes ligamentaires.'},
+  {id:'c036',severity:'moyenne',category:'cardio',title:'Syncope cardiaque — Bradycardie',scenario:'Homme de 71 ans, perte de connaissance brève. Revenu à lui. FC à 38/min. Antécédent de BAV connu non appareillé.',vitals:{hr:38,bp:'90/58',spo2:96,rr:16,temp:36.7,glucose:104},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'tête',type:'Contusion',severity:'legere'}],objectives:['ECG urgent','Accès IV','Atropine si bradycardie symptomatique','Surveiller rythme'],requiredActions:['ecg','acces_iv'],tags:['bradycardie','BAV','cardio'],criticalTimer:false,hint:'BAV complet symptomatique : ECG urgent + voie veineuse + atropine en attendant pacemaker.',solution:'BAV symptomatique : atropine 0.5mg IV. Si réfractaire → isoprénaline ou pacemaker transcutané.'},
+  {id:'c037',severity:'moyenne',category:'trauma',title:'Plaie du scalp — Choc occipital',scenario:'Femme de 38 ans, choc occipital contre un meuble. Plaie béante de 5 cm au vertex. Saignement abondant. Légèrement nauséeuse.',vitals:{hr:96,bp:'118/76',spo2:98,rr:17,temp:36.8,glucose:94},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'tête',type:'Lacération',severity:'moyenne'}],objectives:['Pansement hémostatique','Compression manuelle','Accès IV si anémie'],requiredActions:['pansement_hemosta'],tags:['plaie scalp','hémorragie'],criticalTimer:false,hint:'Scalp très vascularisé : saigne beaucoup. Compression directe efficace.',solution:'Compression directe + pansement hémostatique. Bilan neurologique + scanner si signe d\'alarme.'},
+  {id:'c038',severity:'moyenne',category:'trauma',title:'Traumatisme thoracique — Côtes cassées',scenario:'Homme de 52 ans, AVP. Douleurs thoraciques à l\'inspiration. Crépitation à la palpation en latéral droit. SpO2 limite.',vitals:{hr:106,bp:'118/76',spo2:93,rr:24,temp:36.5,glucose:100},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'thorax',type:'Contusion',severity:'moyenne'}],objectives:['ECG','Accès IV','Morphine pour antalgie','Coldpack thoracique','Surveillance SpO2'],requiredActions:['ecg','acces_iv','morphine','coldpack'],tags:['fractures côtes','thorax'],criticalTimer:false,hint:'Côtes fracturées : antalgie suffisante pour maintenir une respiration efficace.',solution:'Fractures de côtes : antalgie IV (morphine ou kétamine) pour permettre une ventilation correcte. Surveiller pneumothorax.'},
+  {id:'c039',severity:'moyenne',category:'metabolique',title:'Insuffisance surrénalienne aiguë',scenario:'Femme de 42 ans, corticothérapie longue durée, arrêt brutal. Hypotension sévère, grande fatigue, vomissements, confusion légère.',vitals:{hr:118,bp:'78/48',spo2:96,rr:22,temp:37.6,glucose:52},gcs:13,gcsParts:{E:3,V:5,M:5},injuries:[],objectives:['Glycémie urgente','Accès IV','Bolus NaCl 0.9%','Glucagon si hypoglycémie','ECG'],requiredActions:['glycemie','acces_iv','glucagon'],tags:['insuffisance surrénalienne','cortisol'],criticalTimer:true,criticalSecs:300,hint:'Crise surrénalienne : hydrocortisone 100mg IV urgence + expansion volémique.',solution:'Crise addisonienne : Hydrocortisone 100mg IV + sérum glucosé + NaCl 0.9%. Urgence vitale.'},
+  {id:'c040',severity:'moyenne',category:'trauma',title:'Blessure oculaire — Corps étranger',scenario:'Soudeur de 27 ans, douleur oculaire gauche intense après projection de métal sans protection. Œil rouge, larmoiement. Vision floue.',vitals:{hr:92,bp:'124/80',spo2:99,rr:16,temp:36.7,glucose:96},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'tête',type:'Blessure pénétrante',severity:'moyenne'}],objectives:['Rinçage oculaire abondant','Pansement oculaire','Bilan ophtalmologique urgent'],requiredActions:['pansement_compressif'],tags:['œil','corps étranger'],criticalTimer:false,hint:'Corps étranger oculaire : rinçage abondant, NE PAS frotter.',solution:'Rinçage sérum physiologique + orientation ophtalmologie urgente. Corps étranger pénétrant = chirurgie.'},
+
+  // Cas 41-60
+  {id:'c041',severity:'critique',category:'cardio',title:'Embolie Pulmonaire Massive',scenario:'Femme de 58 ans, retour de voyage long-courrier, dyspnée brutale, douleur thoracique pleurétique, SpO2 effondrée. TA basse.',vitals:{hr:128,bp:'78/48',spo2:82,rr:32,temp:37.0,glucose:110},gcs:12,gcsParts:{E:3,V:4,M:5},injuries:[{zone:'thorax',type:'Contusion',severity:'critique'}],objectives:['ECG urgent','Accès IV','Épinéphrine si choc','Oxygénothérapie'],requiredActions:['ecg','acces_iv','epinephrine'],tags:['embolie','pulmonaire','TVP'],criticalTimer:true,criticalSecs:180,hint:'EP massive : choc obstructif. Thrombolyse si instabilité hémodynamique.',solution:'EP massive : thrombolyse systémique ou embolectomie chirurgicale. Épinéphrine pour le choc.'},
+  {id:'c042',severity:'critique',category:'metabolique',title:'Acidocétose diabétique sévère',scenario:'Homme de 18 ans, diabétique type 1, hospitalisé pour acidocétose. GCS diminué, respiration de Kussmaul, odeur acétonique.',vitals:{hr:122,bp:'88/54',spo2:96,rr:34,temp:37.4,glucose:520},gcs:10,gcsParts:{E:2,V:3,M:5},injuries:[],objectives:['Glycémie urgente','Accès IV','Insuline IV progressive','Réhydratation 1000mL','ECG (surveillance K+)'],requiredActions:['glycemie','acces_iv','insuline','poche_1000'],tags:['acidocétose','diabète','métabolisme'],criticalTimer:true,criticalSecs:240,hint:'Acidocétose : insuline uniquement après remplissage et correction hypokaliémie.',solution:'ACT : insuline 0.1 UI/kg/h après remplissage + surveillance K+ toutes 2h.'},
+  {id:'c043',severity:'critique',category:'trauma',title:'Traumatisme vertébral — Plongée',scenario:'Jeune homme de 21 ans, plongée dans une piscine peu profonde. Trouvé immobile dans l\'eau. Sortie en protection cervicale. Pas de mouvements des membres inférieurs.',vitals:{hr:58,bp:'90/60',spo2:93,rr:14,temp:35.6,glucose:98},gcs:11,gcsParts:{E:3,V:3,M:5},injuries:[{zone:'cou',type:'Blessure pénétrante',severity:'critique'},{zone:'thorax',type:'Contusion',severity:'critique'}],objectives:['Immobilisation cervicale totale','Accès IV','ECG','Glycémie','Surveillance neurologique'],requiredActions:['acces_iv','ecg','glycemie'],tags:['traumatisme vertébral','rachis','plongée'],criticalTimer:true,criticalSecs:240,hint:'Suspicion fracture cervicale : immobilisation totale avant tout. Pas de mobilisation sans imagerie.',solution:'Rachis cervical immobilisé + accès vasculaire + neurostimulation à éviter. IRM urgence.'},
+  {id:'c044',severity:'critique',category:'cardio',title:'Dissection Aortique Aiguë',scenario:'Homme de 66 ans, douleur dorsale déchirante irradiant vers l\'abdomen. TA asymétrique. Pouls fémoraux absents à gauche.',vitals:{hr:112,bp:'188/110',spo2:94,rr:22,temp:36.8,glucose:116},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'thorax',type:'Blessure pénétrante',severity:'critique'}],objectives:['ECG urgent','Accès IV bilatéral','Contrôle de la PA (cible 120mmHg)','Morphine IV pour douleur'],requiredActions:['ecg','acces_iv','morphine'],tags:['dissection aortique','chirurgie vasculaire'],criticalTimer:true,criticalSecs:180,hint:'Dissection aortique : contrôle tensionnel urgent. Pas de thrombolyse !',solution:'Type A → chirurgie urgente. Type B → contrôle tensionnel médical (nicardipine/labétalol IV).'},
+  {id:'c045',severity:'critique',category:'trauma',title:'Traumatisme pelvien — Fracture instable',scenario:'Femme de 44 ans, AVP à moto. Douleur pelvienne intense, instabilité hémodynamique. Hématurie macroscopique. PA effondrée.',vitals:{hr:138,bp:'68/38',spo2:92,rr:26,temp:35.4,glucose:94},gcs:11,gcsParts:{E:3,V:3,M:5},injuries:[{zone:'bassin',type:'Ecrasement (crush syndrome)',severity:'critique'},{zone:'bassin',type:'Saignement actif',severity:'critique'}],objectives:['Accès IO','2 poches de sang 1000mL','Ceinture pelvienne d\'immobilisation','Épinéphrine'],requiredActions:['acces_io','poche_1000','epinephrine'],tags:['fracture pelvis','choc hémorragique'],criticalTimer:true,criticalSecs:150,hint:'Fracture pelvienne instable : hémorragie massive dans le rétropéritoine. Ceinture pelvienne en urgence.',solution:'Ceinture pelvienne + damage control resuscitation : transfusion massive + chirurgie de contrôle des lésions.'},
+  {id:'c046',severity:'critique',category:'cardio',title:'Tamponnade Cardiaque',scenario:'Homme de 35 ans, poignardé dans le thorax antérieur gauche. Jugulaires turgescentes, bruits cardiaques assourdis, TA basse. Triade de Beck.',vitals:{hr:136,bp:'68/52',spo2:88,rr:28,temp:36.2,glucose:96},gcs:10,gcsParts:{E:3,V:3,M:4},injuries:[{zone:'thorax',type:'Traumatisme par balle',severity:'critique'}],objectives:['ECG','Accès IO ou IV immédiat','Épinéphrine','Pansement hémostatique'],requiredActions:['ecg','acces_io','epinephrine'],tags:['tamponnade','thorax','poignardage'],criticalTimer:true,criticalSecs:120,hint:'Tamponnade : Triade de Beck (hypotension + turgescence jugulaire + bruits cardiaques assourdis). Péricardiocentèse urgente.',solution:'Péricardiocentèse sous guidage echographique en urgence + chirurgie.'},
+  {id:'c047',severity:'critique',category:'metabolique',title:'Sepsis Sévère — Pneumonie fulminante',scenario:'Homme de 78 ans, fièvre à 40°C, confusion, hypotension malgré hydratation. FC 130, FR 34. Saturation basse. Source probable pulmonaire.',vitals:{hr:132,bp:'74/42',spo2:86,rr:36,temp:40.1,glucose:188},gcs:9,gcsParts:{E:2,V:2,M:5},injuries:[],objectives:['ECG','Accès IV','Bilan infectieux','Épinéphrine (vasopresseur)','Glycémie'],requiredActions:['ecg','acces_iv','epinephrine','glycemie'],tags:['sepsis','pneumonie','réanimation'],criticalTimer:true,criticalSecs:180,hint:'Sepsis sévère : heure d\'or. Hémocultures avant antibiotiques, puis antibio large spectre immédiat.',solution:'Bundle sepsis 1h : bilan + antibio + remplissage 30mL/kg + vasopresseurs si réfractaire.'},
+  {id:'c048',severity:'critique',category:'trauma',title:'Noyade — Asphyxie hypoxique',scenario:'Enfant de 7 ans, retrouvé inerte dans une piscine. Soustrait par les parents, inconscient, apnée, peau cyanosée. Parents en panique.',vitals:{hr:40,bp:'60/30',spo2:55,rr:0,temp:33.8,glucose:48},gcs:3,gcsParts:{E:1,V:1,M:1},injuries:[{zone:'thorax',type:'Contusion',severity:'critique'}],objectives:['MCE immédiat','Accès IO (pédiatrique)','Épinéphrine','Glycémie urgente','ECG'],requiredActions:['acces_io','epinephrine','glycemie'],tags:['noyade','arrêt cardiaque','pédiatrie'],criticalTimer:true,criticalSecs:90,hint:'Noyade avec ACR : réchauffement actif + RCP continue. Ne pas abandonner en hypothermie.',solution:'MCE + ventilation + réchauf + épinéphrine. Adage : "on n\'est pas mort tant qu\'on n\'est pas chaud et mort."'},
+  {id:'c049',severity:'critique',category:'cardio',title:'Torsades de Pointes — QT long',scenario:'Femme de 55 ans, syncope répétée. ECG montre torsades de pointes. QTc très allongé. Antécédent de traitement antiarythmique.',vitals:{hr:0,bp:'60/30',spo2:80,rr:4,temp:36.6,glucose:105},gcs:5,gcsParts:{E:1,V:1,M:3},injuries:[{zone:'thorax',type:'Asystolie',severity:'critique'}],objectives:['ECG immédiat','Défibrillation','Accès IV','Magnésium IV'],requiredActions:['ecg','defib','acces_iv'],tags:['torsades','QT long','arythmie'],criticalTimer:true,criticalSecs:120,hint:'Torsades de pointes : sulfate de magnésium 2g IV + défibrillation si ACR.',solution:'Sulfate de magnésium 2g IVL + correction facteurs déclenchants + défibrillation si FV.'},
+  {id:'c050',severity:'critique',category:'trauma',title:'Blast Injury — Explosion improvised',scenario:'Multiple victimes, explosion en espace confiné. Patient 1 : homme 36 ans, perforation tympanique, hémorragie pulmonaire, fractures multiples. En état de choc.',vitals:{hr:142,bp:'62/34',spo2:79,rr:32,temp:35.2,glucose:104},gcs:8,gcsParts:{E:2,V:2,M:4},injuries:[{zone:'tête',type:'Traumatisme par balle',severity:'critique'},{zone:'thorax',type:'Blessure pénétrante',severity:'critique'},{zone:'abdomen',type:'Contusion',severity:'critique'}],objectives:['Triage (START)','Accès IO immédiat','2 poches sang 1000mL','Pansements hémostatiques multiples','ECG'],requiredActions:['acces_io','poche_1000','pansement_hemosta','ecg'],tags:['blast','explosion','polytraumatisme','NRBC'],criticalTimer:true,criticalSecs:120,hint:'Blast injury : lésions multiples simultanées. Lésion pulmonaire = cause principale de décès initial.',solution:'Damage control : contrôle hémorragique + expansion volémique + oxygénation + prévention hypothermie.'},
+
+  // Cas 51-70
+  {id:'c051',severity:'legere',category:'trauma',title:'Luxation de l\'épaule',scenario:'Joueur de handball de 25 ans, choc de l\'épaule droite. Déformation visible, mouvements impossibles. Douleur EVA 8/10. Pas de lésion vasculaire.',vitals:{hr:98,bp:'128/84',spo2:99,rr:18,temp:36.7,glucose:96},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'bras droit',type:'Contusion',severity:'moyenne'}],objectives:['Coldpack','Bande de soutien','Analgésie avant réduction'],requiredActions:['coldpack','bande_elastique'],tags:['luxation','épaule','sport'],criticalTimer:false,hint:'Luxation de l\'épaule : réduction après analgésie adéquate.',solution:'Luxation antérieure de l\'épaule : analgésie IV, puis réduction douce (technique de Cunningham).'},
+  {id:'c052',severity:'legere',category:'metabolique',title:'Fièvre isolée — Infection urinaire',scenario:'Femme de 65 ans, fièvre à 38.8°C, brûlures mictionnelles depuis 2 jours. Pas d\'autres symptômes. Légèrement déshydratée.',vitals:{hr:92,bp:'118/76',spo2:99,rr:17,temp:38.8,glucose:112},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[],objectives:['Glycémie','Constantes complètes','Évaluer hydratation'],requiredActions:['glycemie'],tags:['fièvre','infection','urinaire'],criticalTimer:false,hint:'Infection urinaire simple : antibiotiques oraux et hydratation.',solution:'IU non compliquée : antibiothérapie per os adaptée + hydratation + ECBU.'},
+  {id:'c053',severity:'legere',category:'trauma',title:'Traumatisme thoracique mineur — Choc direct',scenario:'Femme de 38 ans, coup direct au thorax lors d\'un accident de sport. Douleur à la palpation de 2 côtes. SpO2 normale. Respiration légèrement douloureuse.',vitals:{hr:82,bp:'122/78',spo2:98,rr:17,temp:36.6,glucose:94},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'thorax',type:'Contusion',severity:'legere'}],objectives:['Coldpack','ECG si douleur typique','Antalgie simple'],requiredActions:['coldpack','ecg'],tags:['côtes','contusion','thorax'],criticalTimer:false,hint:'Contusion thoracique mineure : antalgie + surveillance.',solution:'Contusion costale : AINS + paracétamol. Scanner si suspicion pneumothorax.'},
+  {id:'c054',severity:'legere',category:'trauma',title:'Plaie par morsure humaine',scenario:'Femme de 29 ans, morsure à la main gauche lors d\'une bagarre. Plaie punctiforme superficielle. Pas de saignement actif.',vitals:{hr:82,bp:'118/76',spo2:99,rr:15,temp:36.7,glucose:90},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'avant-bras gauche',type:'Blessure pénétrante',severity:'legere'}],objectives:['Nettoyage abondant','Pansement de terrain'],requiredActions:['pansement_terrain_larm'],tags:['morsure humaine','infection'],criticalTimer:false,hint:'Morsure humaine : très infectieuse. Nettoyage minutieux obligatoire.',solution:'Morsure humaine : nettoyage + antibiothérapie préventive + prophylaxie VIH si exposition à risque.'},
+  {id:'c055',severity:'moyenne',category:'cardio',title:'Péricardite aiguë — Douleur positionnelle',scenario:'Homme de 32 ans, douleur thoracique augmentant en décubitus, soulagée penchée en avant. Fièvre modérée. Frottement péricardique à l\'auscultation.',vitals:{hr:98,bp:'118/78',spo2:98,rr:18,temp:38.3,glucose:98},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'thorax',type:'Contusion',severity:'legere'}],objectives:['ECG urgent (sus-décalage ST diffus en selle)','Accès IV','Glycémie','Anti-inflammatoire'],requiredActions:['ecg','acces_iv','glycemie'],tags:['péricardite','fièvre','douleur thoracique'],criticalTimer:false,hint:'Péricardite : sus-décalage ST diffus en selle + frottement péricardique + douleur positionnelle.',solution:'Aspirine + colchicine pendant 3 mois. Éviter sport pendant 3 mois minimum.'},
+  {id:'c056',severity:'moyenne',category:'trauma',title:'Entorse cervicale grave — Coup du lapin',scenario:'Conductrice de 35 ans, accident arrière. Cervicalgies intenses, paresthésies dans les deux bras. Possible lésion ligamentaire.',vitals:{hr:86,bp:'128/82',spo2:99,rr:16,temp:36.7,glucose:98},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'cou',type:'Contusion',severity:'moyenne'}],objectives:['Immobilisation cervicale','ECG','Accès IV','Bilan neurologique'],requiredActions:['acces_iv','ecg'],tags:['cervical','coup du lapin','AVP'],criticalTimer:false,hint:'Entorse cervicale grave : immobilisation + bilan radiologique avant tout.',solution:'Collier cervical rigide + scanner cervical + neurologie.'},
+  {id:'c057',severity:'moyenne',category:'metabolique',title:'Alcoolémie critique — Ivresse aiguë',scenario:'Homme de 42 ans, trouvé dans la rue, inconscient. Odeur alcoolique. Antécédent d\'alcoolisme chronique.',vitals:{hr:58,bp:'90/58',spo2:93,rr:10,temp:35.2,glucose:48},gcs:8,gcsParts:{E:2,V:2,M:4},injuries:[{zone:'tête',type:'Contusion',severity:'legere'}],objectives:['Glycémie urgente','Position latérale de sécurité','Accès IV','Glucagon si hypoglycémie'],requiredActions:['glycemie','acces_iv','glucagon'],tags:['alcool','ivresse','hypoglycémie'],criticalTimer:true,criticalSecs:240,hint:'Ivresse alcoolique : exclure hypoglycémie et TC associé.',solution:'Glycémie + TC éliminé + PLS + voie veineuse. Risque aspiration ++.'},
+  {id:'c058',severity:'moyenne',category:'trauma',title:'Traumatisme oculaire contondant',scenario:'Boxeur de 24 ans, direct à l\'œil droit. Hématome péri-orbitaire important, vision floue, photophobie. Pas de fracture visible.',vitals:{hr:88,bp:'128/80',spo2:99,rr:16,temp:36.8,glucose:96},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'tête',type:'Contusion',severity:'moyenne'}],objectives:['Coldpack périorbitaire','Pansement oculaire protecteur','Bilan ophtalmo urgent'],requiredActions:['coldpack','pansement_compressif'],tags:['trauma oculaire','boxe'],criticalTimer:false,hint:'Trauma oculaire : pas de compression directe sur le globe. Pansement protecteur.',solution:'Trauma oculaire contondant : consultation ophtalmologique urgente, risque d\'hyphéma ou décollement rétinien.'},
+  {id:'c059',severity:'moyenne',category:'trauma',title:'Fracture de hanche — Chute personne âgée',scenario:'Femme de 82 ans, chute de sa hauteur au domicile. Hanche gauche très douloureuse, membre en rotation externe, raccourcissement. PA légèrement basse.',vitals:{hr:96,bp:'100/66',spo2:96,rr:18,temp:36.4,glucose:108},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'cuisse gauche',type:'Contusion',severity:'moyenne'}],objectives:['Accès IV','Morphine IV pour antalgie','Immobilisation','ECG'],requiredActions:['acces_iv','morphine','ecg'],tags:['fracture hanche','personne âgée'],criticalTimer:false,hint:'Fracture du col fémoral chez PA : antalgie IV + immobilisation + bilan préopératoire.',solution:'Fracture du col fémoral : analgésie IV (morphine titrée) + remplacement prothétique en urgence.'},
+  {id:'c060',severity:'moyenne',category:'cardio',title:'Défibrillation préventive — TV lente',scenario:'Homme de 66 ans, palpitations, malaise, TV à 120/min documentée. Patient conscient, TA conservée. Antécédent post-infarctus.',vitals:{hr:120,bp:'102/64',spo2:96,rr:18,temp:36.8,glucose:118},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'thorax',type:'Contusion',severity:'legere'}],objectives:['ECG 12 dérivations','Accès IV','Défibrillateur en attente','Amiodarone IV'],requiredActions:['ecg','acces_iv','defib'],tags:['tachycardie ventriculaire','cardio'],criticalTimer:false,hint:'TV avec pouls : cardioversion synchronisée si patient tolérant, amiodarone si stable.',solution:'TV monomorphe tolérée : amiodarone 300mg IV sur 20 min. TV mal tolérée → cardioversion 100-200J.'},
+
+  // Cas 61-80
+  {id:'c061',severity:'critique',category:'trauma',title:'Décrochage — Strangulation',scenario:'Femme de 28 ans, retrouvée pendue, décrochée par les pompiers. Ligature au cou, inconsciente, marques caractéristiques.',vitals:{hr:28,bp:'50/20',spo2:55,rr:0,temp:33.4,glucose:78},gcs:3,gcsParts:{E:1,V:1,M:1},injuries:[{zone:'cou',type:'Blessure pénétrante',severity:'critique'},{zone:'tête',type:'Contusion',severity:'critique'}],objectives:['MCE si ACR','Accès IO','Épinéphrine','ECG','Glycémie urgente'],requiredActions:['acces_io','epinephrine','ecg','glycemie'],tags:['pendaison','ACR','strangulation'],criticalTimer:true,criticalSecs:90,hint:'Pendaison : lésions cervicales + anoxie cérébrale. Immobilisation cervicale + RCP si ACR.',solution:'RCP + protection cervicale + intubation + neuroprotection.'},
+  {id:'c062',severity:'critique',category:'metabolique',title:'Surdosage opioïde — Heroine',scenario:'Homme de 31 ans, trouvé inconscient, seringue à côté. Myosis, bradypnée à 4/min, cyanose. Répondre aux douleurs.',vitals:{hr:52,bp:'78/48',spo2:72,rr:4,temp:35.4,glucose:88},gcs:5,gcsParts:{E:1,V:1,M:3},injuries:[],objectives:['Naloxone IM ou IV','Accès IV','Position latérale de sécurité','ECG','Glycémie'],requiredActions:['acces_iv','glycemie','epinephrine'],tags:['surdosage','héroïne','opioïdes'],criticalTimer:true,criticalSecs:120,hint:'Triade opioïde : myosis + bradypnée + coma. Naloxone 0.4-2mg IV urgence.',solution:'Naloxone IV + surveillance car demi-vie courte (risque re-sédation) + réanimation respiratoire.'},
+  {id:'c063',severity:'critique',category:'cardio',title:'Infarctus du Myocarde STEMI — Choc cardiogénique',scenario:'Homme de 72 ans, douleur thoracique depuis 3h, état de choc. ECG : sus-ST en V1-V4. PA effondrée malgré remplissage.',vitals:{hr:118,bp:'62/38',spo2:86,rr:28,temp:36.5,glucose:148},gcs:12,gcsParts:{E:3,V:4,M:5},injuries:[{zone:'thorax',type:'Contusion',severity:'critique'}],objectives:['ECG urgent','Accès IV 2 voies','Épinéphrine (vasopresseur)','Morphine','Coronarographie urgente'],requiredActions:['ecg','acces_iv','epinephrine','morphine'],tags:['STEMI','choc cardiogénique','SCA'],criticalTimer:true,criticalSecs:120,hint:'STEMI + choc : coronarographie en urgence. Épinéphrine comme vasopresseur + dopamine.',solution:'STEMI + choc cardiogénique : revascularisation urgente (PCI) + assistance circulatoire.'},
+  {id:'c064',severity:'critique',category:'trauma',title:'Traumatisme cervical avec tétraplégie',scenario:'Plongeur de 19 ans, trauma C5-C6 confirmé. Tétraplégie totale, bradycardie de choc spinal, hypotension. PA effondrée malgré remplissage.',vitals:{hr:44,bp:'68/38',spo2:91,rr:12,temp:35.8,glucose:104},gcs:10,gcsParts:{E:3,V:3,M:4},injuries:[{zone:'cou',type:'Ecrasement (crush syndrome)',severity:'critique'}],objectives:['Immobilisation cervicale absolue','Accès IV','Atropine (bradycardie neurogénique)','ECG','Glucomètre'],requiredActions:['acces_iv','ecg','glycemie'],tags:['tétraplégie','choc spinal','rachis'],criticalTimer:true,criticalSecs:180,hint:'Choc spinal : bradycardie + hypotension sans tachycardie réflexe. Atropine + remplissage.',solution:'Choc neurogénique : noradrénaline vasopresseur de choix + atropine + methylprednisolone controversé.'},
+  {id:'c065',severity:'critique',category:'metabolique',title:'Méningite à pneumocoque — Purpura fulminans',scenario:'Enfant de 4 ans, fièvre brutale, raideur de nuque, purpura extensif non purgatif. Très agité puis obnubilé.',vitals:{hr:168,bp:'72/44',spo2:91,rr:44,temp:40.4,glucose:38},gcs:8,gcsParts:{E:2,V:2,M:4},injuries:[],objectives:['Glycémie URGENTE','Accès IO','Épinéphrine','Antibiotiques IV immédiats'],requiredActions:['glycemie','acces_io','epinephrine'],tags:['méningite','purpura fulminans','pédiatrie'],criticalTimer:true,criticalSecs:60,hint:'Purpura fulminans : ceftriaxone IV AVANT TOUT EXAMEN si accès difficile. Urgence extrême.',solution:'Antibiothérapie immédiate + corticoïdes + remplissage + vasopresseurs. Mortalité > 50% sans traitement immédiat.'},
+  {id:'c066',severity:'critique',category:'trauma',title:'Amputation digitale — Accident industriel',scenario:'Homme de 38 ans, section complète de l\'index et du majeur droits par presse industrielle. Hémorragie active modérée. Patient en état de choc douloureux.',vitals:{hr:112,bp:'96/64',spo2:97,rr:22,temp:36.4,glucose:104},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'avant-bras droit',type:'Traumatisme par balle',severity:'critique'}],objectives:['Pansement hémostatique','Accès IV','Morphine IV','Conserver les doigts dans la glace (sans contact direct)'],requiredActions:['pansement_hemosta','acces_iv','morphine'],tags:['amputation','doigt','industrie'],criticalTimer:true,criticalSecs:180,hint:'Amputation digitale : conserver les segments dans du sérum physiologique froid (pas de contact direct avec la glace).',solution:'Pansement + accès IV + morphine + conservation des segments amputés pour reimplantation éventuelle.'},
+  {id:'c067',severity:'critique',category:'cardio',title:'Rupture de Pilier Mitral — Post-infarctus',scenario:'Homme de 68 ans, J3 post-infarctus. Dégradation hémodynamique brutale, souffle systolique en régurgitation, œdème pulmonaire aigu.',vitals:{hr:128,bp:'72/46',spo2:82,rr:36,temp:36.8,glucose:138},gcs:11,gcsParts:{E:3,V:3,M:5},injuries:[{zone:'thorax',type:'Contusion',severity:'critique'}],objectives:['ECG urgent','Accès IV bilatéral','Épinéphrine','Poche de sang (si anémie)'],requiredActions:['ecg','acces_iv','epinephrine'],tags:['pilier mitral','OAP','choc cardiogénique'],criticalTimer:true,criticalSecs:150,hint:'Complication mécanique post-IDM : urgence chirurgicale absolue.',solution:'Chirurgie cardiaque urgente. En attendant : CPAP + dobutamine + contre-pulsion aortique.'},
+  {id:'c068',severity:'critique',category:'trauma',title:'Noyade en eau froide — Hypothermie',scenario:'Enfant de 8 ans, noyade en lac de montagne, eau à 4°C. Retrouvé inerte après 15 min d\'immersion. Température centrale à 26°C.',vitals:{hr:22,bp:'40/20',spo2:40,rr:2,temp:26.0,glucose:38},gcs:3,gcsParts:{E:1,V:1,M:1},injuries:[{zone:'thorax',type:'Contusion',severity:'critique'}],objectives:['MCE et accès IO','Épinéphrine','Glycémie URGENTE','Réchauffement actif','ECG'],requiredActions:['acces_io','epinephrine','glycemie','ecg'],tags:['noyade','hypothermie','pédiatrie'],criticalTimer:true,criticalSecs:90,hint:'Hypothermie profonde : pas mort avant d\'être réchauffé. Réchauffement avec ECMO si disponible.',solution:'RCP + réchauffement actif central + ECMO si hypothermie profonde avec ACR réfractaire.'},
+  {id:'c069',severity:'critique',category:'metabolique',title:'Hémorragie digestive haute — Varices',scenario:'Homme de 55 ans, alcoolique chronique. Hématémèse massive, sang rouge vif. TA effondrée. Bruit de circulation portal à l\'auscultation.',vitals:{hr:138,bp:'58/32',spo2:89,rr:26,temp:36.8,glucose:52},gcs:10,gcsParts:{E:2,V:3,M:5},injuries:[{zone:'abdomen',type:'Saignement actif',severity:'critique'}],objectives:['Accès IV 2 voies','2 poches de sang','ECG','Glycémie urgente','Épinéphrine si choc'],requiredActions:['acces_iv','poche_1000','ecg','glycemie','epinephrine'],tags:['hémorragie digestive','varices œsophagiennes','cirrhose'],criticalTimer:true,criticalSecs:120,hint:'Hémorragie variqueuse : terlipressine + endoscopie en urgence. Mortalité élevée.',solution:'Terlipressine IV + sclérose endoscopique + sonde de Blakemore si réfractaire.'},
+  {id:'c070',severity:'critique',category:'trauma',title:'Morsure de serpent venimeux — Envenimation grave',scenario:'Randonneur de 34 ans, morsure de vipère au mollet droit. Douleur intense, œdème ascendant rapide, purpura local. Signes systémiques.',vitals:{hr:118,bp:'82/52',spo2:94,rr:22,temp:37.4,glucose:108},gcs:13,gcsParts:{E:4,V:4,M:5},injuries:[{zone:'jambe droite',type:'Blessure pénétrante',severity:'critique'}],objectives:['Immobiliser le membre','Accès IV','Pansement compressif (léger)','Anti-venin IV','ECG'],requiredActions:['acces_iv','pansement_compressif','ecg'],tags:['envenimation','vipère','toxicologie'],criticalTimer:true,criticalSecs:180,hint:'Morsure vipère : immobilisation du membre + anti-venin IV si grade ≥ 2. PAS de garrot, PAS d\'incision.',solution:'Immunoglobulines spécifiques (Viperfav) IV + surveillance hospitalière 24h minimum.'},
+
+  // Cas 71-90
+  {id:'c071',severity:'legere',category:'trauma',title:'Abrasion du coude — Chute trottinette',scenario:'Adolescent de 14 ans, chute de trottinette. Abrasion du coude droit avec gravier incrustés. Saignement faible.',vitals:{hr:88,bp:'110/70',spo2:99,rr:16,temp:36.6,glucose:96},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'avant-bras droit',type:'Abrasion',severity:'legere'}],objectives:['Nettoyer la plaie','Pansement de terrain'],requiredActions:['pansement_terrain_rarm'],tags:['abrasion','enfant'],criticalTimer:false,hint:'Abrasion : nettoyage soigneux pour retirer les corps étrangers.',solution:'Nettoyage mécanique + antiseptique + pansement gras non adhérent.'},
+  {id:'c072',severity:'legere',category:'metabolique',title:'Nausées et vomissements — Gastro-entérite',scenario:'Femme de 32 ans, vomissements répétés depuis 6h. Pas de fièvre. Légère déshydratation.',vitals:{hr:88,bp:'110/70',spo2:99,rr:16,temp:36.8,glucose:90},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[],objectives:['Glycémie','Constantes','Hydratation orale si tolérée'],requiredActions:['glycemie'],tags:['gastro','vomissements'],criticalTimer:false,hint:'Gastro-entérite simple : réhydratation orale + antiémétique.',solution:'Réhydratation orale progressive + antiémétique. IV si persistent.'},
+  {id:'c073',severity:'legere',category:'trauma',title:'Plaie superficielle du genou',scenario:'Cycliste de 40 ans, chute. Plaie de 3 cm au genou gauche. Saignement arrêté spontanément. Conscient.',vitals:{hr:80,bp:'122/78',spo2:99,rr:15,temp:36.7,glucose:92},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'jambe gauche',type:'Coupure',severity:'legere'}],objectives:['Nettoyer','Pansement de terrain'],requiredActions:['pansement_terrain_rleg'],tags:['plaie','genou'],criticalTimer:false,hint:'Plaie superficielle propre : nettoyage + pansement.',solution:'Nettoyage + antiseptique + pansement. Fermeture si bords nets et propres.'},
+  {id:'c074',severity:'legere',category:'trauma',title:'Traumatisme dentaire — Dent cassée',scenario:'Enfant de 9 ans, choc au visage. Dent de lait cassée, saignement gingival modéré.',vitals:{hr:92,bp:'106/66',spo2:99,rr:17,temp:36.5,glucose:94},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'tête',type:'Contusion',severity:'legere'}],objectives:['Pansement compressif gingival','Récupérer la dent','Bilan dentaire'],requiredActions:['pansement_compressif'],tags:['dent','pédiatrie'],criticalTimer:false,hint:'Conserver la dent dans du sérum physiologique ou du lait.',solution:'Dent de lait : réimplantation non indiquée. Dent définitive : conservation + replantation dans l\'heure.'},
+  {id:'c075',severity:'legere',category:'metabolique',title:'Jambes lourdes — Insuffisance veineuse',scenario:'Femme de 58 ans, jambes lourdes et gonflées en fin de journée. Varices connues. Pas d\'œdème de Quincke.',vitals:{hr:74,bp:'132/82',spo2:99,rr:14,temp:36.7,glucose:106},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'jambe gauche',type:'Contusion',severity:'legere'}],objectives:['Bande élastique de compression','Évaluation vasculaire'],requiredActions:['bande_elastique'],tags:['varices','veineux'],criticalTimer:false,hint:'Insuffisance veineuse : compression élastique + surélévation du membre.',solution:'Bas de compression classe 2 + phlébotonie + marche régulière.'},
+  {id:'c076',severity:'moyenne',category:'cardio',title:'Palpitations nocturnes — Fibrillation auriculaire paroxystique',scenario:'Homme de 56 ans, réveillé par des palpitations. Pouls irrégulier à 140/min. Pas de douleur thoracique. Antécédent de FA traitée.',vitals:{hr:140,bp:'138/88',spo2:97,rr:18,temp:36.8,glucose:108},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[],objectives:['ECG urgent','Accès IV','Cardioversion si > 48h de FA','Surveillance'],requiredActions:['ecg','acces_iv'],tags:['fibrillation auriculaire','FA','arythmie'],criticalTimer:false,hint:'FA < 48h : cardioversion possible. FA > 48h : anticoagulation 3 semaines avant cardioversion.',solution:'FA paroxystique : contrôle de fréquence (bêtabloquants) ou rythme (amiodarone/flécaïne selon ATCD).'},
+  {id:'c077',severity:'moyenne',category:'trauma',title:'Décollement du scalp — Accident machine',scenario:'Ouvrière de 36 ans, cheveux coincés dans une machine industrielle. Décollement partiel du cuir chevelu. Hémorragie importante.',vitals:{hr:116,bp:'92/60',spo2:95,rr:22,temp:36.2,glucose:94},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'tête',type:'Lacération',severity:'critique'}],objectives:['Pansement hémostatique','Accès IV','Poche de sang si anémie'],requiredActions:['pansement_hemosta','acces_iv'],tags:['scalp','avulsion','industrie'],criticalTimer:true,criticalSecs:240,hint:'Avulsion du scalp : hémorragie pouvant être massive. Compression + IV urgente.',solution:'Compression hémostatique + reconstruction chirurgicale. Conserver le lambeau dans les meilleures conditions.'},
+  {id:'c078',severity:'moyenne',category:'metabolique',title:'Intoxication au CO — Fuite de gaz',scenario:'Couple trouvé inconscient dans leur appartement. Chauffage à gaz défectueux. Céphalées, confusion avant la perte de conscience.',vitals:{hr:112,bp:'102/68',spo2:98,rr:20,temp:37.0,glucose:104},gcs:12,gcsParts:{E:3,V:4,M:5},injuries:[],objectives:['Sortie immédiate du lieu (déjà faite)','Accès IV','ECG','Glycémie','Oxygène 15L/min masque haute concentration'],requiredActions:['acces_iv','ecg','glycemie'],tags:['intoxication CO','gaz','oxycarbonisme'],criticalTimer:true,criticalSecs:240,hint:'CO : SpO2 peut être normale (fausse). Oxygénothérapie haute concentration immédiate.',solution:'Oxygène 15L/min MHC pendant 6h minimum. Carboxyhémoglobine > 25% → caisson hyperbare.'},
+  {id:'c079',severity:'moyenne',category:'trauma',title:'Perforation abdominale — Ulcère gastroduodénal',scenario:'Homme de 50 ans, douleur épigastrique brutale "en coup de poignard", abdomen en planche, défense généralisée.',vitals:{hr:114,bp:'96/62',spo2:97,rr:24,temp:37.8,glucose:114},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'abdomen',type:'Blessure pénétrante',severity:'critique'}],objectives:['Accès IV','Morphine IV','ECG','Bilan chirurgical d\'urgence'],requiredActions:['acces_iv','morphine','ecg'],tags:['ulcère','perforation','chirurgie'],criticalTimer:true,criticalSecs:240,hint:'Péritonite chirurgicale : laparotomie urgente. Antalgie IV ne masque pas le diagnostic.',solution:'Laparotomie en urgence + lavage péritonéal. Antalgie IV préopératoire autorisée.'},
+  {id:'c080',severity:'moyenne',category:'cardio',title:'Insuffisance cardiaque décompensée — OAP',scenario:'Femme de 78 ans, dyspnée brutale nocturne, orthopnée. Râles crépitants bilatéraux, jambes œdématiées. Saturation basse.',vitals:{hr:112,bp:'172/102',spo2:87,rr:32,temp:36.6,glucose:128},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'thorax',type:'Contusion',severity:'moyenne'}],objectives:['ECG urgent','Accès IV','Furosémide IV','Dérivés nitrés si TA > 110','Surveillance SpO2'],requiredActions:['ecg','acces_iv'],tags:['OAP','insuffisance cardiaque','dyspnée'],criticalTimer:true,criticalSecs:240,hint:'OAP : position demi-assise + diurétique IV + dérivés nitrés + CPAP si SpO2 < 90%.',solution:'OAP : furosémide 40-80mg IV + ISDN sublingual + CPAP. Intubation si échec.'},
+
+  // Cas 81-100
+  {id:'c081',severity:'critique',category:'trauma',title:'Fracture du crâne déprimée — Choc violent',scenario:'Homme de 25 ans, frappé à la tête avec un objet contondant. Fracture temporale droite visible. Perte de connaissance. Pupille droite en mydriase.',vitals:{hr:58,bp:'164/96',spo2:94,rr:10,temp:36.8,glucose:118},gcs:7,gcsParts:{E:1,V:2,M:4},injuries:[{zone:'tête',type:'Traumatisme par balle',severity:'critique'}],objectives:['Accès IV ou IO','ECG','Glycémie','Mannitol si engagement','Neurochirurgie urgente'],requiredActions:['acces_iv','ecg','glycemie'],tags:['fracture crâne','engagement','neurochirurgie'],criticalTimer:true,criticalSecs:150,hint:'Engagement cérébral : mydriase unilatérale + bradycardie + hypertension = urgence neurochirurgicale.',solution:'Mannitol 20% 1g/kg IV + décompression chirurgicale urgente.'},
+  {id:'c082',severity:'critique',category:'cardio',title:'Choc septique — Bactériémie à Gram négatif',scenario:'Homme de 62 ans, post-chirurgie abdominale J5. Fièvre à 40°C, confusion, PA effondrée malgré remplissage 3L, peau marbrée, anurie.',vitals:{hr:138,bp:'58/30',spo2:90,rr:34,temp:40.2,glucose:48},gcs:10,gcsParts:{E:2,V:3,M:5},injuries:[{zone:'abdomen',type:'Blessure pénétrante',severity:'critique'}],objectives:['ECG','Accès IV bilatéral','Épinéphrine (noradrénaline)','Glycémie urgente','Bilan infectieux'],requiredActions:['ecg','acces_iv','epinephrine','glycemie'],tags:['choc septique','bactériémie','réanimation'],criticalTimer:true,criticalSecs:120,hint:'Choc septique : noradrénaline vasopresseur de 1ère ligne. Objectif PAM > 65 mmHg.',solution:'Noradrénaline + antibiothérapie probabiliste + bilan microbiologique + contrôle de la source.'},
+  {id:'c083',severity:'critique',category:'trauma',title:'Électrocution haute tension',scenario:'Électricien de 29 ans, projection par arc électrique 15kV. Brûlures d\'entrée et de sortie visibles. Inconscient. Arythmie documentée.',vitals:{hr:0,bp:'40/20',spo2:60,rr:4,temp:36.0,glucose:112},gcs:4,gcsParts:{E:1,V:1,M:2},injuries:[{zone:'bras gauche',type:'Blessure pénétrante',severity:'critique'},{zone:'jambe droite',type:'Blessure pénétrante',severity:'critique'}],objectives:['Sécuriser la zone (déjà fait)','MCE si ACR','Accès IO','Épinéphrine','ECG + défibrillateur','Glycémie'],requiredActions:['acces_io','epinephrine','ecg','defib'],tags:['électrocution','brûlures','arythmie'],criticalTimer:true,criticalSecs:90,hint:'Électrocution : arythmies immédiates + lésions musculaires profondes. MCE + défibrillation si FV.',solution:'RCP + défibrillation si FV + réanimation volémique massive (rhabdomyolyse) + greffe cutanée ultérieure.'},
+  {id:'c084',severity:'critique',category:'metabolique',title:'Thyrotoxicose — Crise thyréotoxique',scenario:'Femme de 48 ans, hyperthyroïdie connue, fièvre à 41°C, FC 190, agitation extrême, IC décompensée.',vitals:{hr:192,bp:'108/58',spo2:92,rr:30,temp:41.1,glucose:148},gcs:12,gcsParts:{E:3,V:4,M:5},injuries:[],objectives:['ECG urgent','Accès IV','Propofol si agitation','Propranolol IV','Glycémie'],requiredActions:['ecg','acces_iv','propofol_100','glycemie'],tags:['thyrotoxicose','hyperthyroïdie','crise'],criticalTimer:true,criticalSecs:180,hint:'Crise thyréotoxique : beta-bloquant IV + propylthiouracile + hydrocortisone + refroidissement.',solution:'Propranolol IV + PTU + dexaméthasone + refroidissement + traitement précipitant.'},
+  {id:'c085',severity:'critique',category:'cardio',title:'Rupture d\'Anévrysme Aortique Abdominal',scenario:'Homme de 74 ans, douleur abdominale syncopale, pulsations abdominales, TA effondrée. Antécédent d\'AAA connu.',vitals:{hr:138,bp:'52/28',spo2:92,rr:26,temp:35.6,glucose:104},gcs:11,gcsParts:{E:3,V:3,M:5},injuries:[{zone:'abdomen',type:'Saignement actif',severity:'critique'}],objectives:['Accès IV bilatéral','2 poches de sang 1000mL','Épinéphrine','ECG','Chirurgie vasculaire urgente'],requiredActions:['acces_iv','poche_1000','epinephrine','ecg'],tags:['AAA','rupture','choc hémorragique'],criticalTimer:true,criticalSecs:90,hint:'AAA rompu : mortalité chirurgicale < 50% si opéré. Mortalité sans chirurgie = 100%.',solution:'Autorisation de permissive hypotension (PAM 50 mmHg) jusqu\'à la salle op + damage control resuscitation.'},
+  {id:'c086',severity:'critique',category:'trauma',title:'Traumatisme crânio-facial grave — AVP poids-lourd',scenario:'Passager de 30 ans, AVP avec poids-lourd. Défiguration sévère, voies aériennes obstruées par le sang et les débris osseux. GCS critique.',vitals:{hr:46,bp:'56/28',spo2:52,rr:2,temp:34.8,glucose:92},gcs:3,gcsParts:{E:1,V:1,M:1},injuries:[{zone:'tête',type:'Ecrasement (crush syndrome)',severity:'critique'},{zone:'cou',type:'Contusion',severity:'critique'}],objectives:['Dégager les voies aériennes','Accès IO immédiat','Épinéphrine','ECG','Intubation'],requiredActions:['acces_io','epinephrine','ecg'],tags:['trauma cranio-facial','obstruction VA','polytraumatisme'],criticalTimer:true,criticalSecs:60,hint:'Obstruction des voies aériennes = priorité absolue. Aspiration + intubation ou cricothyrotomie.',solution:'Intubation à séquence rapide ou cricothyrotomie d\'urgence + RCP si ACR.'},
+  {id:'c087',severity:'critique',category:'metabolique',title:'Intoxication au paracétamol — Surdosage volontaire',scenario:'Femme de 23 ans, prise de 12g de paracétamol il y a 6h. Nausées, douleurs épigastriques. Bilan hépatique en cours.',vitals:{hr:92,bp:'108/70',spo2:98,rr:18,temp:36.8,glucose:82},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[],objectives:['Accès IV','N-Acétylcystéine IV','Glycémie','ECG','Bilan hépatique'],requiredActions:['acces_iv','glycemie','ecg'],tags:['intoxication','paracétamol','tentative autolyse'],criticalTimer:true,criticalSecs:360,hint:'N-Acétylcystéine efficace si donnée dans les 8-10h. Après 24h : risque de défaillance hépatique.',solution:'NAC IV en urgence + surveillance bilan hépatique + soutien psychologique + psychiatrie.'},
+  {id:'c088',severity:'critique',category:'trauma',title:'Traumatisme splénique — Rupture en 2 temps',scenario:'Femme de 36 ans, AVP il y a 72h. Douleur abdominale gauche croissante, épaule gauche douloureuse (signe de Kehr). PA commence à baisser.',vitals:{hr:122,bp:'84/52',spo2:95,rr:24,temp:36.4,glucose:96},gcs:13,gcsParts:{E:4,V:4,M:5},injuries:[{zone:'abdomen',type:'Saignement actif',severity:'critique'}],objectives:['Accès IV','Poche de sang 500mL','Épinéphrine','ECG','Chirurgie urgente'],requiredActions:['acces_iv','poche_500','epinephrine','ecg'],tags:['rate','rupture splénique','hémorragie interne'],criticalTimer:true,criticalSecs:180,hint:'Rupture splénique en 2 temps : classique après trauma abdominal. Signe de Kehr pathognomonique.',solution:'Splénectomie ou splénorraphie + remplissage + transfusion. Drainage si hémopéritoine limité.'},
+  {id:'c089',severity:'critique',category:'cardio',title:'Péricardite constrictive — Tamponnade chronique',scenario:'Homme de 52 ans, TB connue, dyspnée d\'effort croissante sur 3 mois. Pouls paradoxal, signe de Kussmaul. TA basse.',vitals:{hr:118,bp:'78/60',spo2:90,rr:24,temp:37.2,glucose:110},gcs:13,gcsParts:{E:4,V:4,M:5},injuries:[{zone:'thorax',type:'Contusion',severity:'critique'}],objectives:['ECG','Accès IV','Épinéphrine si état choc'],requiredActions:['ecg','acces_iv'],tags:['tamponnade','péricardite','TB'],criticalTimer:true,criticalSecs:240,hint:'Tamponnade : péricardiocentèse urgente si instabilité. Chirurgie si contrainte.',solution:'Péricardiocentèse guidée par écho + péricardectomie chirurgicale pour les formes chroniques.'},
+  {id:'c090',severity:'critique',category:'trauma',title:'Éventration traumatique — Organes extériorisés',scenario:'Ouvrier de 44 ans, lame de scie abdominale. Éventration traumatique avec anse grêle extériorisée. Patient très agité, PA chute rapidement.',vitals:{hr:142,bp:'72/42',spo2:92,rr:28,temp:35.6,glucose:108},gcs:11,gcsParts:{E:3,V:3,M:5},injuries:[{zone:'abdomen',type:'Blessure pénétrante',severity:'critique'}],objectives:['NE PAS réintroduire les organes — couvrir avec champ humide','Accès IV','Poche de sang 1000mL','Épinéphrine'],requiredActions:['acces_iv','poche_1000','epinephrine'],tags:['éventration','trauma abdominal','chirurgie'],criticalTimer:true,criticalSecs:120,hint:'Éventration : couvrir avec un champ stérile humide. Ne JAMAIS réintroduire les organes sur le terrain.',solution:'Champ humide stérile + accès vasculaire + laparotomie chirurgicale urgente.'},
+
+  // Cas 91-110 (complément pour dépasser 100)
+  {id:'c091',severity:'legere',category:'trauma',title:'Contusion costale isolée',scenario:'Homme de 47 ans, chute de sa bicyclette. Douleur côte droite, pas de dyspnée. SpO2 normale.',vitals:{hr:82,bp:'128/80',spo2:99,rr:16,temp:36.7,glucose:94},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'thorax',type:'Contusion',severity:'legere'}],objectives:['Coldpack','Antalgie'],requiredActions:['coldpack'],tags:['côte','contusion'],criticalTimer:false,hint:'Contusion costale isolée : AINS + paracétamol.',solution:'AINS + coldpack. Radio si douleur persistante.'},
+  {id:'c092',severity:'legere',category:'trauma',title:'Hématome sous-unguéal',scenario:'Femme de 40 ans, doigt coincé dans une porte. Hématome sous le pouce gauche, douleur EVA 7/10.',vitals:{hr:88,bp:'122/78',spo2:99,rr:15,temp:36.6,glucose:94},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'avant-bras gauche',type:'Contusion',severity:'legere'}],objectives:['Coldpack','Trépanation si EVA > 6'],requiredActions:['coldpack'],tags:['doigt','hématome'],criticalTimer:false,hint:'Hématome sous-unguéal : coldpack puis trépanation si douleur importante.',solution:'Coldpack immédiat. Trépanation de l\'ongle pour évacuer l\'hématome si douleur intense.'},
+  {id:'c093',severity:'moyenne',category:'cardio',title:'Endocardite infectieuse — Embolies septiques',scenario:'Homme de 35 ans, toxicomane, fièvre prolongée, souffles cardiaques nouveau. Pétéchies. Hémocultures en cours.',vitals:{hr:104,bp:'100/62',spo2:96,rr:22,temp:39.2,glucose:108},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'thorax',type:'Contusion',severity:'moyenne'}],objectives:['Accès IV','ECG','Glycémie','Hémocultures (avant antibio)'],requiredActions:['acces_iv','ecg','glycemie'],tags:['endocardite','toxicomanie','sepsis'],criticalTimer:false,hint:'Endocardite : hémocultures avant antibiotiques. Echocardiographie urgente.',solution:'Hémocultures + écho cardiaque + antibiothérapie prolongée (4-6 semaines) à adapter.'},
+  {id:'c094',severity:'moyenne',category:'trauma',title:'Fracture du poignet — Colles',scenario:'Femme de 65 ans, chute sur la main droite. Déformation du poignet en dos de fourchette. Douleur EVA 8/10.',vitals:{hr:90,bp:'140/86',spo2:99,rr:17,temp:36.7,glucose:116},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'avant-bras droit',type:'Contusion',severity:'moyenne'}],objectives:['Coldpack','Immobilisation','Antalgie IV','ECG si > 65 ans'],requiredActions:['coldpack','bande_elastique','ecg'],tags:['Colles','poignet','ostéoporose'],criticalTimer:false,hint:'Fracture de Pouteau-Colles : réduction si déplacée + plâtre. Antalgie avant réduction.',solution:'Réduction orthopédique sous anesthésie locale ou générale + plâtre brachio-antébrachial.'},
+  {id:'c095',severity:'legere',category:'trauma',title:'Luxation temporomandibulaire',scenario:'Femme de 28 ans, luxation de la mâchoire en bâillant. Bouche bloquée en ouverture, douleur. Consciente.',vitals:{hr:78,bp:'118/74',spo2:99,rr:14,temp:36.6,glucose:90},gcs:15,gcsParts:{E:4,V:5,M:6},injuries:[{zone:'tête',type:'Contusion',severity:'legere'}],objectives:['Réduction manuelle douce','Antalgie','Bande de contention'],requiredActions:['pansement_compressif'],tags:['mâchoire','luxation','ATM'],criticalTimer:false,hint:'Luxation ATM : manœuvre de Nélaton sous antalgie.',solution:'Réduction manuelle + protection de la mâchoire 2 semaines.'},
+  {id:'c096',severity:'moyenne',category:'metabolique',title:'Pancréatite aiguë — Douleur en ceinture',scenario:'Homme de 52 ans, alcoolique, douleur abdominale intense en ceinture irradiant dans le dos, vomissements. Lipase très élevée.',vitals:{hr:108,bp:'96/62',spo2:96,rr:22,temp:38.0,glucose:168},gcs:14,gcsParts:{E:4,V:4,M:6},injuries:[{zone:'abdomen',type:'Contusion',severity:'moyenne'}],objectives:['Accès IV','Morphine IV','Glycémie','ECG','Réhydratation 500mL'],requiredActions:['acces_iv','morphine','glycemie','ecg'],tags:['pancréatite','alcool','abdomen'],criticalTimer:false,hint:'Pancréatite : antalgie IV + réhydratation agressive. Pas d\'alimentation.',solution:'Morphine IV + NaCl 0.9% 250-500mL/h + surveillance glycémie + calcium.'},
+  {id:'c097',severity:'critique',category:'cardio',title:'Péricardite purulente — Choc septique',scenario:'Homme de 45 ans, diabétique, fièvre 40°C depuis 3 jours. Épanchement péricardique massif à l\'écho. Choc septique.',vitals:{hr:138,bp:'62/40',spo2:88,rr:32,temp:40.0,glucose:340},gcs:11,gcsParts:{E:3,V:3,M:5},injuries:[{zone:'thorax',type:'Blessure pénétrante',severity:'critique'}],objectives:['Accès IV','Épinéphrine','Glycémie urgente','ECG','Péricardiocentèse urgente'],requiredActions:['acces_iv','epinephrine','glycemie','ecg'],tags:['péricardite purulente','choc septique','diabète'],criticalTimer:true,criticalSecs:150,hint:'Péricardite purulente : urgence chirurgicale. Drainage + antibiothérapie.',solution:'Péricardiocentèse + drainage chirurgical + antibiothérapie IV prolongée.'},
+  {id:'c098',severity:'critique',category:'trauma',title:'Explosion thoracique — Lésion de l\'aorte',scenario:'Homme de 38 ans, choc thoracique violent dans AVP. Douleur dorso-lombaire irradiante. Élargissement du médiastin. PA asymétrique.',vitals:{hr:118,bp:'158/96',spo2:92,rr:26,temp:36.3,glucose:116},gcs:13,gcsParts:{E:4,V:4,M:5},injuries:[{zone:'thorax',type:'Traumatisme par balle',severity:'critique'}],objectives:['ECG','Accès IO si impossible IV','Bêtabloquants IV (contrôle TA)','Morphine IV'],requiredActions:['ecg','acces_io','morphine'],tags:['trauma aortique','médiastin','AVP'],criticalTimer:true,criticalSecs:120,hint:'Lésion aortique traumatique : contrôle tensionnel strict (TA systolique < 120 mmHg) + endoprothèse.',solution:'TEVAR (endoprothèse aortique) en urgence. Pas d\'hyperpression, pas de tachycardie.'},
+  {id:'c099',severity:'critique',category:'metabolique',title:'Coma hépatique — Insuffisance hépatique fulminante',scenario:'Femme de 34 ans, hépatite fulminante post-médicamenteuse. Ictère intense, confusion croissante, signes d\'hypertension intracrânienne.',vitals:{hr:106,bp:'92/58',spo2:92,rr:20,temp:37.8,glucose:38},gcs:9,gcsParts:{E:2,V:2,M:5},injuries:[],objectives:['Glycémie URGENTE','Accès IV','Glucagon','ECG','Lactulose si encéphalopathie'],requiredActions:['glycemie','acces_iv','glucagon','ecg'],tags:['coma hépatique','foie','encéphalopathie'],criticalTimer:true,criticalSecs:180,hint:'Insuffisance hépatique fulminante : hypoglycémie fréquente + encéphalopathie + coagulopathie.',solution:'G30% IV + lactulose + rifaximine + transplantation hépatique urgente si critères.'},
+  {id:'c100',severity:'critique',category:'trauma',title:'Multi-victimes — Explosion en gare',scenario:'ÉVÉNEMENT DE MASSE. Explosion en gare. 15 victimes identifiées. Vous prenez en charge un homme de 48 ans, victime directe. Polytraumatisme sévère. Blast + impact. Triage P1.',vitals:{hr:0,bp:'0/0',spo2:0,rr:0,temp:35.0,glucose:94},gcs:3,gcsParts:{E:1,V:1,M:1},injuries:[{zone:'thorax',type:'Traumatisme par balle',severity:'critique'},{zone:'tête',type:'Ecrasement (crush syndrome)',severity:'critique'},{zone:'abdomen',type:'Saignement actif',severity:'critique'},{zone:'cuisse gauche',type:'Saignement actif',severity:'critique'}],objectives:['Triage SIEVE / START','MCE si ACR','Accès IO bilateral','Épinéphrine','ECG + défibrillateur','2× sang 1000mL'],requiredActions:['acces_io','epinephrine','defib','poche_1000'],tags:['NRBC','ORSEC','explosion','masse'],criticalTimer:true,criticalSecs:60,hint:'NRBC / catastrophe : triage avant traitement. Votre priorité = P1 = ACR potentiellement réversible.',solution:'MARCH + damage control surgery + coordination médico-légale + communication inter-équipes.'}
+];
+
+// ================== GAME STATE ==================
+let lives = 5;
+let currentCase = null;
+let caseIndex = 0;
+let completedCases = JSON.parse(localStorage.getItem('chl_completed')||'[]');
+let gameLog = [];
+let actionsDone = new Set();
+let ecgLeadsPlaced = new Set();
+let elapsedSeconds = 0;
+let critTimerInterval = null;
+let vitalUpdateInterval = null;
+let ecgAnimFrame = null;
+let defibCharged = false;
+let defibJoules = 200;
+let glucoMeasured = false;
+
+// ================== INIT ==================
+function init() {
+  renderCaseList();
+  updateLivesDisplay();
+}
+
+function renderCaseList(filter='all') {
+  const grid = document.getElementById('caseGrid');
+  const filtered = CASES.filter(c => {
+    if (filter==='all') return true;
+    if (['legere','moyenne','critique'].includes(filter)) return c.severity===filter;
+    return c.category===filter;
+  });
+  grid.innerHTML = filtered.map(c => {
+    const done = completedCases.includes(c.id);
+    return `<div class="case-card" onclick="startCase('${c.id}')">
+      ${done?'<span class="case-done">✓</span>':''}
+      <span class="case-severity sev-${c.severity}">${c.severity.toUpperCase()}</span>
+      <div class="case-title">${c.title}</div>
+      <div class="case-desc">${c.scenario.substring(0,80)}...</div>
+      <div class="case-tags">${c.tags.map(t=>`<span class="case-tag">${t}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterCases(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCaseList(f);
+}
+
+// ================== START CASE ==================
+function startCase(id) {
+  currentCase = CASES.find(c=>c.id===id);
+  caseIndex = CASES.indexOf(currentCase);
+  actionsDone = new Set();
+  ecgLeadsPlaced = new Set();
+  glucoMeasured = false;
+  defibCharged = false;
+  defibJoules = 200;
+  gameLog = [];
+  elapsedSeconds = 0;
+
+  showView('viewSim');
+  renderHUD();
+  renderConsciousness();
+  renderScenario();
+  renderBodyDiagram();
+  renderToolbar();
+  renderMeds();
+  renderObjectives();
+  clearFeedback();
+  clearLog();
+  hideMedicalDevices();
+
+  if (currentCase.criticalTimer) startCriticalTimer();
+}
+
+function hideMedicalDevices() {
+  document.getElementById('ecgDisplay').classList.remove('show');
+  document.getElementById('defibDisplay').classList.remove('show');
+  document.getElementById('glucoDisplay').classList.remove('show');
+  document.getElementById('timerWrap').style.display='none';
+}
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ================== HUD ==================
+function renderHUD() {
+  const v = currentCase.vitals;
+  setHUD('hud-hr', v.hr, v.hr===0?'vital-crit':v.hr>120||v.hr<50?'vital-warn':'vital-ok', v.hr===0?'ARRÊT':v.hr);
+  setHUD('hud-bp', v.bp, (v.bp==='0/0'||v.bp.split('/')[0]<80)?'vital-crit':parseInt(v.bp)<100?'vital-warn':'vital-ok', v.bp==='0/0'?'0/0':v.bp);
+  setHUD('hud-spo2', v.spo2, v.spo2===0?'vital-crit':v.spo2<90?'vital-warn':'vital-ok', v.spo2+'%');
+  setHUD('hud-rr', v.rr, v.rr===0?'vital-crit':v.rr>25||v.rr<10?'vital-warn':'vital-ok', v.rr===0?'APNÉE':v.rr);
+  setHUD('hud-temp', v.temp, v.temp<35?'vital-crit':v.temp>39?'vital-warn':'vital-ok', v.temp+'°C');
+  setHUD('hud-glucose', v.glucose, v.glucose<60?'vital-crit':v.glucose>300?'vital-warn':'vital-ok', v.glucose);
+}
+
+function setHUD(id, raw, cls, display) {
+  const el = document.getElementById(id);
+  el.textContent = display;
+  el.className = 'hud-value ' + cls;
+}
+
+function renderConsciousness() {
+  const g = currentCase.gcs;
+  const p = currentCase.gcsParts;
+  const levels = {15:'ALERTE',14:'OBNUBILÉ',13:'OBNUBILÉ',12:'CONFUS',11:'CONFUS',10:'STUPEUR',9:'STUPEUR',8:'COMA LÉGER',7:'COMA',6:'COMA',5:'COMA PROFOND',4:'COMA PROFOND',3:'MORT CÉRÉBRALE POSSIBLE'};
+  const lvl = levels[g]||'INCONSCIENT';
+  const colors = g>=13?'var(--green)':g>=9?'var(--orange)':g>=6?'var(--gold)':'var(--accent)';
+  document.getElementById('gcsLevel').textContent = lvl;
+  document.getElementById('gcsLevel').style.color = colors;
+  document.getElementById('gcsScore').textContent = `GCS ${g}/15`;
+  const fill = document.getElementById('gcsFill');
+  fill.style.width = (g/15*100)+'%';
+  fill.style.background = colors;
+}
+
+// ================== SCENARIO ==================
+function renderScenario() {
+  document.getElementById('simTitle').textContent = currentCase.title;
+  document.getElementById('simText').textContent = currentCase.scenario;
+}
+
+// ================== BODY ==================
+function renderBodyDiagram() {
+  // Reset all zones
+  document.querySelectorAll('.body-zone').forEach(el => {
+    el.style.fill = '';
+    el.classList.remove('injured','critical');
+  });
+
+  currentCase.injuries.forEach(inj => {
+    const zoneMap = {
+      'tête':'zone-head','cou':'zone-neck','thorax':'zone-thorax','abdomen':'zone-abdomen',
+      'bras gauche':'zone-larm','bras droit':'zone-rarm',
+      'avant-bras gauche':'zone-lforearm','avant-bras droit':'zone-rforearm',
+      'bassin':'zone-pelvis','cuisse gauche':'zone-lthigh','cuisse droite':'zone-rthigh',
+      'jambe gauche':'zone-lleg','jambe droite':'zone-rleg'
+    };
+    const zid = zoneMap[inj.zone];
+    if (zid) {
+      const el = document.getElementById(zid);
+      if (el) {
+        el.classList.add('injured');
+        el.style.fill = inj.severity==='critique'?'rgba(192,57,43,0.4)':inj.severity==='moyenne'?'rgba(230,126,34,0.3)':'rgba(212,168,67,0.2)';
+        if (inj.severity==='critique') el.classList.add('critical');
+      }
+    }
+  });
+
+  // Heart indicator
+  const heartEl = document.getElementById('heartIndicator');
+  if (currentCase.vitals.hr === 0) {
+    heartEl.style.display = 'block';
+    heartEl.style.fill = 'var(--accent)';
+  } else {
+    heartEl.style.display = 'none';
+  }
+
+  document.getElementById('bodyInjuries').innerHTML = currentCase.injuries.length > 0
+    ? currentCase.injuries.map(inj=>`
+        <div class="injury-item">
+          <div class="injury-zone">${inj.zone.toUpperCase()}</div>
+          <div class="injury-name">${inj.type}</div>
+          <div class="injury-severity inj-${inj.severity}">${inj.severity.toUpperCase()}</div>
+        </div>`).join('')
+    : '<div style="font-family:\'Share Tech Mono\',monospace;font-size:11px;color:var(--muted)">Aucune lésion externe visible</div>';
+}
+
+function showZoneInfo(zone) {
+  const injuries = currentCase.injuries.filter(i=>i.zone===zone);
+  if (injuries.length===0) {
+    showFeedback('info', 'Zone examinée : '+zone.toUpperCase(), 'Aucune lésion détectée dans cette zone.');
+  } else {
+    const txt = injuries.map(i=>`${i.type} (${i.severity})`).join(', ');
+    showFeedback('info', 'LÉSION DÉTECTÉE — '+zone.toUpperCase(), txt);
+  }
+}
+
+// ================== OBJECTIVES ==================
+function renderObjectives() {
+  const list = document.getElementById('objectiveList');
+  list.innerHTML = currentCase.objectives.map((obj,i)=>`
+    <div class="obj-item" id="obj-${i}">
+      <div class="obj-check" id="objcheck-${i}"></div>
+      <div class="obj-text">${obj}</div>
+    </div>`).join('');
+}
+
+function checkObjective(keyword) {
+  currentCase.requiredActions.forEach((ra,i) => {
+    if (ra === keyword) {
+      const objEl = document.getElementById(`obj-${i}`);
+      const checkEl = document.getElementById(`objcheck-${i}`);
+      if (objEl && checkEl && !objEl.classList.contains('done')) {
+        objEl.classList.add('done');
+        checkEl.classList.add('done');
+        checkEl.textContent = '✓';
+      }
+    }
+  });
+  checkWinCondition();
+}
+
+function checkWinCondition() {
+  const allDone = currentCase.requiredActions.every(ra => actionsDone.has(ra));
+  if (allDone) {
+    setTimeout(()=>endCase(true), 800);
+  }
+}
+
+// ================== TOOLBAR ==================
+function renderToolbar() {
+  document.getElementById('tabTools').innerHTML = `
+    <div class="tool-section">
+      <div class="tool-section-title">MATÉRIEL MÉDICAL</div>
+      <div class="tools-grid">
+        <div class="tool-btn" id="tool-iv" onclick="openProcedure('iv')"><span class="tool-icon">💉</span><span class="tool-name">ACCÈS IV</span></div>
+        <div class="tool-btn" id="tool-io" onclick="openProcedure('io')"><span class="tool-icon">🦴</span><span class="tool-name">ACCÈS IO</span></div>
+        <div class="tool-btn" id="tool-defib" onclick="useDefib()"><span class="tool-icon">⚡</span><span class="tool-name">DÉFIBRILLATEUR</span></div>
+        <div class="tool-btn" id="tool-ecg" onclick="useECG()"><span class="tool-icon">📈</span><span class="tool-name">ECG</span></div>
+        <div class="tool-btn" id="tool-coldpack" onclick="useColdpack()"><span class="tool-icon">🧊</span><span class="tool-name">COLDPACK</span></div>
+        <div class="tool-btn" id="tool-glycemie" onclick="useGlucometer()"><span class="tool-icon">🩸</span><span class="tool-name">GLYCÉMIE</span></div>
+      </div>
+    </div>
+    <div class="tool-section">
+      <div class="tool-section-title">PANSEMENTS</div>
+      <div class="tools-grid">
+        <div class="tool-btn" id="tool-terrain" onclick="openBandageProcedure('terrain')"><span class="tool-icon">🩹</span><span class="tool-name">TERRAIN</span></div>
+        <div class="tool-btn" id="tool-compressif" onclick="openBandageProcedure('compressif')"><span class="tool-icon">🩹</span><span class="tool-name">COMPRESSIF</span></div>
+        <div class="tool-btn" id="tool-hemosta" onclick="openBandageProcedure('hemosta')"><span class="tool-icon">🩹</span><span class="tool-name">HÉMOSTATIQUE</span></div>
+        <div class="tool-btn" id="tool-bande" onclick="useBandeElastique()"><span class="tool-icon">🎗️</span><span class="tool-name">BANDE ÉLASTIQUE</span></div>
+      </div>
+    </div>
+    <div class="tool-section">
+      <div class="tool-section-title">POCHES DE SANG</div>
+      <div class="blood-options">
+        <div class="blood-opt" onclick="useSang(250)">250 mL</div>
+        <div class="blood-opt" onclick="useSang(500)">500 mL</div>
+        <div class="blood-opt" onclick="useSang(750)">750 mL</div>
+        <div class="blood-opt" onclick="useSang(1000)">1000 mL</div>
+      </div>
+    </div>`;
+}
+
+function renderMeds() {
+  document.getElementById('tabMeds').innerHTML = `
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:14px">MÉDICAMENTS DISPONIBLES</div>
+    ${[
+      {id:'epinephrine',icon:'💊',name:'Épinéphrine',desc:'Vasopresseur / RCP',dose:'1 mg IV — toutes 3-5 min en ACR'},
+      {id:'morphine',icon:'💊',name:'Morphine',desc:'Analgésique opioïde',dose:'0.1 mg/kg IV titration lente'},
+      {id:'fentanyl',icon:'💊',name:'Fentanyl',desc:'Analgésique rapide IV',dose:'1-2 µg/kg IV'},
+      {id:'propofol_100',icon:'🧪',name:'Propofol 100mL',desc:'Sédation courte',dose:'1-2 mg/kg IV puis 2-10 mg/kg/h'},
+      {id:'propofol_250',icon:'🧪',name:'Propofol 250mL',desc:'Sédation entretien',dose:'Entretien 2-8 mg/kg/h'},
+      {id:'insuline',icon:'💉',name:'Insuline',desc:'Hypoglycémiant',dose:'0.1 UI/kg/h IV — hyperglycémie'},
+      {id:'glucagon',icon:'💊',name:'Glucagon',desc:'Hyperglycémiant d\'urgence',dose:'1 mg IM/IV — hypoglycémie'}
+    ].map(m=>`
+      <div class="drug-btn" onclick="adminMed('${m.id}','${m.name}')">
+        <span class="drug-icon">${m.icon}</span>
+        <div class="drug-info">
+          <div class="drug-name">${m.name}</div>
+          <div class="drug-desc">${m.desc}</div>
+          <div class="drug-dose">${m.dose}</div>
+        </div>
+      </div>`).join('')}`;
+}
+
+// ================== TOOL ACTIONS ==================
+function useECG() {
+  if (actionsDone.has('ecg')) {
+    showFeedback('info','ECG DÉJÀ RÉALISÉ','Le tracé ECG est affiché ci-dessous.');
+    return;
+  }
+  actionsDone.add('ecg');
+  markToolUsed('tool-ecg');
+  document.getElementById('ecgDisplay').classList.add('show');
+  addLog('info', 'ECG posé — Placement des dérivations en cours...');
+  showFeedback('info','ECG POSITIONNÉ','Placez maintenant les 12 dérivations sur le schéma ECG ci-dessous. Cliquez sur chaque dérivation pour la positionner.');
+  checkObjective('ecg');
+  drawECG();
+}
+
+function placeLead(el, lead) {
+  if (el.classList.contains('placed')) return;
+  el.classList.add('placed');
+  ecgLeadsPlaced.add(lead);
+  addLog('info',`Dérivation ${lead} posée`);
+  if (ecgLeadsPlaced.size === 12) {
+    const rhythm = getECGRhythm();
+    document.getElementById('ecgRhythm').textContent = rhythm;
+    showFeedback('good','ECG COMPLET — RYTHME ANALYSÉ', rhythm);
+    addLog('good', 'ECG 12 dérivations complet — Rythme: '+rhythm);
+  }
+}
+
+function getECGRhythm() {
+  const hr = currentCase.vitals.hr;
+  if (hr===0) return 'ASYSTOLIE — Aucune activité électrique';
+  if (currentCase.tags.includes('FV') || currentCase.tags.includes('torsades')) return 'FIBRILLATION VENTRICULAIRE — Choc électrique indiqué';
+  if (currentCase.tags.includes('TV')) return 'TACHYCARDIE VENTRICULAIRE — Rythme monomorphe';
+  if (currentCase.tags.includes('TSV') || currentCase.tags.includes('arythmie')) return 'TACHYCARDIE SUPRA-VENTRICULAIRE — Complexes fins';
+  if (currentCase.tags.includes('bradycardie') || currentCase.tags.includes('BAV')) return 'BLOC AURICULO-VENTRICULAIRE — Bradycardie';
+  if (currentCase.tags.includes('SCA') || currentCase.tags.includes('infarctus') || currentCase.tags.includes('STEMI')) return 'SUS-DÉCALAGE ST en V1-V4 — STEMI ANTÉRIEUR EXTENSIF';
+  if (currentCase.tags.includes('FA')) return 'FIBRILLATION AURICULAIRE — Rythme irrégulier';
+  if (hr > 100) return 'TACHYCARDIE SINUSALE — ' + hr + ' bpm';
+  if (hr < 60) return 'BRADYCARDIE SINUSALE — ' + hr + ' bpm';
+  return 'RYTHME SINUSAL — ' + hr + ' bpm';
+}
+
+let ecgOffset = 0;
+function drawECG() {
+  const canvas = document.getElementById('ecgCanvas');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width; const h = canvas.height;
+  const hr = currentCase.vitals.hr;
+
+  function frame() {
+    ctx.fillStyle='#000';
+    ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle='rgba(39,174,96,0.2)';
+    ctx.lineWidth=0.5;
+    for(let x=0;x<w;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    for(let y=0;y<h;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+
+    if (hr===0) {
+      ctx.strokeStyle='#e74c3c';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke();
+    } else {
+      ctx.strokeStyle='#27ae60';ctx.lineWidth=2;
+      ctx.beginPath();
+      const period = 300*(60/hr);
+      for(let x=0;x<w;x++){
+        const t=(x+ecgOffset)%period;
+        let y=h/2;
+        const frac=t/period;
+        if(frac<0.1) y=h/2+Math.sin(frac*Math.PI*20)*4;
+        else if(frac<0.18){const p=(frac-0.1)/0.04;if(p<1)y=h/2-h*0.4*Math.sin(p*Math.PI);}
+        else if(frac<0.22){const p=(frac-0.18)/0.04;y=h/2+h*0.12*Math.sin(p*Math.PI);}
+        else if(frac<0.3) y=h/2+Math.sin(frac*Math.PI*8)*3;
+        if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      ecgOffset=(ecgOffset+2)%period;
+    }
+    ecgAnimFrame=requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+function useDefib() {
+  if (!document.getElementById('defibDisplay').classList.contains('show')) {
+    document.getElementById('defibDisplay').classList.add('show');
+    addLog('info','Défibrillateur mis en place');
+    showFeedback('info','DÉFIBRILLATEUR PRÊT','Positionnez les électrodes, choisissez l\'énergie et chargez avant de délivrer le choc.');
+  }
+  actionsDone.add('defib');
+  markToolUsed('tool-defib');
+  checkObjective('defib');
+  document.getElementById('defibJoules').textContent = defibJoules+' J';
+  setTimeout(()=>{
+    document.getElementById('shockBtn').disabled = false;
+    document.getElementById('defibStatus').textContent='CHARGÉ — PRÊT AU CHOC ⚡';
+    document.getElementById('defibStatus').style.color='var(--orange)';
+    defibCharged=true;
+    addLog('good','Défibrillateur chargé à '+defibJoules+'J');
+  }, 1500);
+}
+
+function changeDefibJoules(delta) {
+  defibJoules = Math.max(50, Math.min(360, defibJoules+delta));
+  document.getElementById('defibJoules').textContent = defibJoules+' J';
+  defibCharged=false;
+  document.getElementById('shockBtn').disabled=true;
+  document.getElementById('defibStatus').textContent='ÉNERGIE MODIFIÉE — RECHARGER';
+  document.getElementById('defibStatus').style.color='var(--muted)';
+}
+
+function deliverShock() {
+  if (!defibCharged) return;
+  const isCorrect = currentCase.tags.some(t=>['FV','torsades','TV','ACR'].includes(t)) || currentCase.vitals.hr===0;
+  document.getElementById('defibStatus').textContent = '⚡ CHOC DÉLIVRÉ — '+defibJoules+'J';
+  document.getElementById('defibStatus').style.color = 'var(--accent)';
+  document.getElementById('shockBtn').disabled=true;
+  defibCharged=false;
+  if (isCorrect) {
+    addLog('good','Choc électrique délivré à '+defibJoules+'J — Réponse cardiaque en cours...');
+    showFeedback('good','CHOC DÉLIVRÉ','Rythme en cours d\'analyse. Continuez le MCE pendant 2 minutes.');
+    actionsDone.add('defib');
+    checkObjective('defib');
+  } else {
+    addLog('bad','Choc inapproprié — Rythme non choquable !');
+    showFeedback('bad','CHOC INAPPROPRIÉ','Ce rythme n\'est pas choquable. Vérifiez l\'ECG avant de défibriller !');
+    loseLife();
+  }
+}
+
+function useColdpack() {
+  if (actionsDone.has('coldpack')) {
+    showFeedback('info','COLDPACK','Déjà appliqué sur la zone concernée.');
+    return;
+  }
+  actionsDone.add('coldpack');
+  markToolUsed('tool-coldpack');
+  addLog('good','Coldpack appliqué sur zone lésée');
+  showFeedback('good','COLDPACK APPLIQUÉ','Application de froid : réduit l\'inflammation et l\'hématome. Envelopper dans une compresse, ne jamais appliquer directement sur la peau.');
+  checkObjective('coldpack');
+}
+
+function useGlucometer() {
+  if (glucoMeasured) {
+    const g = currentCase.vitals.glucose;
+    document.getElementById('glucoVal').textContent = g;
+    showFeedback('info','GLYCÉMIE DÉJÀ MESURÉE',`Glycémie : ${g} mg/dL`);
+    return;
+  }
+  glucoMeasured=true;
+  actionsDone.add('glycemie');
+  markToolUsed('tool-glycemie');
+  const g = currentCase.vitals.glucose;
+  document.getElementById('glucoDisplay').classList.add('show');
+  document.getElementById('glucoVal').textContent = '...';
+  setTimeout(()=>{
+    document.getElementById('glucoVal').textContent = g;
+    const c = g<60?'var(--accent)':g<70?'var(--orange)':g>200?'var(--orange)':g>300?'var(--accent)':'var(--green)';
+    document.getElementById('glucoVal').style.color = c;
+    const r = g<40?'⚠️ HYPOGLYCÉMIE CRITIQUE (<40)':g<70?'⚠️ HYPOGLYCÉMIE (<70)':g<100?'✓ NORMAL (70-100)':g<180?'✓ NORMAL-HAUT':g<300?'⚠️ HYPERGLYCÉMIE (>180)':'🚨 HYPERGLYCÉMIE CRITIQUE (>300)';
+    document.getElementById('glucoRange').innerHTML=`<span style="color:${c}">${r}</span>`;
+    document.getElementById('hud-glucose').textContent = g;
+    addLog('good',`Glycémie mesurée : ${g} mg/dL`);
+    showFeedback(g<60||g>300?'bad':'good','GLYCÉMIE MESURÉE',`${g} mg/dL — ${r}`);
+    checkObjective('glycemie');
+  }, 800);
+}
+
+function useBandeElastique() {
+  if (actionsDone.has('bande_elastique')) {
+    showFeedback('info','BANDE ÉLASTIQUE','Déjà appliquée.');
+    return;
+  }
+  actionsDone.add('bande_elastique');
+  markToolUsed('tool-bande');
+  addLog('good','Bande élastique posée');
+  showFeedback('good','BANDE ÉLASTIQUE POSÉE','Contention efficace. Vérifier la circulation distale (pouls, chaleur, sensibilité).');
+  checkObjective('bande_elastique');
+}
+
+function useSang(vol) {
+  const key = 'poche_'+vol;
+  actionsDone.add(key);
+  addLog('good',`Poche de sang ${vol}mL transfusée`);
+  showFeedback('good',`POCHE ${vol}mL ADMINISTRÉE`,'Surveiller les constantes hémodynamiques. Risque de réaction transfusionnelle.');
+  checkObjective(key);
+  if (!actionsDone.has('acces_iv') && !actionsDone.has('acces_io')) {
+    showFeedback('bad','IMPOSSIBLE — PAS D\'ACCÈS VASCULAIRE','Posez d\'abord un accès IV ou IO avant d\'administrer une poche de sang !');
+    actionsDone.delete(key);
+    loseLife();
+  }
+}
+
+// ================== PROCEDURES ==================
+let procState = {};
+
+function openProcedure(type) {
+  const modal = document.getElementById('modalOverlay');
+  const body = document.getElementById('modalBody');
+
+  if (type==='iv') {
+    document.getElementById('modalTitle').textContent='ACCÈS INTRAVEINEUX';
+    document.getElementById('modalSub').textContent='SUIVRE LES ÉTAPES DANS L\'ORDRE';
+    procState = {type:'iv', step:0, steps:[
+      {text:'Poser le garrot proximal',icon:'🩺',key:'garrot'},
+      {text:'Désinfecter le site de ponction (alcool)',icon:'🧴',key:'desinfect'},
+      {text:'Essuyer avec compresse stérile',icon:'🧻',key:'essuyer'},
+      {text:'Introduire l\'aiguille cathéter (bevel vers le haut)',icon:'💉',key:'piquer'},
+      {text:'Retirer le mandrin, vérifier reflux sanguin',icon:'🩸',key:'reflux'},
+      {text:'Retirer le garrot',icon:'✂️',key:'retirer_garrot'},
+      {text:'Poser le pansement de fixation',icon:'🩹',key:'pansement_fix'},
+      {text:'Purger la perfusion et connecter',icon:'💧',key:'purger'}
+    ]};
+  } else if (type==='io') {
+    document.getElementById('modalTitle').textContent='ACCÈS INTRAOSSEUX (IO)';
+    document.getElementById('modalSub').textContent='EN CAS D\'ACCÈS IV IMPOSSIBLE';
+    procState = {type:'io', step:0, steps:[
+      {text:'Choisir le site (tibia proximal médial)',icon:'🦴',key:'site_io'},
+      {text:'Désinfecter la zone',icon:'🧴',key:'desinfect_io'},
+      {text:'Anesthésie locale si patient conscient',icon:'💉',key:'anesthesie_io'},
+      {text:'Inserrer l\'aiguille IO avec mouvement rotatif',icon:'🔩',key:'insertion_io'},
+      {text:'Retirer le mandrin — vérifier position',icon:'✅',key:'verif_io'},
+      {text:'Test d\'aspiration (moelle osseuse)',icon:'🩸',key:'aspiration_io'},
+      {text:'Rincer avec NaCl 0.9%',icon:'💧',key:'rincer_io'},
+      {text:'Sécuriser le dispositif',icon:'🩹',key:'secur_io'}
+    ]};
+  }
+
+  body.innerHTML = renderProcedureSteps(procState);
+  modal.classList.add('show');
+}
+
+function openBandageProcedure(type) {
+  const modal = document.getElementById('modalOverlay');
+  const body = document.getElementById('modalBody');
+
+  const procedures = {
+    terrain: {
+      title:'PANSEMENT DE TERRAIN',
+      steps:[
+        {text:'Nettoyer la plaie avec sérum physiologique',icon:'💧',key:'nettoyer'},
+        {text:'Appliquer antiseptique (bétadine ou chlorhexidine)',icon:'🧴',key:'antiseptique'},
+        {text:'Sécher la zone avec compresse stérile',icon:'🧻',key:'secher'},
+        {text:'Appliquer la compresse stérile sur la plaie',icon:'🩹',key:'compresse'},
+        {text:'Fixer avec sparadrap ou bande',icon:'🎗️',key:'fixer'}
+      ]
+    },
+    compressif: {
+      title:'PANSEMENT COMPRESSIF',
+      steps:[
+        {text:'Compression directe manuelle sur la plaie',icon:'✋',key:'compression'},
+        {text:'Appliquer compresses épaisses sur la lésion',icon:'🩹',key:'compresses_epaisses'},
+        {text:'Enrouler la bande élastique en serrant',icon:'🎗️',key:'bande_compression'},
+        {text:'Vérifier perfusion distale (pouls)',icon:'💓',key:'verif_perf'},
+        {text:'Surveiller le saignement à travers le pansement',icon:'👁️',key:'surveillance'}
+      ]
+    },
+    hemosta: {
+      title:'PANSEMENT HÉMOSTATIQUE',
+      steps:[
+        {text:'Identifier la source du saignement',icon:'🩸',key:'identifier'},
+        {text:'Appliquer pression directe ferme',icon:'✋',key:'pression'},
+        {text:'Placer l\'agent hémostatique (QuikClot/Celox) dans la plaie',icon:'🩹',key:'hemosta_agent'},
+        {text:'Comprimer 3 minutes minimum',icon:'⏱️',key:'comprimer'},
+        {text:'Couvrir avec pansement compressif',icon:'🎗️',key:'couvrir'},
+        {text:'Ne pas retirer — surveiller 15 min',icon:'👁️',key:'surveiller'}
+      ]
+    }
+  };
+
+  const proc = procedures[type];
+  document.getElementById('modalTitle').textContent = proc.title;
+  document.getElementById('modalSub').textContent = 'ÉTAPES OBLIGATOIRES DANS L\'ORDRE';
+
+  const actionKey = type==='terrain'
+    ? (currentCase.injuries.find(i=>['avant-bras gauche','bras gauche'].some(z=>z===i.zone))?'pansement_terrain_larm':'pansement_terrain_rleg')
+    : type==='compressif'?'pansement_compressif':'pansement_hemosta';
+
+  procState = {type:'bandage_'+type, step:0, steps:proc.steps, finalKey:actionKey};
+  body.innerHTML = renderProcedureSteps(procState);
+  modal.classList.add('show');
+}
+
+function renderProcedureSteps(state) {
+  return `<div class="proc-steps">` +
+    state.steps.map((s,i)=>`
+      <div class="proc-step ${i===0?'active-step':i<state.step?'done':i>0?'locked-step':''}" id="pstep-${i}" onclick="doStep(${i})">
+        <div class="step-num">${i<state.step?'✓':i+1}</div>
+        <div class="step-text">${s.text}</div>
+        <span class="step-icon">${s.icon}</span>
+      </div>`).join('') +
+    `</div>
+    <button class="proc-btn" id="procFinalBtn" onclick="completeProcedure()" ${state.step<state.steps.length?'disabled':''}>
+      ✓ PROCÉDURE TERMINÉE
+    </button>`;
+}
+
+function doStep(idx) {
+  if (idx !== procState.step) {
+    if (idx < procState.step) return;
+    // Wrong order
+    showFeedback('bad','ÉTAPE INCORRECTE','Vous devez suivre les étapes dans l\'ordre. Reprenez depuis l\'étape '+(procState.step+1)+'.');
+    loseLife();
+    return;
+  }
+  procState.step++;
+  const stepEl = document.getElementById('pstep-'+idx);
+  stepEl.classList.remove('active-step','locked-step');
+  stepEl.classList.add('done');
+  stepEl.querySelector('.step-num').textContent='✓';
+
+  if (procState.step < procState.steps.length) {
+    const nextEl = document.getElementById('pstep-'+procState.step);
+    if (nextEl) {
+      nextEl.classList.remove('locked-step');
+      nextEl.classList.add('active-step');
+    }
+  }
+  addLog('good','Étape '+procState.step+' : '+procState.steps[idx].text);
+
+  if (procState.step===procState.steps.length) {
+    document.getElementById('procFinalBtn').disabled=false;
+  }
+}
+
+function completeProcedure() {
+  const type = procState.type;
+  let key, name;
+  if (type==='iv') { key='acces_iv'; name='Accès IV'; }
+  else if (type==='io') { key='acces_io'; name='Accès IO'; }
+  else { key=procState.finalKey; name=document.getElementById('modalTitle').textContent; }
+
+  actionsDone.add(key);
+  markToolUsed('tool-'+(type.startsWith('bandage_')?procState.finalKey.split('_')[1]:type));
+
+  if (type==='iv') markToolUsed('tool-iv');
+  if (type==='io') markToolUsed('tool-io');
+  if (type.startsWith('bandage_terrain')) markToolUsed('tool-terrain');
+  if (type.startsWith('bandage_compressif')) markToolUsed('tool-compressif');
+  if (type.startsWith('bandage_hemosta')) markToolUsed('tool-hemosta');
+
+  addLog('good', name+' posé avec succès — Procédure complète ✓');
+  showFeedback('good', name.toUpperCase()+' RÉUSSI', currentCase.hint);
+  checkObjective(key);
+  closeModal();
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+// ================== MEDICATIONS ==================
+function adminMed(id, name) {
+  const isCorrect = currentCase.requiredActions.includes(id) || checkMedAppropriateness(id);
+  if (!actionsDone.has(id)) {
+    if (!actionsDone.has('acces_iv') && !actionsDone.has('acces_io') && !['glucagon'].includes(id)) {
+      showFeedback('bad','PAS D\'ACCÈS VASCULAIRE !','Posez d\'abord un accès IV ou IO avant d\'administrer ce médicament par voie intraveineuse.');
+      loseLife();
+      return;
+    }
+    actionsDone.add(id);
+    addLog('good', name+' administrée');
+    showFeedback('good', name.toUpperCase()+' ADMINISTRÉE', getMedFeedback(id));
+    checkObjective(id);
+  } else {
+    showFeedback('info',name.toUpperCase()+' — DÉJÀ DONNÉE','Vérifier le délai avant une nouvelle dose.');
+  }
+  if (!isCorrect && !currentCase.requiredActions.includes(id)) {
+    if (isMedHarmful(id)) {
+      showFeedback('bad','MÉDICAMENT INAPPROPRIÉ !',`${name} n'est pas indiqué dans ce cas. Risque iatrogène !`);
+      loseLife();
+    }
+  }
+}
+
+function checkMedAppropriateness(id) {
+  const vitals = currentCase.vitals;
+  if (id==='epinephrine' && vitals.hr===0) return true;
+  if (id==='insuline' && vitals.glucose>250) return true;
+  if (id==='glucagon' && vitals.glucose<70) return true;
+  if (id==='morphine' && currentCase.injuries.some(i=>['critique','moyenne'].includes(i.severity))) return true;
+  return false;
+}
+
+function isMedHarmful(id) {
+  const v=currentCase.vitals;
+  if (id==='insuline' && v.glucose<80) return true;
+  if (id==='morphine' && v.hr<50 && v.rr<10) return true;
+  return false;
+}
+
+function getMedFeedback(id) {
+  const feedbacks = {
+    epinephrine:'Épinéphrine 1mg IV/IO. En RCP : toutes 3-5 min. Vasopresseur de choix en ACR.',
+    morphine:'Morphine titrée 2mg IV toutes 5 min jusqu\'à EVA < 4/10. Surveiller SpO2 et FR.',
+    fentanyl:'Fentanyl 1-2µg/kg IV. Action rapide (2 min). Parfait pour gestes douloureux.',
+    propofol_100:'Propofol 1-2mg/kg IV pour induction. Surveiller TA et apnée.',
+    propofol_250:'Propofol entretien 2-8 mg/kg/h. Nécessite monitoring continu.',
+    insuline:'Insuline 0.1 UI/kg/h IV. Réévaluer glycémie toutes 30 min.',
+    glucagon:'Glucagon 1mg IM/IV. Élève la glycémie rapidement. Efficace en 10 min.'
+  };
+  return feedbacks[id]||'Médicament administré. Surveiller les effets.';
+}
+
+// ================== LIVES ==================
+function loseLife() {
+  if (lives <= 0) return;
+  lives--;
+  updateLivesDisplay();
+  const heart = document.getElementById('h'+(lives+1));
+  if (heart) {
+    heart.classList.add('lost');
+    heart.style.animation='none';
+    setTimeout(()=>heart.style.animation='',10);
+  }
+  addLog('bad', '💔 Vie perdue — '+lives+' restante(s)');
+  if (lives===0) {
+    setTimeout(()=>endCase(false),1200);
+  }
+}
+
+function updateLivesDisplay() {
+  for(let i=1;i<=5;i++){
+    const h=document.getElementById('h'+i);
+    if(h){
+      if(i<=lives){h.classList.remove('lost');}
+      else{h.classList.add('lost');}
+    }
+  }
+}
+
+// ================== TIMER ==================
+function startCriticalTimer() {
+  document.getElementById('timerWrap').style.display='block';
+  let secs = currentCase.criticalSecs;
+  const total = secs;
+  const utFill = document.getElementById('utFill');
+  const utVal = document.getElementById('utVal');
+
+  critTimerInterval = setInterval(()=>{
+    secs--;
+    const m=Math.floor(secs/60);
+    const s=secs%60;
+    utVal.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    utFill.style.width=(secs/total*100)+'%';
+    utFill.style.background=secs<30?'var(--accent)':secs<60?'var(--orange)':'var(--accent)';
+    if (secs<=0) {
+      clearInterval(critTimerInterval);
+      if (!allRequiredDone()) {
+        addLog('bad','⏰ TEMPS CRITIQUE ÉCOULÉ — Patient en détresse maximale');
+        showFeedback('bad','TEMPS CRITIQUE ÉCOULÉ','Le délai critique est passé. Erreur médicale grave !');
+        loseLife();
+      }
+    }
+  },1000);
+}
+
+function allRequiredDone() {
+  return currentCase.requiredActions.every(ra=>actionsDone.has(ra));
+}
+
+// ================== END CASE ==================
+function endCase(win) {
+  if (critTimerInterval) { clearInterval(critTimerInterval); critTimerInterval=null; }
+  if (ecgAnimFrame) { cancelAnimationFrame(ecgAnimFrame); ecgAnimFrame=null; }
+
+  if (win && !completedCases.includes(currentCase.id)) {
+    completedCases.push(currentCase.id);
+    localStorage.setItem('chl_completed',JSON.stringify(completedCases));
+  }
+
+  const screen = document.getElementById('endScreen');
+  const icon = win?'✅':'💔';
+  const title = win?'PATIENT STABLE':'PATIENT DÉCÉDÉ';
+  const sub = win ? 'MISSION ACCOMPLIE — CAS RÉUSSI' : 'ERREUR MÉDICALE — CAS ÉCHOUÉ';
+  const cls = win?'win':'lose';
+
+  document.getElementById('endIcon').textContent = icon;
+  document.getElementById('endTitle').textContent = title;
+  document.getElementById('endTitle').className='endscreen-title '+cls;
+  document.getElementById('endSub').textContent = sub;
+  document.getElementById('endStats').innerHTML=`
+    <div class="endscreen-stat">VIES RESTANTES<span>${'❤️'.repeat(lives)+'💔'.repeat(5-lives)}</span></div>
+    <div class="endscreen-stat">ACTIONS RÉALISÉES<span>${actionsDone.size}</span></div>
+    <div class="endscreen-stat">CAS TERMINÉS<span>${completedCases.length}/100</span></div>`;
+
+  if (!win && lives===0) {
+    document.getElementById('endSub').textContent='GAME OVER — Plus de vies';
+    document.getElementById('btnNextCase').style.display='none';
+  }
+
+  const nextExists = caseIndex+1 < CASES.length;
+  document.getElementById('btnNextCase').style.display = nextExists&&win?'':'none';
+  screen.classList.add('show');
+}
+
+function retryCase() {
+  if (lives===0) { lives=5; updateLivesDisplay(); }
+  document.getElementById('endScreen').classList.remove('show');
+  startCase(currentCase.id);
+}
+
+function nextCase() {
+  document.getElementById('endScreen').classList.remove('show');
+  if (caseIndex+1 < CASES.length) {
+    startCase(CASES[caseIndex+1].id);
+  }
+}
+
+function showList() {
+  document.getElementById('endScreen').classList.remove('show');
+  if (ecgAnimFrame) { cancelAnimationFrame(ecgAnimFrame); ecgAnimFrame=null; }
+  if (critTimerInterval) { clearInterval(critTimerInterval); critTimerInterval=null; }
+  showView('viewList');
+  renderCaseList();
+}
+
+// ================== UI HELPERS ==================
+function showFeedback(type, title, text) {
+  const box = document.getElementById('feedbackBox');
+  box.className='feedback-box show '+type;
+  document.getElementById('feedbackTitle').textContent=title;
+  document.getElementById('feedbackText').textContent=text;
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function clearFeedback() {
+  document.getElementById('feedbackBox').className='feedback-box';
+}
+
+function addLog(type, text) {
+  gameLog.unshift({type,text,time:formatTime(elapsedSeconds)});
+  elapsedSeconds++;
+  const tab = document.getElementById('tabLog');
+  tab.innerHTML = gameLog.map(e=>`
+    <div class="log-entry log-${e.type}">
+      <span class="log-time">${e.time}</span>
+      <span class="log-text">${e.text}</span>
+    </div>`).join('');
+}
+
+function formatTime(s) {
+  const m=Math.floor(s/60);
+  return `${String(m).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
+
+function clearLog() {
+  document.getElementById('tabLog').innerHTML='';
+  addLog('info','Cas démarré — '+currentCase.title);
+}
+
+function markToolUsed(id) {
+  const el=document.getElementById(id);
+  if(el) {
+    el.classList.add('used');
+    el.onclick=null;
+  }
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.sidebar-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  ['tabTools','tabMeds','tabLog'].forEach(t=>{
+    document.getElementById(t).style.display = t==='tab'+capitalize(tab)?'block':'none';
+  });
+}
+
+function capitalize(s) { return s.charAt(0).toUpperCase()+s.slice(1); }
+
+// ================== START ==================
+init();
+</script>
+</body>
+</html>
