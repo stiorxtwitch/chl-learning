@@ -127,10 +127,9 @@ function getSession() { const s = sessionStorage.getItem('chl_user'); return s ?
 const user = getSession();
 if (!user) window.location.href = 'index.html';
 function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
-if (user && user.etiquette === 'Direction') document.getElementById('dirNav').style.display = 'inline';
+if (user && user.etiquette === 'Direction') document.getElementById('adminNav').style.display = 'inline';
 
 const BADGE_CATALOGUE = {
-  // Stagiaires
   '37bdc287-47a9-4ce7-af3f-5afda2686bec': { nom:'Diplôme Certificatif Aide Soignant', description:'Maitrise de la théorie', icone:'📖', niveau:'Stagiaire', couleur:'#27ae60' },
   'f07a0c4d-1580-4322-b887-ee82591294c7': { nom:'Diplôme Certificatif Infirmier', description:'Maitrise de la théorie', icone:'📈', niveau:'Infirmier', couleur:'#2980b9' },
   '58652cf7-57c7-4e26-adf7-ba92116c4790': { nom:'Diplôme Certificatif Apprenti Médecin', description:'Maitrise de la théorie', icone:'🫀', niveau:'Apprenti Médecin', couleur:'#e67e22' },
