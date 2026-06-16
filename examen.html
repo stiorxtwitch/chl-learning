@@ -253,7 +253,7 @@ document.addEventListener('visibilitychange', () => {
 async function loadExamens() {
   try {
     const [examens, resultats] = await Promise.all([
-      fetch(`${SUPABASE_URL}/rest/v1/examens?actif=eq.true&order=etiquette_requise,titre`, { headers: HEADERS }).then(r => r.json()),
+      rpc('get_examens', {}),                           // ✅ RPC : plus d'accès direct
       rpc('get_mes_resultats', { p_user_id: user.id })   // ✅ RPC : ses résultats uniquement
     ]);
 
@@ -296,9 +296,10 @@ async function loadExamens() {
 // ─── DÉMARRAGE EXAMEN ─────────────────────────────────────────────────────────
 async function startExam(examId) {
   try {
-    const eRes = await fetch(`${SUPABASE_URL}/rest/v1/examens?id=eq.${examId}&select=*`, { headers: HEADERS });
-    const exArr = await eRes.json();
-    currentExamen = exArr[0];
+    // ✅ RPC : récupère l'examen via la liste (déjà chargée) ou refetch sécurisé
+    const tousExamens = await rpc('get_examens', {});
+    currentExamen = (tousExamens || []).find(e => e.id === examId);
+    if (!currentExamen) throw new Error('EXAMEN_NOT_FOUND');
 
     // ✅ RPC : questions sans reponse_correcte — retirée côté serveur
     const qs = await rpc('get_questions', { p_examen_id: examId });
