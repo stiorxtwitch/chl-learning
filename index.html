@@ -412,43 +412,80 @@
 </div>
 
 <script>
+  // ─── CONFIG ───────────────────────────────────────────────────────────────
+  // La clé anon est inévitable côté client, mais avec RLS activé côté Supabase
+  // elle ne donne accès à RIEN directement — seule la fonction RPC authenticate_user
+  // peut valider un login, et elle ne renvoie jamais les mots de passe.
   const SUPABASE_URL = 'https://sevrfgivcpefyykuffti.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNldnJmZ2l2Y3BlZnl5a3VmZnRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NDI1NTMsImV4cCI6MjA3ODUxODU1M30.YZnkSHsVWKQEhfU7xYfWyTFmtkM28Zuzdu7Y1sjBXQc';
 
+  // ─── ANTI-BRUTE FORCE ─────────────────────────────────────────────────────
+  const MAX_ATTEMPTS = 5;
+  const LOCKOUT_MS = 5 * 60 * 1000; // 5 minutes
+
+  function getLockout() {
+    try {
+      const data = JSON.parse(sessionStorage.getItem('chl_lockout') || '{}');
+      return data;
+    } catch { return {}; }
+  }
+
+  function isLockedOut() {
+    const { attempts, lockedUntil } = getLockout();
+    if (lockedUntil && Date.now() < lockedUntil) return true;
+    if (lockedUntil && Date.now() >= lockedUntil) {
+      sessionStorage.removeItem('chl_lockout');
+    }
+    return false;
+  }
+
+  function recordFailedAttempt() {
+    const data = getLockout();
+    const attempts = (data.attempts || 0) + 1;
+    if (attempts >= MAX_ATTEMPTS) {
+      sessionStorage.setItem('chl_lockout', JSON.stringify({
+        attempts,
+        lockedUntil: Date.now() + LOCKOUT_MS
+      }));
+    } else {
+      sessionStorage.setItem('chl_lockout', JSON.stringify({ attempts }));
+    }
+    return attempts;
+  }
+
+  function resetAttempts() {
+    sessionStorage.removeItem('chl_lockout');
+  }
+
+  // ─── SESSION ──────────────────────────────────────────────────────────────
   function setSession(user) {
     sessionStorage.setItem('chl_user', JSON.stringify(user));
   }
 
   function getSession() {
-    const s = sessionStorage.getItem('chl_user');
-    return s ? JSON.parse(s) : null;
+    try {
+      const s = sessionStorage.getItem('chl_user');
+      return s ? JSON.parse(s) : null;
+    } catch { return null; }
   }
 
   if (getSession()) {
     window.location.href = 'home.html';
   }
 
+  // ─── KEYBOARD ─────────────────────────────────────────────────────────────
   document.getElementById('password').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') handleLogin();
   });
-
   document.getElementById('username').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') document.getElementById('password').focus();
   });
 
-  async function hashPassword(password) {
-    const msgBuffer = new TextEncoder().encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
+  // ─── LOGIN ────────────────────────────────────────────────────────────────
   async function handleLogin() {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
-
     const btn = document.getElementById('loginBtn');
-    const error = document.getElementById('errorMsg');
     const loading = document.getElementById('loading');
 
     if (!username || !password) {
@@ -456,70 +493,70 @@
       return;
     }
 
+    // Vérification lockout
+    if (isLockedOut()) {
+      const { lockedUntil } = getLockout();
+      const remaining = Math.ceil((lockedUntil - Date.now()) / 60000);
+      showError(`COMPTE BLOQUÉ — RÉESSAYEZ DANS ${remaining} MIN`);
+      return;
+    }
+
     btn.disabled = true;
-    error.classList.remove('show');
     loading.classList.add('show');
 
     try {
-      // Récupération de l'utilisateur depuis Supabase
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/users?username=eq.${encodeURIComponent(username)}&select=*`,
-        {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-          }
-        }
-      );
+      // ✅ SÉCURISÉ : appel RPC côté serveur — la table users n'est jamais exposée
+      // La fonction authenticate_user tourne en SECURITY DEFINER dans Supabase
+      // et ne renvoie que {success, id, username, etiquette} — jamais le mot de passe
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/authenticate_user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        },
+        body: JSON.stringify({ p_username: username, p_password: password })
+      });
 
-      if (!res.ok) {
-        throw new Error('FETCH_ERROR');
-      }
+      if (!res.ok) throw new Error('FETCH_ERROR');
 
-      const users = await res.json();
+      const result = await res.json();
 
-      if (!users || users.length === 0) {
-        throw new Error('NOT_FOUND');
-      }
-
-      const user = users[0];
-
-      // Vérification du mot de passe (stocké en clair dans password_hash)
-      const validPassword =
-        (user.password_hash && user.password_hash === password) ||
-        password === 'chl2024';
-
-      if (!validPassword) {
-        throw new Error('WRONG_PASSWORD');
+      if (!result.success) {
+        throw new Error(result.error || 'UNKNOWN');
       }
 
       // Connexion réussie
+      resetAttempts();
       setSession({
-        id: user.id,
-        username: user.username,
-        etiquette: user.etiquette
+        id: result.id,
+        username: result.username,
+        etiquette: result.etiquette
       });
 
       btn.textContent = '✓ ACCÈS ACCORDÉ';
       btn.style.background = 'var(--green)';
       loading.classList.remove('show');
 
-      setTimeout(() => {
-        window.location.href = 'home.html';
-      }, 800);
+      setTimeout(() => { window.location.href = 'home.html'; }, 800);
 
     } catch (err) {
       loading.classList.remove('show');
       btn.disabled = false;
       btn.textContent = 'ACCÉDER';
 
-      if (err.message === 'NOT_FOUND') {
-        showError('UTILISATEUR INTROUVABLE');
-      } else if (err.message === 'WRONG_PASSWORD') {
-        showError('MOT DE PASSE INCORRECT');
+      const attempts = recordFailedAttempt();
+      const remaining = MAX_ATTEMPTS - attempts;
+
+      if (err.message === 'NOT_FOUND' || err.message === 'WRONG_PASSWORD') {
+        // Message délibérément vague pour ne pas aider un attaquant
+        if (remaining > 0) {
+          showError(`IDENTIFIANTS INCORRECTS — ${remaining} ESSAI(S) RESTANT(S)`);
+        } else {
+          showError('TROP DE TENTATIVES — COMPTE BLOQUÉ 5 MIN');
+        }
       } else {
         showError('ERREUR CONNEXION — RÉESSAYEZ');
-        console.error(err);
       }
     }
   }
