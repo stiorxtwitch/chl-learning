@@ -115,9 +115,11 @@
   .toggle-btn.no{background:rgba(212,168,67,.08);border-color:rgba(212,168,67,.3);color:var(--gold);}
   .toggle-btn.no:hover{background:rgba(212,168,67,.18);}
 
-  .modal-footer{padding:16px 28px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;}
+  .modal-footer{padding:16px 28px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
   .btn-close-modal{padding:9px 22px;background:none;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;border-radius:2px;cursor:pointer;transition:all .2s;}
   .btn-close-modal:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-reset-badges{padding:9px 22px;background:none;border:1px solid rgba(192,57,43,.35);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;border-radius:2px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;}
+  .btn-reset-badges:hover{background:rgba(192,57,43,.12);border-color:var(--accent2);}
 </style>
 </head>
 <body>
@@ -154,7 +156,9 @@
       <div id="badgeList"></div>
     </div>
     <div class="modal-footer">
+      <button class="btn-reset-badges" onclick="resetAllBadges()">🗑 RESET TOUS LES BREVETS</button>
       <button class="btn-close-modal" onclick="closeBadgeModalDirect()">FERMER</button>
+    </div>
     </div>
   </div>
 </div>
@@ -463,6 +467,30 @@
   function closeBadgeModal(e) {
     if (e.target === document.getElementById('badgeModal')) closeBadgeModalDirect();
   }
+  async function resetAllBadges() {
+    if (!modalUserId) return;
+    const u = allUsers.find(u => u.id === modalUserId);
+    if (!u) return;
+    const count = Object.keys(modalBadgeMap).length;
+    if (count === 0) { showToast("AUCUN BREVET À SUPPRIMER", "error"); return; }
+    if (!confirm(`Supprimer les ${count} brevet(s) de "${u.username}" ?`)) return;
+    const headers = { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" };
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${modalUserId}`, {
+      method: "PATCH", headers,
+      body: JSON.stringify({ badges: [], updated_at: new Date().toISOString() })
+    });
+    if (res.ok) {
+      modalBadgeMap = {};
+      u.badges = [];
+      renderBadgeList();
+      const countEl = document.querySelector(`#row-${modalUserId} .badge-count`);
+      if (countEl) countEl.textContent = "0";
+      showToast("✓ TOUS LES BREVETS SUPPRIMÉS", "success");
+    } else {
+      showToast("✗ ERREUR RESET", "error");
+    }
+  }
+
   function closeBadgeModalDirect() {
     document.getElementById('badgeModal').classList.remove('open');
     modalUserId = null;
