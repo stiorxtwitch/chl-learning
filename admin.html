@@ -26,13 +26,11 @@
   .page-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:4px;}
   .page-sub{color:var(--muted);font-size:14px;margin-top:8px;}
 
-  /* STATS ROW */
   .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:36px;}
   .stat-card{background:var(--card);border:1px solid var(--border);border-radius:2px;padding:18px 20px;}
   .stat-card-value{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;}
   .stat-card-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
 
-  /* USER TABLE */
   .table-container{background:var(--card);border:1px solid var(--border);border-radius:2px;overflow:hidden;margin-bottom:32px;}
   .table-header{padding:16px 24px;background:var(--card2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;}
   .table-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;}
@@ -51,26 +49,25 @@
   .td-id{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);}
   .td-date{font-size:12px;color:var(--muted);}
 
-  /* Etiquette select */
   .etiquette-select{background:var(--card2);border:1px solid var(--border);border-radius:2px;padding:6px 12px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;outline:none;transition:all .2s;}
   .etiquette-select:focus{border-color:var(--accent);}
   .etiquette-select:hover{border-color:var(--muted);}
 
-  /* Badges */
-  .badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:2px;border:1px solid;}
-  .badge-Stagiaire{color:var(--green);border-color:rgba(39,174,96,.4);background:rgba(39,174,96,.08);}
-  .badge-Infirmier{color:var(--blue);border-color:rgba(41,128,185,.4);background:rgba(41,128,185,.08);}
-  .badge-AM{color:var(--orange);border-color:rgba(230,126,34,.4);background:rgba(230,126,34,.08);}
-  .badge-Medecin{color:var(--gold);border-color:rgba(212,168,67,.4);background:rgba(212,168,67,.08);}
-  .badge-Direction{color:var(--accent2);border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.08);}
+  .btn-badges{background:none;border:1px solid rgba(212,168,67,.35);color:var(--gold);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:4px 10px;border-radius:2px;cursor:pointer;transition:all .2s;}
+  .btn-badges:hover{background:rgba(212,168,67,.12);border-color:var(--gold);}
+  .btn-delete{background:none;border:1px solid rgba(192,57,43,.3);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:4px 10px;border-radius:2px;cursor:pointer;transition:all .2s;}
+  .btn-delete:hover{background:rgba(192,57,43,.15);}
+  .td-actions{display:flex;gap:6px;align-items:center;}
 
-  /* Toast */
-  .toast{position:fixed;bottom:30px;right:30px;padding:14px 20px;border-radius:2px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;border:1px solid;}
+  .badge-count{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(212,168,67,.15);border:1px solid rgba(212,168,67,.3);font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--gold);margin-left:6px;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:30px;right:30px;padding:14px 20px;border-radius:2px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;transform:translateY(80px);opacity:0;transition:all .3s;z-index:9999;border:1px solid;}
   .toast.show{transform:translateY(0);opacity:1;}
   .toast.success{background:rgba(39,174,96,.15);border-color:rgba(39,174,96,.4);color:var(--green);}
   .toast.error{background:rgba(192,57,43,.15);border-color:rgba(192,57,43,.4);color:var(--accent2);}
 
-  /* Add user */
+  /* ADD USER FORM */
   .add-form{background:var(--card);border:1px solid rgba(192,57,43,.3);border-radius:2px;padding:28px;margin-bottom:32px;}
   .add-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:4px;color:var(--accent);margin-bottom:20px;}
   .form-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;}
@@ -82,34 +79,92 @@
   .btn-add{padding:10px 22px;background:var(--accent);border:none;color:white;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;border-radius:2px;cursor:pointer;transition:all .2s;white-space:nowrap;}
   .btn-add:hover{background:var(--accent2);}
 
-  /* Spinner */
   .loading{text-align:center;padding:30px;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:3px;}
   .empty{text-align:center;padding:40px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;border:1px dashed var(--border);border-radius:2px;}
+
+  /* ── BADGE MODAL ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+  .modal-overlay.open{opacity:1;pointer-events:all;}
+  .modal{background:var(--card);border:1px solid var(--border);border-radius:2px;width:560px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;position:relative;transform:translateY(16px);transition:transform .25s;}
+  .modal-overlay.open .modal{transform:translateY(0);}
+  .modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+  .modal-head{padding:24px 28px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+  .modal-icon{font-size:24px;}
+  .modal-info{flex:1;}
+  .modal-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;line-height:1;}
+  .modal-sub{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+  .modal-close{background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:2px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+  .modal-close:hover{border-color:var(--accent);color:var(--accent);}
+  .modal-body{padding:20px 28px;overflow-y:auto;flex:1;}
+  .modal-section-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:12px;}
+
+  .badge-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:2px;border:1px solid var(--border);background:var(--card2);margin-bottom:8px;transition:border-color .2s;}
+  .badge-row:hover{border-color:var(--muted);}
+  .badge-emoji{font-size:22px;width:32px;text-align:center;flex-shrink:0;}
+  .badge-info{flex:1;}
+  .badge-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+  .badge-level{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;}
+  .badge-obtained{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:3px;}
+
+  .toggle-btn{flex-shrink:0;padding:6px 14px;border-radius:2px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;transition:all .2s;border:1px solid;}
+  .toggle-btn.has{background:rgba(39,174,96,.1);border-color:rgba(39,174,96,.4);color:var(--green);}
+  .toggle-btn.has:hover{background:rgba(192,57,43,.1);border-color:rgba(192,57,43,.4);color:var(--accent2);}
+  .toggle-btn.has:hover::before{content:'RETIRER ';}
+  .toggle-btn.has span{display:inline;}
+  .toggle-btn.has:hover span{display:none;}
+  .toggle-btn.no{background:rgba(212,168,67,.08);border-color:rgba(212,168,67,.3);color:var(--gold);}
+  .toggle-btn.no:hover{background:rgba(212,168,67,.18);}
+
+  .modal-footer{padding:16px 28px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;}
+  .btn-close-modal{padding:9px 22px;background:none;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;border-radius:2px;cursor:pointer;transition:all .2s;}
+  .btn-close-modal:hover{border-color:var(--accent);color:var(--accent);}
 </style>
 </head>
 <body>
 <nav>
-  <a href="home.html" class="nav-link active">ACCUEIL</a>
-  <a href="cours.html" class="nav-link">COURS</a>
-  <a href="examen.html" class="nav-link">EXAMENS</a>
-  <a href="profil.html" class="nav-link">PROFIL</a>
-  <a href="effectifs.html" class="nav-link">EFFECTIF</a>
-  <a href="interactive.html" class="nav-link">FORMATION INTERACTIVE</a>
-  <span id="adminNav" style="display:none">
-    <a href="admin.html" class="nav-link">ADMIN</a>
+  <a href="home.html" class="nav-brand">C<span>H</span>L</a>
+  <div style="display:flex;gap:4px;align-items:center;">
+    <a href="home.html" class="nav-link">ACCUEIL</a>
+    <a href="cours.html" class="nav-link">COURS</a>
+    <a href="examen.html" class="nav-link">EXAMENS</a>
+    <a href="profil.html" class="nav-link">PROFIL</a>
+    <a href="effectifs.html" class="nav-link">EFFECTIF</a>
+    <a href="interactive.html" class="nav-link">FORMATION INTERACTIVE</a>
+    <a href="admin.html" class="nav-link active">ADMIN</a>
     <a href="resultats.html" class="nav-link">RÉSULTATS</a>
-  </span>
+  </div>
   <button class="btn-logout" onclick="logout()">DÉCONNEXION</button>
 </nav>
 
 <div class="toast" id="toast"></div>
+
+<!-- BADGE MODAL -->
+<div class="modal-overlay" id="badgeModal" onclick="closeBadgeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-icon">🎖️</div>
+      <div class="modal-info">
+        <div class="modal-title" id="modalUsername">—</div>
+        <div class="modal-sub" id="modalSub">GESTION DES BREVETS</div>
+      </div>
+      <button class="modal-close" onclick="closeBadgeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section-label">BREVETS DISPONIBLES — CLIQUEZ POUR ATTRIBUER OU RETIRER</div>
+      <div id="badgeList"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-close-modal" onclick="closeBadgeModalDirect()">FERMER</button>
+    </div>
+  </div>
+</div>
 
 <main>
   <div class="container">
     <div class="page-header">
       <div class="page-label">DIRECTION // ACCÈS RESTREINT</div>
       <div class="page-title">ADMINISTRATION</div>
-      <div class="page-sub">Gestion des utilisateurs et des étiquettes d'accès</div>
+      <div class="page-sub">Gestion des utilisateurs, étiquettes et brevets</div>
     </div>
 
     <div class="stats-row" id="statsRow">
@@ -120,7 +175,6 @@
       <div class="stat-card"><div class="stat-card-value" style="color:var(--gold)" id="totalMedecin">—</div><div class="stat-card-label">MÉDECINS</div></div>
     </div>
 
-    <!-- AJOUTER UTILISATEUR -->
     <div class="add-form">
       <div class="add-title">AJOUTER UN UTILISATEUR</div>
       <div class="form-row">
@@ -146,7 +200,6 @@
       </div>
     </div>
 
-    <!-- TABLE UTILISATEURS -->
     <div class="table-container">
       <div class="table-header">
         <div class="table-title">UTILISATEURS</div>
@@ -173,11 +226,19 @@
   let allUsers = [];
 
   const ETIQUETTES = ['Stagiaire','Infirmier','Apprenti Médecin','Médecin','Direction'];
-  const ET_BADGE = { 'Stagiaire':'badge-Stagiaire','Infirmier':'badge-Infirmier','Apprenti Médecin':'badge-AM','Médecin':'badge-Medecin','Direction':'badge-Direction' };
+
+  const BADGE_CATALOGUE = {
+    '37bdc287-47a9-4ce7-af3f-5afda2686bec': { nom:'Diplôme Certificatif Aide Soignant',    icone:'📖', niveau:'Stagiaire',       couleur:'#27ae60' },
+    'f07a0c4d-1580-4322-b887-ee82591294c7': { nom:'Diplôme Certificatif Infirmier',          icone:'📈', niveau:'Infirmier',       couleur:'#2980b9' },
+    '58652cf7-57c7-4e26-adf7-ba92116c4790': { nom:'Diplôme Certificatif Apprenti Médecin',   icone:'🫀', niveau:'Apprenti Médecin', couleur:'#e67e22' },
+    '60eeda10-13f9-46ce-b5e3-2de9f17a06d6': { nom:'Diplôme Certificatif Médecin',            icone:'🧵', niveau:'Médecin',         couleur:'#d4a843' },
+  };
+
+  // ── DATA ────────────────────────────────────────────────────────────────────
 
   async function loadUsers() {
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?order=created_at.desc&select=id,username,etiquette,created_at`, { headers });
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?order=created_at.desc&select=id,username,etiquette,badges,created_at`, { headers });
     allUsers = await res.json();
     updateStats();
     renderTable(allUsers);
@@ -185,12 +246,29 @@
 
   function updateStats() {
     document.getElementById('totalUsers').textContent = allUsers.length;
-    ['Stagiaire','Infirmier','Apprenti Médecin','Médecin'].forEach(et => {
-      const count = allUsers.filter(u => u.etiquette === et).length;
-      const ids = { 'Stagiaire':'totalStagiaire','Infirmier':'totalInfirmier','Apprenti Médecin':'totalApprentis','Médecin':'totalMedecin' };
-      document.getElementById(ids[et]).textContent = count;
+    const ids = { 'Stagiaire':'totalStagiaire','Infirmier':'totalInfirmier','Apprenti Médecin':'totalApprentis','Médecin':'totalMedecin' };
+    Object.keys(ids).forEach(et => {
+      document.getElementById(ids[et]).textContent = allUsers.filter(u => u.etiquette === et).length;
     });
   }
+
+  // Parse badges array → map of examen_id → {obtenu_le}
+  function parseBadges(raw) {
+    if (!Array.isArray(raw)) return {};
+    const map = {};
+    raw.forEach(b => {
+      if (typeof b === 'string') map[b] = { obtenu_le: null };
+      else if (b && b.examen_id) map[b.examen_id] = { obtenu_le: b.obtenu_le || null };
+    });
+    return map;
+  }
+
+  function countBadges(u) {
+    const raw = Array.isArray(u.badges) ? u.badges : [];
+    return parseBadges(raw);
+  }
+
+  // ── TABLE ───────────────────────────────────────────────────────────────────
 
   function renderTable(users) {
     if (!users.length) {
@@ -202,12 +280,16 @@
         <thead><tr>
           <th>IDENTIFIANT</th>
           <th>ÉTIQUETTE</th>
+          <th>BREVETS</th>
           <th>CRÉÉ LE</th>
           <th>ID</th>
           <th>ACTIONS</th>
         </tr></thead>
         <tbody>
-          ${users.map(u => `
+          ${users.map(u => {
+            const badgeMap = countBadges(u);
+            const count = Object.keys(badgeMap).length;
+            return `
             <tr id="row-${u.id}">
               <td class="td-username">${u.username}</td>
               <td>
@@ -215,27 +297,31 @@
                   ${ETIQUETTES.map(et => `<option value="${et}" ${et === u.etiquette ? 'selected' : ''}>${et}</option>`).join('')}
                 </select>
               </td>
-              <td class="td-date">${new Date(u.created_at).toLocaleDateString('fr-BE')}</td>
-              <td class="td-id">${u.id.substring(0,8)}...</td>
               <td>
-                <button onclick="deleteUser('${u.id}', '${u.username}')" 
-                  style="background:none;border:1px solid rgba(192,57,43,.3);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:4px 10px;border-radius:2px;cursor:pointer;transition:all .2s"
-                  onmouseover="this.style.background='rgba(192,57,43,.15)'" onmouseout="this.style.background='none'">
-                  SUPPR.
+                <button class="btn-badges" onclick="openBadgeModal('${u.id}')">
+                  🎖️ BREVETS <span class="badge-count">${count}</span>
                 </button>
               </td>
-            </tr>`).join('')}
+              <td class="td-date">${new Date(u.created_at).toLocaleDateString('fr-BE')}</td>
+              <td class="td-id">${u.id.substring(0,8)}…</td>
+              <td class="td-actions">
+                <button class="btn-delete" onclick="deleteUser('${u.id}', '${u.username}')">SUPPR.</button>
+              </td>
+            </tr>`;
+          }).join('')}
         </tbody>
       </table>`;
   }
 
   function filterUsers(q) {
-    const filtered = allUsers.filter(u => 
-      u.username.toLowerCase().includes(q.toLowerCase()) || 
+    const filtered = allUsers.filter(u =>
+      u.username.toLowerCase().includes(q.toLowerCase()) ||
       u.etiquette.toLowerCase().includes(q.toLowerCase())
     );
     renderTable(filtered);
   }
+
+  // ── ETIQUETTE ───────────────────────────────────────────────────────────────
 
   async function updateEtiquette(userId, newEt) {
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
@@ -253,6 +339,8 @@
     }
   }
 
+  // ── DELETE ──────────────────────────────────────────────────────────────────
+
   async function deleteUser(userId, username) {
     if (!confirm(`Supprimer l'utilisateur "${username}" ?`)) return;
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
@@ -267,14 +355,14 @@
     }
   }
 
+  // ── ADD USER ────────────────────────────────────────────────────────────────
+
   async function addUser() {
     const username = document.getElementById('newUsername').value.trim();
     const password = document.getElementById('newPassword').value;
     const etiquette = document.getElementById('newEtiquette').value;
     if (!username || !password) { showToast('✗ REMPLISSEZ TOUS LES CHAMPS', 'error'); return; }
-    
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
-    // Note: en production, hasher le mot de passe côté Edge Function
     const res = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
       method: 'POST', headers,
       body: JSON.stringify({ username, password_hash: password, etiquette })
@@ -290,6 +378,99 @@
     }
   }
 
+  // ── BADGE MODAL ─────────────────────────────────────────────────────────────
+
+  let modalUserId = null;
+  let modalBadgeMap = {}; // examen_id → {obtenu_le} — état local pendant le modal
+
+  function openBadgeModal(userId) {
+    const u = allUsers.find(u => u.id === userId);
+    if (!u) return;
+    modalUserId = userId;
+    modalBadgeMap = parseBadges(u.badges);
+
+    document.getElementById('modalUsername').textContent = u.username.toUpperCase();
+    document.getElementById('modalSub').textContent = `GESTION DES BREVETS — ${u.etiquette.toUpperCase()}`;
+    renderBadgeList();
+    document.getElementById('badgeModal').classList.add('open');
+  }
+
+  function renderBadgeList() {
+    const list = document.getElementById('badgeList');
+    list.innerHTML = Object.entries(BADGE_CATALOGUE).map(([examId, cat]) => {
+      const owned = !!modalBadgeMap[examId];
+      const obtenu = owned && modalBadgeMap[examId].obtenu_le
+        ? new Date(modalBadgeMap[examId].obtenu_le).toLocaleDateString('fr-BE', { year:'numeric', month:'long', day:'numeric' })
+        : owned ? 'Date inconnue' : null;
+
+      return `
+        <div class="badge-row" id="brow-${examId}">
+          <div class="badge-emoji">${owned ? cat.icone : '🔒'}</div>
+          <div class="badge-info">
+            <div class="badge-name">${cat.nom}</div>
+            <div class="badge-level" style="color:${cat.couleur}">${cat.niveau.toUpperCase()}</div>
+            ${owned ? `<div class="badge-obtained">✓ Obtenu le ${obtenu}</div>` : `<div class="badge-obtained" style="color:var(--muted)">Non attribué</div>`}
+          </div>
+          <button class="toggle-btn ${owned ? 'has' : 'no'}" onclick="toggleBadge('${examId}')">
+            ${owned ? '<span>✓ ATTRIBUÉ</span>' : '+ ATTRIBUER'}
+          </button>
+        </div>`;
+    }).join('');
+  }
+
+  async function toggleBadge(examId) {
+    const u = allUsers.find(u => u.id === modalUserId);
+    if (!u) return;
+
+    const owned = !!modalBadgeMap[examId];
+
+    if (owned) {
+      // Retirer
+      delete modalBadgeMap[examId];
+    } else {
+      // Ajouter avec date d'aujourd'hui
+      modalBadgeMap[examId] = { obtenu_le: new Date().toISOString() };
+    }
+
+    // Reconstruire le tableau de badges dans le format stocké
+    const newBadgesArr = Object.entries(modalBadgeMap).map(([examen_id, data]) => ({
+      examen_id,
+      obtenu_le: data.obtenu_le
+    }));
+
+    const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' };
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${modalUserId}`, {
+      method: 'PATCH', headers,
+      body: JSON.stringify({ badges: newBadgesArr, updated_at: new Date().toISOString() })
+    });
+
+    if (res.ok) {
+      // Mettre à jour le cache local
+      u.badges = newBadgesArr;
+      renderBadgeList();
+      // Mettre à jour le compteur dans la ligne du tableau
+      const countEl = document.querySelector(`#row-${modalUserId} .badge-count`);
+      if (countEl) countEl.textContent = Object.keys(modalBadgeMap).length;
+      showToast(owned ? '✓ BREVET RETIRÉ' : '✓ BREVET ATTRIBUÉ', 'success');
+    } else {
+      // Rollback
+      if (owned) modalBadgeMap[examId] = { obtenu_le: null };
+      else delete modalBadgeMap[examId];
+      showToast('✗ ERREUR — RÉESSAYEZ', 'error');
+    }
+  }
+
+  function closeBadgeModal(e) {
+    if (e.target === document.getElementById('badgeModal')) closeBadgeModalDirect();
+  }
+  function closeBadgeModalDirect() {
+    document.getElementById('badgeModal').classList.remove('open');
+    modalUserId = null;
+    modalBadgeMap = {};
+  }
+
+  // ── TOAST ───────────────────────────────────────────────────────────────────
+
   function showToast(msg, type) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -297,7 +478,9 @@
     setTimeout(() => t.classList.remove('show'), 3000);
   }
 
-  loadUsers().catch(e => {
+  // ── INIT ────────────────────────────────────────────────────────────────────
+
+  loadUsers().catch(() => {
     document.getElementById('usersTableWrapper').innerHTML = '<div class="empty">ERREUR DE CONNEXION SUPABASE</div>';
   });
 </script>
