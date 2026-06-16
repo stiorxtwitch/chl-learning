@@ -221,6 +221,14 @@
 <script>
   const SUPABASE_URL = 'https://sevrfgivcpefyykuffti.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNldnJmZ2l2Y3BlZnl5a3VmZnRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NDI1NTMsImV4cCI6MjA3ODUxODU1M30.YZnkSHsVWKQEhfU7xYfWyTFmtkM28Zuzdu7Y1sjBXQc';
+  const ADMIN_HEADERS = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
+  async function rpc(fn, params) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST', headers: ADMIN_HEADERS, body: JSON.stringify(params)
+    });
+    if (!res.ok) throw new Error(`RPC ${fn} failed: ${res.status}`);
+    return res.json();
+  }
 
   function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
   const user = getSession();
@@ -242,8 +250,7 @@
 
   async function loadUsers() {
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?order=created_at.desc&select=id,username,etiquette,badges,created_at`, { headers });
-    allUsers = await res.json();
+    allUsers = await rpc('admin_get_users', {});
     updateStats();
     renderTable(allUsers);
   }
@@ -329,11 +336,8 @@
 
   async function updateEtiquette(userId, newEt) {
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${userId}`, {
-      method: 'PATCH', headers,
-      body: JSON.stringify({ etiquette: newEt, updated_at: new Date().toISOString() })
-    });
-    if (res.ok) {
+    const res = await rpc('admin_update_etiquette', { p_user_id: userId, p_etiquette: newEt });
+    if (res && res.success) {
       const u = allUsers.find(u => u.id === userId);
       if (u) u.etiquette = newEt;
       updateStats();
@@ -348,8 +352,8 @@
   async function deleteUser(userId, username) {
     if (!confirm(`Supprimer l'utilisateur "${username}" ?`)) return;
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${userId}`, { method: 'DELETE', headers });
-    if (res.ok || res.status === 204) {
+    const res = await rpc('admin_delete_user', { p_user_id: userId });
+    if (res && res.success) {
       allUsers = allUsers.filter(u => u.id !== userId);
       updateStats();
       renderTable(allUsers);
@@ -367,11 +371,8 @@
     const etiquette = document.getElementById('newEtiquette').value;
     if (!username || !password) { showToast('✗ REMPLISSEZ TOUS LES CHAMPS', 'error'); return; }
     const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
-      method: 'POST', headers,
-      body: JSON.stringify({ username, password_hash: password, etiquette })
-    });
-    if (res.ok || res.status === 201) {
+    const res = await rpc('admin_create_user', { p_username: username, p_password: password, p_etiquette: etiquette });
+    if (res && res.success) {
       document.getElementById('newUsername').value = '';
       document.getElementById('newPassword').value = '';
       showToast('✓ UTILISATEUR CRÉÉ', 'success');
@@ -442,13 +443,8 @@
       obtenu_le: data.obtenu_le
     }));
 
-    const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${modalUserId}`, {
-      method: 'PATCH', headers,
-      body: JSON.stringify({ badges: newBadgesArr, updated_at: new Date().toISOString() })
-    });
-
-    if (res.ok) {
+    const res = await rpc('admin_update_badges', { p_user_id: modalUserId, p_badges: newBadgesArr });
+    if (res && res.success) {
       // Mettre à jour le cache local
       u.badges = newBadgesArr;
       renderBadgeList();
@@ -474,12 +470,8 @@
     const count = Object.keys(modalBadgeMap).length;
     if (count === 0) { showToast("AUCUN BREVET À SUPPRIMER", "error"); return; }
     if (!confirm(`Supprimer les ${count} brevet(s) de "${u.username}" ?`)) return;
-    const headers = { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" };
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${modalUserId}`, {
-      method: "PATCH", headers,
-      body: JSON.stringify({ badges: [], updated_at: new Date().toISOString() })
-    });
-    if (res.ok) {
+    const res = await rpc('admin_update_badges', { p_user_id: modalUserId, p_badges: [] });
+    if (res && res.success) {
       modalBadgeMap = {};
       u.badges = [];
       renderBadgeList();

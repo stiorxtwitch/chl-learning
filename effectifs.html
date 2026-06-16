@@ -253,25 +253,31 @@ function normalizeBadges(raw) {
   }).filter(Boolean);
 }
 
-async function loadAll() {
-  const h = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
+const EFF_HEADERS = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
+async function rpc(fn, params) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: 'POST', headers: EFF_HEADERS, body: JSON.stringify(params)
+  });
+  if (!res.ok) throw new Error(`RPC ${fn} failed: ${res.status}`);
+  return res.json();
+}
 
-  // ✅ select=* évite tout 400 lié à une colonne manquante
-  const [uRes, rRes, pRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/users?select=*&order=created_at.asc`, { headers: h }),
-    fetch(`${SUPABASE_URL}/rest/v1/resultats?select=user_id,score,valide,created_at`, { headers: h }),
-    fetch(`${SUPABASE_URL}/rest/v1/progression?select=user_id,cours_id,termine`, { headers: h }),
+async function loadAll() {
+  const [usersData, allResultats, allProg] = await Promise.all([
+    rpc('admin_get_users_full', {}),
+    rpc('admin_get_resultats', {}),
+    rpc('admin_get_progression', {}),
   ]);
 
-  allUsers = await uRes.json();
-  const allResultats = await rRes.json();
-  const allProg = await pRes.json();
+  allUsers = usersData || [];
+  const allResultatsArr = allResultats || [];
+  const allProgArr = allProg || [];
 
   allUsers.forEach(u => {
     u._badges = normalizeBadges(u.badges);
     u._totalBadges = u._badges.length;
-    u._resultats = allResultats.filter(r => r.user_id === u.id);
-    u._prog = allProg.filter(p => p.user_id === u.id);
+    u._resultats = allResultatsArr.filter(r => r.user_id === u.id);
+    u._prog = allProgArr.filter(p => p.user_id === u.id);
     u._reussis = u._resultats.filter(r => r.valide).length;
     u._scoreMoy = u._resultats.length ? Math.round(u._resultats.reduce((s,r)=>s+(r.score||0),0)/u._resultats.length) : 0;
     u._coursTermines = u._prog.filter(p => p.termine).length;

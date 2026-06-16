@@ -568,16 +568,21 @@
     document.getElementById('adminSection').style.display = 'block';
   }
 
+  const RPC_HEADERS = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
+  async function rpc(fn, params) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST', headers: RPC_HEADERS, body: JSON.stringify(params)
+    });
+    if (!res.ok) throw new Error(`RPC ${fn} failed: ${res.status}`);
+    return res.json();
+  }
+
   async function fetchData() {
-    const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
-    const [coursRes, examensRes, resultatsRes] = await Promise.all([
-      fetch(`${SUPABASE_URL}/rest/v1/cours?actif=eq.true&order=ordre`, { headers }),
-      fetch(`${SUPABASE_URL}/rest/v1/examens?actif=eq.true&order=titre`, { headers }),
-      fetch(`${SUPABASE_URL}/rest/v1/resultats?user_id=eq.${user.id}&select=score,examen_id`, { headers })
+    const [cours, examens, resultats] = await Promise.all([
+      rpc('get_cours_accessibles', { p_user_id: user.id }),
+      rpc('get_examens', {}),
+      rpc('get_mes_resultats', { p_user_id: user.id })
     ]);
-    const cours = await coursRes.json();
-    const examens = await examensRes.json();
-    const resultats = await resultatsRes.json();
 
     const accessibleCours = cours.filter(c => canAccess(c.etiquette_requise));
     const accessibleExamens = examens.filter(e => canAccess(e.etiquette_requise));
