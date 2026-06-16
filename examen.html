@@ -178,19 +178,39 @@
 const SUPABASE_URL = 'https://sevrfgivcpefyykuffti.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNldnJmZ2l2Y3BlZnl5a3VmZnRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5NDI1NTMsImV4cCI6MjA3ODUxODU1M30.YZnkSHsVWKQEhfU7xYfWyTFmtkM28Zuzdu7Y1sjBXQc';
 
-function getSession() { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; }
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function getSession() { try { const s = sessionStorage.getItem('chl_user'); return s ? JSON.parse(s) : null; } catch { return null; } }
 const user = getSession();
 if (!user) window.location.href = 'index.html';
 function logout() { sessionStorage.removeItem('chl_user'); window.location.href = 'index.html'; }
 
+const HEADERS = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': `Bearer ${SUPABASE_KEY}`,
+  'Content-Type': 'application/json'
+};
+
+// Appel RPC générique — toute la logique sensible tourne côté serveur
+async function rpc(fn, params) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: 'POST',
+    headers: HEADERS,
+    body: JSON.stringify(params)
+  });
+  if (!res.ok) throw new Error(`RPC ${fn} failed: ${res.status}`);
+  return res.json();
+}
+
+// ─── ACCÈS ────────────────────────────────────────────────────────────────────
 const HIERARCHY = ['Stagiaire','Infirmier','Apprenti Médecin','Médecin','Direction'];
 function canAccess(req) {
   if (user.etiquette === 'Direction') return true;
   return HIERARCHY.indexOf(user.etiquette) >= HIERARCHY.indexOf(req);
 }
 
+// ─── ÉTAT ─────────────────────────────────────────────────────────────────────
 let currentExamen = null;
-let questions = [];
+let questions = [];        // jamais de reponse_correcte ici — retirée par le serveur
 let currentQ = 0;
 let reponses = {};
 let timerInterval = null;
@@ -199,20 +219,18 @@ let timeLeft = 0;
 let totalTime = 0;
 let wasInFullscreen = false;
 let cheatDetected = false;
-let badgeJustEarned = false;
 
+// ─── FULLSCREEN / ANTI-TRICHE ─────────────────────────────────────────────────
 function enterFullscreen() {
-  const elem = document.documentElement;
-  if (elem.requestFullscreen) elem.requestFullscreen().catch(() => {});
-  else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+  const e = document.documentElement;
+  if (e.requestFullscreen) e.requestFullscreen().catch(() => {});
+  else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen();
 }
 function exitFullscreen() {
   if (document.exitFullscreen) document.exitFullscreen();
   else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
 }
-function checkFullscreen() {
-  return !!(document.fullscreenElement || document.webkitFullscreenElement);
-}
+function checkFullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
 
 document.addEventListener('fullscreenchange', () => {
   if (document.getElementById('examView').style.display === 'block') {
@@ -231,71 +249,86 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+// ─── CHARGEMENT LISTE ─────────────────────────────────────────────────────────
 async function loadExamens() {
-  const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
-  const [eRes, rRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/examens?actif=eq.true&order=etiquette_requise,titre`, { headers }),
-    fetch(`${SUPABASE_URL}/rest/v1/resultats?user_id=eq.${user.id}&select=*`, { headers })
-  ]);
-  const examens = await eRes.json();
-  const resultats = await rRes.json();
-  const urlParams = new URLSearchParams(window.location.search);
-  const autoId = urlParams.get('id');
-  const list = document.getElementById('examList');
-  const etColors = {'Stagiaire':'var(--green)','Infirmier':'var(--blue)','Apprenti Médecin':'var(--orange)','Médecin':'var(--gold)'};
-  list.innerHTML = examens.map(e => {
-    const locked = !canAccess(e.etiquette_requise);
-    const result = resultats.filter(r => r.examen_id === e.id).sort((a,b) => (b.score||0)-(a.score||0))[0];
-    const etColor = etColors[e.etiquette_requise] || 'var(--muted)';
-    return `
-      <div class="exam-list-item ${locked ? 'locked' : ''}" onclick="${locked ? '' : `startExam('${e.id}')`}">
-        <div class="eli-icon">📝</div>
-        <div class="eli-body">
-          <div class="eli-title">${e.titre}</div>
-          <div class="eli-desc">${e.description || ''}</div>
-          <div class="eli-meta">
-            <span class="eli-tag" style="color:${etColor}">${e.etiquette_requise}</span>
-            <span class="eli-tag" style="color:var(--muted)">⏱ ${e.duree_minutes} MIN</span>
-            <span class="eli-tag" style="color:var(--muted)">MIN ${e.score_minimum}%</span>
-            ${result ? `<span class="eli-tag" style="color:${result.score >= e.score_minimum ? 'var(--green)' : 'var(--accent)'}">▶ DERNIER: ${result.score}%</span>` : ''}
+  try {
+    const [examens, resultats] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/examens?actif=eq.true&order=etiquette_requise,titre`, { headers: HEADERS }).then(r => r.json()),
+      rpc('get_mes_resultats', { p_user_id: user.id })   // ✅ RPC : ses résultats uniquement
+    ]);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoId = urlParams.get('id');
+    const list = document.getElementById('examList');
+    const etColors = {'Stagiaire':'var(--green)','Infirmier':'var(--blue)','Apprenti Médecin':'var(--orange)','Médecin':'var(--gold)'};
+    const resultatsArr = resultats || [];
+
+    list.innerHTML = examens.map(e => {
+      const locked = !canAccess(e.etiquette_requise);
+      const result = resultatsArr.filter(r => r.examen_id === e.id).sort((a,b) => (b.score||0)-(a.score||0))[0];
+      const etColor = etColors[e.etiquette_requise] || 'var(--muted)';
+      return `
+        <div class="exam-list-item ${locked ? 'locked' : ''}" onclick="${locked ? '' : `startExam('${e.id}')`}">
+          <div class="eli-icon">📝</div>
+          <div class="eli-body">
+            <div class="eli-title">${e.titre}</div>
+            <div class="eli-desc">${e.description || ''}</div>
+            <div class="eli-meta">
+              <span class="eli-tag" style="color:${etColor}">${e.etiquette_requise}</span>
+              <span class="eli-tag" style="color:var(--muted)">⏱ ${e.duree_minutes} MIN</span>
+              <span class="eli-tag" style="color:var(--muted)">MIN ${e.score_minimum}%</span>
+              ${result ? `<span class="eli-tag" style="color:${result.score >= e.score_minimum ? 'var(--green)' : 'var(--accent)'}">▶ DERNIER: ${result.score}%</span>` : ''}
+            </div>
           </div>
-        </div>
-        <div class="eli-score" style="color:${result ? (result.score >= e.score_minimum ? 'var(--green)' : 'var(--accent)') : 'var(--muted)'}">${result ? result.score + '%' : locked ? '🔒' : '—'}</div>
-      </div>`;
-  }).join('');
-  if (autoId) startExam(autoId);
+          <div class="eli-score" style="color:${result ? (result.score >= e.score_minimum ? 'var(--green)' : 'var(--accent)') : 'var(--muted)'}">
+            ${result ? result.score + '%' : locked ? '🔒' : '—'}
+          </div>
+        </div>`;
+    }).join('');
+
+    if (autoId) startExam(autoId);
+  } catch(err) {
+    document.getElementById('examList').innerHTML = `<div style="padding:20px;font-family:'Share Tech Mono',monospace;color:var(--accent)">ERREUR CHARGEMENT</div>`;
+    console.error(err);
+  }
 }
 
+// ─── DÉMARRAGE EXAMEN ─────────────────────────────────────────────────────────
 async function startExam(examId) {
-  const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` };
-  const [eRes, qRes] = await Promise.all([
-    fetch(`${SUPABASE_URL}/rest/v1/examens?id=eq.${examId}&select=*`, { headers }),
-    fetch(`${SUPABASE_URL}/rest/v1/questions?examen_id=eq.${examId}&order=ordre`, { headers })
-  ]);
-  const exRes = await eRes.json();
-  currentExamen = exRes[0];
-  questions = await qRes.json();
-  reponses = {};
-  currentQ = 0;
-  startTime = Date.now();
-  totalTime = currentExamen.duree_minutes * 60;
-  timeLeft = totalTime;
-  badgeJustEarned = false;
+  try {
+    const eRes = await fetch(`${SUPABASE_URL}/rest/v1/examens?id=eq.${examId}&select=*`, { headers: HEADERS });
+    const exArr = await eRes.json();
+    currentExamen = exArr[0];
 
-  enterFullscreen();
-  wasInFullscreen = true;
-  cheatDetected = false;
+    // ✅ RPC : questions sans reponse_correcte — retirée côté serveur
+    const qs = await rpc('get_questions', { p_examen_id: examId });
+    questions = qs || [];
 
-  document.getElementById('examListView').style.display = 'none';
-  document.getElementById('examView').style.display = 'block';
-  document.getElementById('timerBar').style.display = 'flex';
-  document.getElementById('examNameBar').textContent = currentExamen.titre.substring(0,40).toUpperCase();
-  document.getElementById('resultView').style.display = 'none';
+    reponses = {};
+    currentQ = 0;
+    startTime = Date.now();
+    totalTime = currentExamen.duree_minutes * 60;
+    timeLeft = totalTime;
 
-  startTimer();
-  renderQuestion();
+    enterFullscreen();
+    wasInFullscreen = true;
+    cheatDetected = false;
+
+    document.getElementById('examListView').style.display = 'none';
+    document.getElementById('examView').style.display = 'block';
+    document.getElementById('timerBar').style.display = 'flex';
+    document.getElementById('examNameBar').textContent = currentExamen.titre.substring(0,40).toUpperCase();
+    document.getElementById('resultView').style.display = 'none';
+
+    startTimer();
+    renderQuestion();
+  } catch(err) {
+    alert("Erreur lors du chargement de l'examen. Veuillez réessayer.");
+    console.error(err);
+  }
 }
 
+// ─── TIMER ────────────────────────────────────────────────────────────────────
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
@@ -315,12 +348,14 @@ function updateTimerDisplay() {
   document.getElementById('timerFill').style.background = timeLeft < 120 ? 'var(--accent)' : timeLeft < 300 ? 'var(--gold)' : 'linear-gradient(90deg,var(--green),var(--gold))';
 }
 
+// ─── RENDU QUESTION ───────────────────────────────────────────────────────────
 function renderQuestion() {
   const q = questions[currentQ];
   if (!q) return;
   const typeLabels = { 'QCM':'QCM', 'VF':'VRAI / FAUX', 'ouvert':'QUESTION OUVERTE', 'cas_clinique':'CAS CLINIQUE' };
-  let inputHtml = '';
   const saved = reponses[q.id];
+  let inputHtml = '';
+
   if (q.type === 'QCM') {
     const opts = typeof q.options === 'string' ? JSON.parse(q.options) : (q.options || []);
     const letters = ['A','B','C','D','E'];
@@ -339,17 +374,19 @@ function renderQuestion() {
   } else {
     inputHtml = `<textarea class="open-textarea" id="open-${q.id}" placeholder="Rédigez votre réponse ici..." onchange="saveOpen('${q.id}', this.value)">${saved || ''}</textarea>`;
   }
+
   document.getElementById('questionContainer').innerHTML = `
     <div class="question-block">
       <div class="q-num">QUESTION ${currentQ+1} / ${questions.length}</div>
       <div class="q-type-badge type-${q.type}">${typeLabels[q.type]}</div>
-      <div class="q-text">${q.contenu}</div>
+      <div class="q-text">${q.texte || q.contenu || ''}</div>
       ${inputHtml}
-      <div class="explication" id="exp-${q.id}">
+      ${q.explication ? `<div class="explication" id="exp-${q.id}" style="display:none">
         <div class="explication-label">EXPLICATION</div>
-        <div class="explication-text">${q.explication || ''}</div>
-      </div>
+        <div class="explication-text">${q.explication}</div>
+      </div>` : ''}
     </div>`;
+
   document.getElementById('qCounter').textContent = `${currentQ+1} / ${questions.length}`;
   document.getElementById('btnPrev').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
   const isLast = currentQ === questions.length - 1;
@@ -371,143 +408,54 @@ function selectVF(el, qId, value) {
 }
 function saveOpen(qId, value) { reponses[qId] = value; }
 
-function nextQuestion() {
-  const q = questions[currentQ];
-  if (q.type === 'ouvert' || q.type === 'cas_clinique') {
-    const ta = document.getElementById('open-' + q.id);
-    if (ta) reponses[q.id] = ta.value;
-  }
-  if (currentQ < questions.length - 1) { currentQ++; renderQuestion(); }
-}
-function prevQuestion() {
-  const q = questions[currentQ];
-  if (q.type === 'ouvert' || q.type === 'cas_clinique') {
-    const ta = document.getElementById('open-' + q.id);
-    if (ta) reponses[q.id] = ta.value;
-  }
-  if (currentQ > 0) { currentQ--; renderQuestion(); }
-}
-
-async function submitExam() {
-  if (timerInterval) clearInterval(timerInterval);
-
+function saveCurrentTextarea() {
   const q = questions[currentQ];
   if (q && (q.type === 'ouvert' || q.type === 'cas_clinique')) {
     const ta = document.getElementById('open-' + q.id);
     if (ta) reponses[q.id] = ta.value;
   }
-
-  let pointsOk = 0, pointsTotal = 0;
-  questions.forEach(q => {
-    pointsTotal += (q.points || 1);
-    if (q.type === 'QCM' || q.type === 'VF') {
-      if (reponses[q.id] === q.reponse_correcte) pointsOk += (q.points || 1);
-    } else {
-      if (reponses[q.id] && reponses[q.id].trim().length > 10) pointsOk += Math.ceil((q.points || 1) * 0.5);
-    }
-  });
-
-  const score = pointsTotal > 0 ? Math.round(pointsOk / pointsTotal * 100) : 0;
-  const tempsPasse = Math.round((Date.now() - startTime) / 60000);
-  const valide = score >= currentExamen.score_minimum;
-
-  const headers = {
-    'apikey': SUPABASE_KEY,
-    'Authorization': `Bearer ${SUPABASE_KEY}`,
-    'Content-Type': 'application/json'
-  };
-
-  // 1. Enregistrer le résultat
-  await fetch(`${SUPABASE_URL}/rest/v1/resultats`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      user_id: user.id,
-      examen_id: currentExamen.id,
-      reponses,
-      score,
-      points_obtenus: pointsOk,
-      points_total: pointsTotal,
-      valide,
-      temps_passe_minutes: tempsPasse
-    })
-  });
-
-  // 2. Si réussi → ajouter le badge
-  if (valide) {
-    await saveBadge(headers, score);
-  }
-
-  showResults(score, pointsOk, pointsTotal, tempsPasse, valide);
 }
+function nextQuestion() { saveCurrentTextarea(); if (currentQ < questions.length - 1) { currentQ++; renderQuestion(); } }
+function prevQuestion() { saveCurrentTextarea(); if (currentQ > 0) { currentQ--; renderQuestion(); } }
 
-// ✅ Fonction dédiée à la sauvegarde du badge — robuste et séparée
-async function saveBadge(headers, score) {
+// ─── SOUMISSION ───────────────────────────────────────────────────────────────
+async function submitExam() {
+  if (timerInterval) clearInterval(timerInterval);
+  saveCurrentTextarea();
+
   try {
-    // Récupérer les données actuelles de l'user avec select=*
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}&select=*`,
-      { headers }
-    );
-    const arr = await res.json();
-    if (!arr || arr.length === 0) {
-      console.error('User non trouvé pour badge');
-      return;
-    }
-    const currentUser = arr[0];
-    const currentBadges = Array.isArray(currentUser.badges) ? currentUser.badges : [];
-
-    // Vérifier si le badge est déjà présent
-    const alreadyHas = currentBadges.some(b => {
-      const id = typeof b === 'string' ? b : b.examen_id;
-      return id === currentExamen.id;
+    // ✅ RPC : calcul du score + enregistrement résultat + badge — tout côté serveur
+    // Le client n'a jamais eu accès aux bonnes réponses
+    const result = await rpc('soumettre_examen', {
+      p_user_id: user.id,
+      p_examen_id: currentExamen.id,
+      p_reponses: reponses
     });
 
-    if (alreadyHas) {
-      console.log('Badge déjà obtenu, pas de doublon');
-      return;
-    }
+    if (!result.success) throw new Error(result.error || 'SUBMIT_FAILED');
+    showResults(result);
 
-    // Ajouter le nouveau badge
-    const newBadge = {
-      examen_id: currentExamen.id,
-      obtenu_le: new Date().toISOString(),
-      score
-    };
-    const updatedBadges = [...currentBadges, newBadge];
-
-    const patchRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/users?id=eq.${user.id}`,
-      {
-        method: 'PATCH',
-        headers: { ...headers, 'Prefer': 'return=minimal' },
-        body: JSON.stringify({
-          badges: updatedBadges,
-          total_badges: updatedBadges.length
-        })
-      }
-    );
-
-    if (patchRes.ok) {
-      console.log('✅ Badge enregistré avec succès:', currentExamen.id);
-      badgeJustEarned = true;
-    } else {
-      const errText = await patchRes.text();
-      console.error('❌ Erreur PATCH badge:', patchRes.status, errText);
-    }
-  } catch (err) {
-    console.error('❌ Exception lors de la sauvegarde du badge:', err);
+  } catch(err) {
+    alert("Erreur lors de la soumission. Veuillez réessayer.");
+    console.error(err);
+    document.getElementById('examView').style.display = 'none';
+    document.getElementById('timerBar').style.display = 'none';
+    document.getElementById('examListView').style.display = 'block';
+    if (document.fullscreenElement) exitFullscreen();
   }
 }
 
-function showResults(score, pointsOk, pointsTotal, temps, valide) {
+// ─── RÉSULTATS ────────────────────────────────────────────────────────────────
+function showResults(result) {
   document.getElementById('examView').style.display = 'none';
   document.getElementById('timerBar').style.display = 'none';
   document.getElementById('resultView').style.display = 'block';
   if (document.fullscreenElement) exitFullscreen();
   wasInFullscreen = false;
 
+  const { score, points_obtenus, points_total, valide, badge_earned } = result;
   const pass = valide;
+
   const card = document.getElementById('resultCard');
   card.className = 'result-score-card ' + (pass ? 'pass' : 'fail');
   document.getElementById('resultScore').className = 'result-big-score ' + (pass ? 'pass' : 'fail');
@@ -515,36 +463,25 @@ function showResults(score, pointsOk, pointsTotal, temps, valide) {
   document.getElementById('resultVerdict').className = 'result-verdict ' + (pass ? 'pass' : 'fail');
   document.getElementById('resultVerdict').textContent = pass ? '✓ RÉUSSI' : '✗ ÉCHEC';
   document.getElementById('resultDetails').innerHTML = `
-    <div class="result-detail">POINTS <span>${pointsOk}/${pointsTotal}</span></div>
-    <div class="result-detail">MINIMUM <span>${currentExamen.score_minimum}%</span></div>
-    <div class="result-detail">TEMPS <span>${temps} min</span></div>`;
+    <div class="result-detail">POINTS <span>${points_obtenus}/${points_total}</span></div>
+    <div class="result-detail">MINIMUM <span>${currentExamen.score_minimum}%</span></div>`;
 
-  // Bloc badge obtenu
   const badgeBlock = document.getElementById('badgeEarnedBlock');
-  if (pass && badgeJustEarned) {
-    badgeBlock.innerHTML = `
-      <div class="badge-earned">
-        <div class="badge-earned-title">🎖️ NOUVEAU BREVET OBTENU !</div>
-        <div class="badge-earned-sub">${currentExamen.titre.toUpperCase()} — VALIDÉ AVEC ${score}%</div>
-      </div>`;
-  } else {
-    badgeBlock.innerHTML = '';
-  }
+  badgeBlock.innerHTML = (pass && badge_earned) ? `
+    <div class="badge-earned">
+      <div class="badge-earned-title">🎖️ NOUVEAU BREVET OBTENU !</div>
+      <div class="badge-earned-sub">${currentExamen.titre.toUpperCase()} — VALIDÉ AVEC ${score}%</div>
+    </div>` : '';
 
-  // Correction
+  // Correction : affiche les réponses données + explications
+  // Les bonnes réponses restent côté serveur, jamais envoyées au client
   let rHtml = '<div class="rr-title">CORRECTION</div>';
   questions.forEach(q => {
     const rep = reponses[q.id] || '—';
-    const isAuto = q.type === 'QCM' || q.type === 'VF';
-    const correct = isAuto ? rep === q.reponse_correcte : null;
     rHtml += `<div class="rr-item">
-      <div class="rr-q">${q.contenu}</div>
-      ${isAuto
-        ? `<div class="rr-answer ${correct ? 'rr-correct' : 'rr-wrong'}">${correct ? '✓' : '✗'} Votre réponse : ${rep}</div>
-           ${!correct ? `<div class="rr-answer rr-correct">✓ Bonne réponse : ${q.reponse_correcte}</div>` : ''}`
-        : `<div class="rr-answer" style="color:var(--muted)">Votre réponse : ${rep}</div>
-           <div class="rr-answer rr-correct">Réponse attendue : ${q.reponse_correcte || 'Voir explication'}</div>`}
-      <div class="rr-exp">${q.explication || ''}</div>
+      <div class="rr-q">${q.texte || q.contenu || ''}</div>
+      <div class="rr-answer" style="color:var(--muted)">Votre réponse : ${rep}</div>
+      ${q.explication ? `<div class="rr-exp">${q.explication}</div>` : ''}
     </div>`;
   });
   document.getElementById('resultReview').innerHTML = rHtml;
@@ -558,6 +495,8 @@ function backToList() {
   loadExamens();
 }
 
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+if (user.etiquette === 'Direction') document.getElementById('adminNav').style.display = 'inline';
 loadExamens();
 </script>
 </body>
